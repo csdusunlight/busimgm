@@ -64,3 +64,6 @@ class User(AbstractBaseUser,PermissionsMixin):
     is_active = models.BooleanField('是否可以登录', default=True,
                                     help_text=('Designates whether this user should be treated as '
                                                'active. Unselect this instead of deleting accounts.'))
+
+#class UserLog(models):
+
