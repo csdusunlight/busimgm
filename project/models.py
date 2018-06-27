@@ -38,10 +38,10 @@ SOURCE=(
 )
 
 
-class Project(models):
+class Project(models.Model):
     pid =models.CharField("项目编号", max_length=11, unique=True)
     #contact = models.CharField("商务对接人", max_length=10)
-    contact=models.ForeignKey(User,on_delete=models.SET_NULL,verbose_name="商务对接人")
+    contact=models.ForeignKey(User,on_delete=models.CASCADE,verbose_name="商务对接人")
     name = models.CharField("项目名字", max_length=50)
     company= models.CharField("甲方公司名称", max_length=20)
     platname= models.CharField("平台名字", max_length=20)
@@ -94,7 +94,7 @@ class Project(models):
     # ppreforrec
 
 class ProjectInvestData(models.Model):
-    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_data')
+    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_data',on_delete=models.CASCADE)
     is_futou = models.BooleanField("是否复投", default=False)
     source = models.CharField("投资来源", choices=SOURCE, max_length=10)
     invest_mobile = models.CharField("投资手机号", max_length=11)
@@ -113,7 +113,7 @@ class ProjectInvestData(models.Model):
 
 
 class ProjectStatis(models.Model):
-    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_statis')
+    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_statis',on_delete=models.CASCADE)
     channel_consume = models.DecimalField("渠道消耗", max_digits=10, decimal_places=2, default=0)
     channel_return = models.DecimalField("渠道返现金额", max_digits=10, decimal_places=2, default=0)
     site_consume = models.DecimalField("网站消耗", max_digits=10, decimal_places=2, default=0)

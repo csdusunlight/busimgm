@@ -46,7 +46,7 @@ class MyUserManager(BaseUserManager):
     def create_superuser(self, uid, uname, uqq, password):
         return self._create_user(uid, uname, uqq, password, True, True)
 
-class User(AbstractBaseUser,PermissionsMixin):
+class User(AbstractBaseUser):
 
     uid =models.CharField("用户手机号", max_length=11, unique=True)
     uname = models.CharField("用户名字",max_length=10, unique=True)
