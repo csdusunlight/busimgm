@@ -51,6 +51,10 @@
               <i class="iconfont iconchange iconsize">&#xe600;</i>
               <span class="iconsizetext" slot="title">操作日志</span>
             </el-menu-item>
+            <el-menu-item index="/test">
+              <i class="iconfont iconchange">&#xe617;</i>
+              <span slot="title">test</span>
+            </el-menu-item>
           </el-menu>
         </div>
       </el-col>
