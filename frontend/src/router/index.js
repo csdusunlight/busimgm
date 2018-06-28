@@ -12,6 +12,7 @@ const refundAdmin = () => import('@/components/refundAdmin/refundAdmin')
 const operationLog = () => import('@/components/operationLog/operationLog')
 
 const routerAdmin = () => import('@/components/routerAdmin/routerAdmin')
+const test = () => import('@/components/test/test')
 
 Vue.use(Router)
 
@@ -73,6 +74,11 @@ export default new Router({
           path: '/operationLog',
           name: 'operationLog',
           component: operationLog
+        },
+        {
+          path: '/test',
+          name: 'test',
+          component: test
         }
       ]
     }
