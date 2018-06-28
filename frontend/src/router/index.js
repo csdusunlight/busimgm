@@ -5,7 +5,8 @@ const projectOverview = () => import('@/components/projectOverview/projectOvervi
 const projectLive = () => import('@/components/projectLive/projectLive')
 const dataAdmin = () => import('@/components/dataAdmin/dataAdmin')
 const dataOverview = () => import('@/components/dataOverview/dataOverview')
-const projectAdmin = () => import('@/components/projectAdmin/projectAdmin')
+const projectApply = () => import('@/components/projectApply/projectApply')
+const projectExamine = () => import('@/components/projectExamine/projectExamine')
 const costAdmin = () => import('@/components/costAdmin/costAdmin')
 const invoiceAdmin = () => import('@/components/invoiceAdmin/invoiceAdmin')
 const refundAdmin = () => import('@/components/refundAdmin/refundAdmin')
@@ -27,7 +28,7 @@ export default new Router({
       children: [
         {
           path: '/',
-          redirect: '/operationLog'
+          redirect: '/projectOverview'
         },
         {
           path: '/projectOverview',
@@ -50,9 +51,14 @@ export default new Router({
           component: dataOverview
         },
         {
-          path: '/projectAdmin',
-          name: 'projectAdmin',
-          component: projectAdmin
+          path: '/projectApply',
+          name: 'projectApply',
+          component: projectApply
+        },
+        {
+          path: '/projectExamine',
+          name: 'projectExamine',
+          component: projectExamine
         },
         {
           path: '/costAdmin',

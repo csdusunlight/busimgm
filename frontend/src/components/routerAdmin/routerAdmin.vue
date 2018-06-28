@@ -27,13 +27,17 @@
               <i class="iconfont iconchange">&#xe609;</i>
               <span slot="title">数据总览</span>
             </el-menu-item>
-            <el-menu-item index="/projectAdmin">
+            <el-menu-item index="/projectApply">
               <i class="iconfont iconchange">&#xe6c2;</i>
-              <span slot="title">项目管理</span>
+              <span slot="title">项目申请</span>
+            </el-menu-item>
+            <el-menu-item index="/projectExamine">
+              <i class="iconfont iconchange">&#xe6c2;</i>
+              <span slot="title">项目审核</span>
             </el-menu-item>
             <el-menu-item index="/costAdmin">
               <i class="iconfont iconchange">&#xe608;</i>
-              <span slot="title">费用管理</span>
+              <span slot="title">费用申请</span>
             </el-menu-item>
             <el-menu-item index="/invoiceAdmin">
               <i class="iconfont iconchange">&#xe654;</i>
@@ -53,7 +57,9 @@
       <el-col :span="21" :offset="3" style="overflow-y: auto; position: absolute; top: 0; bottom: 0;">
          <v-header></v-header>
         <div class="bg-color">
-          <router-view></router-view>
+          <keep-alive>
+            <router-view></router-view>
+          </keep-alive>
         </div>
       </el-col>
     </el-row>
