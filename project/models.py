@@ -105,7 +105,7 @@ class Project(models.Model):
     # ppreforrec
 
 class ProjectInvestData(models.Model):
-    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_data',on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_investdata',on_delete=models.CASCADE)
     is_futou = models.BooleanField("是否复投", default=False)
     source = models.CharField("投资来源", choices=SOURCE, max_length=10)
     invest_mobile = models.CharField("投资手机号", max_length=11)
@@ -142,7 +142,7 @@ class ProjectStatis(models.Model):
 
 class ProjectDetail(models.Model):
     date = models.DateField("日期", primary_key=True)
-    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_data',on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_detail',on_delete=models.CASCADE)
     total_to_rec = models.DecimalField("总待收", max_digits=10, decimal_places=2, null=True)
     budgeted_income = models.DecimalField("预估利润", max_digits=10, decimal_places=2, null=True)
     lastday_settle_num = models.DecimalField("昨日结算金额", max_digits=10, decimal_places=2, null=True)
@@ -181,39 +181,47 @@ class fund_apply_log(models.Model):
     """费用申请"""
     """时间 项目名称 打款金额 打款时间 打款截图 对公对私  甲方公司名称 审核状态  备注 """
     date = models.DateField("日期", primary_key=True)
-    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_data',on_delete=models.CASCADE)
-    fund_rec = models.CharField("打款金额")
-    send_time = models.DateTimeField
-    send_pic = models.CharField()
+    project = models.ForeignKey(Project, verbose_name="项目名", related_name='project_fund_apply',on_delete=models.CASCADE)
+    fund_rec = models.DecimalField("打款金额", max_digits=10, decimal_places=2)
+    send_time = models.DateTimeField("打款时间", default=timezone.now)
+    send_pic = models.CharField("打款截图",max_length=200)
     fundtype= models.CharField("打款类型对公对私",choices=ACCOUNT_TYPE,max_length=2)
-    audit_state = models.CharField("审核状态",choices=AUDIT_STATE)
-    record = models.CharField()
-    company = models.CharField("甲方公司名称")
+    audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2)
+    record = models.CharField("备注",max_length=200)
+    company = models.CharField("甲方公司名称",max_length=50)
 
 class refund_apply_log(models.Model):
     """退款申请　日期  项目名称  甲方公司名称  平台名称  对公对私  是否已开票    预付款金额
        已消耗金额   退款金额   签约公司  甲方公司名称   开户行  银行帐号    退款原因  状态  """
     date = models.DateField("日期", primary_key=True)
-    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_data',on_delete=models.CASCADE)
-    fund_rec = models.CharField("打款金额")
-    send_time = models.DateTimeField
-    send_pic = models.CharField()
+    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_refund_apply',on_delete=models.CASCADE)
+    inprest = models.DecimalField("预付款金额", max_digits=10, decimal_places=2)
+    refund_rec = models.DecimalField("退款金额", max_digits=10, decimal_places=2)
+    consume_sum = models.DecimalField("已消耗金额", max_digits=10, decimal_places=2)
+    send_time = models.DateTimeField("退款时间", default=timezone.now)
+    send_pic = models.CharField("退款截图",max_length=200)
     fundtype= models.CharField("打款类型对公对私",choices=ACCOUNT_TYPE,max_length=2)
-    audit_state = models.CharField("审核状态",choices=AUDIT_STATE)
-    record = models.CharField()
-    company = models.CharField("甲方公司名称")
+    is_invoice= models.CharField("是否已开票",choices=ACCOUNT_TYPE,max_length=2)
+    audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2)
+    record = models.CharField("备注",max_length=200)
+    company = models.CharField("甲方公司名称",max_length=50)
+    contract_company = models.CharField("签约公司", max_length=50)
+    bank_account = models.CharField("银行账号", max_length=50)
+    bank = models.CharField('开户银行', max_length=50)
+    reason = models.CharField("退款原因", max_length=50)
+    state = models.CharField("项目状态", choices=PAUDIT_STATE, max_length=20)
 
 class invoice_apply_log(models.Model):
     """ 时间 项目名称 开票日期  发票类型  签约公司  甲方公司名称  开票金额  备注  状态 """
     date = models.DateField("日期", primary_key=True)
-    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_data',on_delete=models.CASCADE)
-    fund_rec = models.CharField("打款金额")
-    send_time = models.DateTimeField
-    send_pic = models.CharField()
-    fundtype= models.CharField("打款类型对公对私",choices=ACCOUNT_TYPE,max_length=2)
-    audit_state = models.CharField("审核状态",choices=AUDIT_STATE)
-    record = models.CharField()
-    company = models.CharField("甲方公司名称")
+    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_invoice_apply',on_delete=models.CASCADE)
+    invoice_num = models.DecimalField("开票金额", max_digits=10, decimal_places=2)
+    send_time = models.DateTimeField()
+    invoice_type= models.CharField("打款类型对公对私",choices=ACCOUNT_TYPE,max_length=2)
+    audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2)
+    record = models.CharField("备注", max_length=200)
+    company = models.CharField("甲方公司名称",max_length=50)
+    contract_company = models.CharField("签约公司", max_length=50)
 
 
 
