@@ -22,12 +22,17 @@ from tools.StringIO import StringIO
 from project.models import DBlock
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, GenericAPIView
 from rest_framework.response import Response
+from rest_framework.decorators import detail_route,action
+from rest_framework import viewsets
+
+logger = logging.getLogger('busimgm')
 
 
-logger = logging.getLogger('wafuli')
 
 
-class ProjectList(generics.ListCreateAPIView):
+
+
+class ProjectDetail(viewsets.ModelViewSet,GenericAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
@@ -35,88 +40,91 @@ class ProjectList(generics.ListCreateAPIView):
     ordering_fields = ('uname')
     search_fields = ('uname')
     ordering=('time')
+    #permission_classes =
+    '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+
     def perform_create(self, serializer):
         serializer.save()
-        print(serializer)
-
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
         serializer._data['data'] = data
 
-
-from rest_framework.decorators import action
-from rest_framework import viewsets
-
-
-
-
-
-class ProjectDetail(viewsets.ModelViewSet,RetrieveUpdateDestroyAPIView):
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
-    '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
-
+    @action(methods=['patch'],detail=True)
+    def is_deleted(self, request, pk=None,*args,**kwargs):
+        '''删除
+        字段仅仅限于is_delete'''
+        judgeres = [True if i == "is_delete" else False for i in request.data ]
+        if all(judgeres)==True:
+            self.partial_update(request,*args,**kwargs)
+        else:
+            raise Exception("do not pass no need para!")
+        res = {}
+        res['code']='0'
+        return Response(res)
 
     @action(methods=['patch'],detail=True)
-    def project_to_be_applyed(self, request,pk=None,*args,**kwargs):
-        '''修改的字段仅仅限于几个字段'''
-        print(self.get_view_name())
-        print(request.data)
-        #print(self.)
+    def is_concluded(self, request, pk=None,*args,**kwargs):
+        """结项
+        字段应该是结算金额settle，结项原因psettlereason"""
+        judgeres = [True if i in ['settle','psettlereason'] else False for i in request.data ]
+        if  all(judgeres)==True:
+            self.partial_update(request,*args,**kwargs)
+        else:
+            raise Exception("do not pass no need para!")
+        res = {}
+        res['code'] = '0'
+        return Response(res)
 
-        print(pk)
-        self.partial_update(request,*args,**kwargs)
-        return Response("hi1")
-
-    @action(methods=['patch'],detail=True)
-    def project_to_be_altered(self, request, pk=None,*args,**kwargs):
-        '''删除的字段仅仅限于is_delete'''
-        self.partial_update(request, *args, **kwargs)
-        return Response("hi2")
-        # judgeres = [True if i == "is_delete" else False for i in request.data ]
-        # print(judgeres)
-        # if all(judgeres)==True:
-        #     self.partial_update(request,*args,**kwargs)
-        # else:
-        #     raise Exception("do not pass no need para!")
-
-
-        # aimPro=Project.objects.get(id=pk)
-        # aimPro.settle=100
-        # aimPro.save(update_fields=['settle',])
-        return Response("hi2")
-
-    @action(methods=['patch'],detail=True)
-    def project_to_be_deleted(self, request, pk=None,*args,**kwargs):
-        self.partial_update(request,*args,**kwargs)
-        aimPro=Project.objects.get(id=pk)
-        aimPro.consume=100
-        aimPro.save(update_fields=['consume',])
-        return Response("hi3")
-
-def approve_for_project_apply(request,*args,**kwargs):
-    '''关于批准立项的操作是由更改project的状态field ,审核人员的单独的权限'''
-    id = kwargs['pk']
-    admin_user = request.user
-    aimPro = Project.objects.get(id=id)
-    aimPro.auditstate = '1'
-    aimPro.audituser = admin_user
-    aimPro.save(update_fields=['auditstate','audituser'])
-    return Response("end")
+    @action(methods=['post'],detail=True)
+    def lanchedpro_approved(self, request, pk=None,*args,**kwargs):
+        """立项审核通过"""
+        aimpro = Project.objects.get(id=pk)
+        aimpro.audituser=request.user
+        aimpro.auditstate='1'
+        aimpro.save(update_fields=['audituser','auditstate'])
+        res = {}
+        res['code'] = '0'
+        return Response(res)
 
 
+    @action(methods=['post'],detail=True)
+    def lanchedpro_rejected(self, request, pk=None,*args,**kwargs):
+        """立项审核拒绝"""
+        lanched_refused_reason=request.data['reason']
+        aimpro = Project.objects.get(id=pk)
+        aimpro.audituser=request.user
+        aimpro.auditstate='2'
+        aimpro.lanched_refused_reason = lanched_refused_reason
+        aimpro.save(update_fields=['audituser','auditstate','lanched_refused_reason'])
+        res = {}
+        res['code'] = '0'
+        return Response(res)
 
 
+    @action(methods=['post'],detail=True)
+    def concludedpro_approved(self, request, pk=None,*args,**kwargs):
+        """结项审核通过"""
+        aimpro = Project.objects.get(id=pk)
+        aimpro.audituser=request.user
+        aimpro.auditstate='1'
+        aimpro.save(update_fields=['audituser','auditstate'])
+        res = {}
+        res['code'] = '0'
+        return Response(res)
 
-
-
-#def finish_project(request):
-    '''结项的操作是发出申请后
-    结项的操作是更改project的状态，并且计算结算金额'''
-
-
-
+    @action(methods=['post'],detail=True)
+    def concludedpro_rejected(self, request, pk=None,*args,**kwargs):
+        """结项审核拒绝"""
+        conclued_refused_reason=request.data['reason']
+        aimpro = Project.objects.get(id=pk)
+        aimpro.audituser=request.user
+        aimpro.auditstate='2'
+        aimpro.conclued_refused_reason = conclued_refused_reason
+        aimpro.save(update_fields=['audituser','auditstate','conclued_refused_reason'])
+        res = {}
+        res['code'] = '0'
+        return Response(res)
 
 def import_projectdata_excel(request):
     admin_user = request.user

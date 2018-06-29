@@ -34,12 +34,7 @@ router.register(r'projects', ProjectDetail, base_name='project')
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name="index.html")),
     path('admin/', admin.site.urls),
-    url(r'^Project/$', ProjectView.ProjectList.as_view()),
-    #url(r'^project/$', ProjectView.ProjectDetail.as_view({'put':''})),
     url(r'project/', include(router.urls)),
-
-    #url(r'^approve_for_build_project/$', ProjectView.approve_for_build_project.as_view()),
-
     url(r'^User/$', AccountView.UserList.as_view()),
     url(r'^User/(?P<pk>[0-9]+)/$', AccountView.UserDetail.as_view(), kwargs={'partial':True}),
 

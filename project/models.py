@@ -15,22 +15,22 @@ SETTLE_STATE=(
     ('daily', "日结"),
 )
 AUDIT_STATE = (
-    ('1', u'审核通过'),
-    ('0', u'待审核'),
-    ('2', u'审核未通过'),
+    ('0', '待审核'),
+    ('1', '审核通过'),
+    ('2', '审核未通过'),
 )
 PAUDIT_STATE = (
-    ('0', u'待审核'),
-    ('2', u'审核未通过'),
-    ('3', u'进行中'),
-    ('4', u'结项中'),
-    ('5', u'已结项'),
-    ('6', u'结项失败'),
+    ('0', '待审核'),
+    ('1', '进行中'),
+    ('2', '审核未通过'),
+    ('4', '结项中'),#结项中等于待审核
+    ('5', '已结项'),#已结项等于审核通过
+    ('6', '结项失败'),#结项失败等于审核失败
 
 )
 SUB_TYPE = (
-    ('1', u'首投'),
-    ('2', u'复投'),
+    ('1', '首投'),
+    ('2', '复投'),
 )
 
 SOURCE=(
@@ -58,12 +58,15 @@ class Project(models.Model):
     contract_company = models.CharField("签约公司", max_length=50)
     pcoperatedetail= models.CharField("合作详情", max_length=200)
     remark= models.CharField("备注", max_length=200,blank=True,null=True)
-    state= models.CharField("项目状态",choices=PAUDIT_STATE, max_length=20)
+    state= models.CharField("审核状态",choices=PAUDIT_STATE, max_length=2)
     settle = models.DecimalField("结算费用", max_digits=10, decimal_places=2, default=0)
     psettlereason= models.CharField("结项原因", max_length=20,null=True)
-    auditstate= models.CharField("项目审核状态",choices=AUDIT_STATE, max_length=20)
+    finish_time = models.DateField("结项日期", blank=True, null=True)
+    #auditstate= models.CharField("立项审核状态",choices=AUDIT_STATE, max_length=2)
     time= models.DateField("立项日期",default=datetime.date.today)
-    finish_time = models.DateField("结项日期", blank=True,null=True)
+    lanched_refused_reason = models.CharField("立项拒绝原因",max_length=100)
+    conclued_refused_reason = models.CharField("结项拒绝原因",max_length=100)
+
     consume = models.DecimalField("消耗总额", max_digits=10, decimal_places=2, default=0)
     invoicenum = models.DecimalField("发票金额", max_digits=10, decimal_places=2, default=0,blank=True,null=True)
     cost = models.DecimalField("项目成本", max_digits=10, decimal_places=2, default=0)
