@@ -64,6 +64,18 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField('是否可以登录', default=True,
                                     help_text=('Designates whether this user should be treated as '
                                                'active. Unselect this instead of deleting accounts.'))
+    is_superuser = models.BooleanField(
+        default=False,
+        help_text=(
+            'Designates that this user has all permissions without '
+            'explicitly assigning them.'
+        ),
+    )
+    USERNAME_FIELD = 'uid'
+    objects = MyUserManager()
+    class Meta:
+        verbose_name = '用户'
+        verbose_name_plural = '用户'
 
 #class UserLog(models):
 
