@@ -62,32 +62,58 @@
               </el-option>
             </el-select>
           </div>
-          <div class="select margin_left">
-            <label class="label">审核状态</label>
-            <el-select size="medium" v-model="examinestate" placeholder="请选择">
-              <el-option
-                v-for="item in examineOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </div>
         </div>
       </el-col>
     </el-row>
     <el-row class="row_top">
       <el-col :span="24">
         <div class="flexright">
-          <el-button size="medium" type="info">新增项目</el-button>
+          <el-button size="medium" @click="newAddproject()" type="info">新增项目</el-button>
         </div>
       </el-col>
+      <el-dialog
+        title="项目申请"
+        :visible.sync="dialogVisible"
+        width="50%"
+        >
+        <div class="form_table">
+          <el-form :model="addProject" :rules="rules" ref="addProject" label-width="120px" class="demo-ruleForm">
+            <el-form-item label="项目名称" prop="resource">
+              <el-input v-model="addProject.resource" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="甲方公司名称" prop="resource">
+              <el-input v-model="addProject.resource" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="平台名称" prop="resource">
+              <el-input v-model="addProject.resource" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="对公对私">
+              <el-input v-model="addProject.resource" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="结算方式" prop="resource">
+              <el-input v-model="addProject.resource" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="签约公司" prop="resource">
+              <el-input v-model="addProject.resource" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="合作详情" prop="resource">
+              <el-input v-model="addProject.resource" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="备注" prop="resource">
+              <el-input type="textarea" v-model="addProject.resource" size="medium"></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-row>
   </div>
 </template>
 
 <script>
-import {examineOption} from '@/common/js/options'
 export default {
   data () {
     return {
@@ -100,6 +126,15 @@ export default {
       settlement: '0',
       projectstate: '0',
       examinestate: '0',
+      dialogVisible: false,
+      addProject: {
+        resource: ''
+      },
+      rules: {
+        resource: [
+          { required: true, message: '项目名称', trigger: 'blur' }
+        ]
+      },
       options: [
         {
           value: '0',
@@ -117,18 +152,34 @@ export default {
       proOptions: [
         {
           value: '0',
-          label: '全部'
+          label: '待审核'
         },
         {
           value: '1',
-          label: '预付款'
+          label: '审核拒绝'
         },
         {
           value: '2',
-          label: '后付款'
+          label: '进行中'
+        },
+        {
+          value: '3',
+          label: '结项中'
+        },
+        {
+          value: '4',
+          label: '已结项'
+        },
+        {
+          value: '5',
+          label: '结项失败'
         }
-      ],
-      examineOptions: examineOption
+      ]
+    }
+  },
+  methods: {
+    newAddproject () {
+      this.dialogVisible = true
     }
   }
 }

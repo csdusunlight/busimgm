@@ -62,17 +62,6 @@
               </el-option>
             </el-select>
           </div>
-          <div class="select margin_left">
-            <label class="label">审核状态</label>
-            <el-select size="medium" v-model="examinestate" placeholder="请选择">
-              <el-option
-                v-for="item in examineOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </div>
         </div>
       </el-col>
     </el-row>
@@ -83,11 +72,12 @@
         </div>
       </el-col>
     </el-row>
+    <el-row class="row_top">
+    </el-row>
   </div>
 </template>
 
 <script>
-import {examineOption} from '@/common/js/options'
 export default {
   data () {
     return {
@@ -117,18 +107,29 @@ export default {
       proOptions: [
         {
           value: '0',
-          label: '全部'
+          label: '待审核'
         },
         {
           value: '1',
-          label: '预付款'
+          label: '审核拒绝'
         },
         {
           value: '2',
-          label: '后付款'
+          label: '进行中'
+        },
+        {
+          value: '3',
+          label: '结项中'
+        },
+        {
+          value: '4',
+          label: '已结项'
+        },
+        {
+          value: '5',
+          label: '结项失败'
         }
-      ],
-      examineOptions: examineOption
+      ]
     }
   }
 }
