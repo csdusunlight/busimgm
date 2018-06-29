@@ -87,6 +87,7 @@
 </template>
 
 <script>
+import {examineOption} from '@/common/js/options'
 export default {
   data () {
     return {
@@ -127,20 +128,7 @@ export default {
           label: '后付款'
         }
       ],
-      examineOptions: [
-        {
-          value: '0',
-          label: '审核通过'
-        },
-        {
-          value: '1',
-          label: '未审核'
-        },
-        {
-          value: '2',
-          label: '审核失败'
-        }
-      ]
+      examineOptions: examineOption
     }
   }
 }

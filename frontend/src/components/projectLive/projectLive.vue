@@ -83,7 +83,6 @@ export default {
   .flexright
     display: flex;
     justify-content: flex-end;
-    padding-right: 18px;
   .select
     .label
       margin-right: 12px;

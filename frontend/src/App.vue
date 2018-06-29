@@ -18,5 +18,6 @@ require('./common/fonts/iconfont.css')
   -moz-osx-font-smoothing: grayscale;
   color: #333;
   height: 100%;
+  font-size: 14px;
 }
 </style>

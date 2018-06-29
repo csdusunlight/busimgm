@@ -38,6 +38,9 @@ module.exports = {
       '@': resolve('src'),
     }
   },
+  externals: {
+    'highcharts': 'Highcharts'
+  },
   module: {
     rules: [
       ...(config.dev.useEslint ? [createLintingRule()] : []),
