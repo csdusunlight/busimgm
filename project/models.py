@@ -46,7 +46,7 @@ OTYPE = (
 
 
 class Project(models.Model):
-    pid =models.CharField("项目编号", max_length=11, unique=True)
+    #pid =models.CharField("项目编号", max_length=11, unique=True)
     contact=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="商务对接人",related_name="contact",blank=True,null=True)
     audituser=models.ForeignKey(User,on_delete=models.SET_NULL,related_name="auditman",verbose_name="审核人",blank=True,null=True)
     name = models.CharField("项目名字", max_length=50)
@@ -54,18 +54,18 @@ class Project(models.Model):
     platname= models.CharField("平台名字", max_length=20)
     paccountype= models.CharField("账户类型",choices=ACCOUNT_TYPE,max_length=2)
     settleway= models.CharField("结算方式",choices=SETTLE_STATE, max_length=2)
-    settle_detail= models.CharField("结算详情", max_length=30)
+    settle_detail= models.CharField("结算详情", max_length=30,blank=True,null=True)
     contract_company = models.CharField("签约公司", max_length=50)
     pcoperatedetail= models.CharField("合作详情", max_length=200)
     remark= models.CharField("备注", max_length=200,blank=True,null=True)
-    state= models.CharField("审核状态",choices=PAUDIT_STATE, max_length=2)
+    state= models.CharField("审核状态",choices=PAUDIT_STATE, max_length=2,default='0')
     settle = models.DecimalField("结算费用", max_digits=10, decimal_places=2, default=0)
     psettlereason= models.CharField("结项原因", max_length=20,null=True)
     concluded_date = models.DateField("结项日期", blank=True, null=True)
     #auditstate= models.CharField("立项审核状态",choices=AUDIT_STATE, max_length=2)
     lanched_date= models.DateField("立项日期",default=datetime.date.today)
-    lanched_refused_reason = models.CharField("立项拒绝原因",max_length=100)
-    conclued_refused_reason = models.CharField("结项拒绝原因",max_length=100)
+    lanched_refused_reason = models.CharField("立项拒绝原因",max_length=100,blank=True,null=True)
+    conclued_refused_reason = models.CharField("结项拒绝原因",max_length=100,blank=True,null=True)
 
     consume = models.DecimalField("消耗总额", max_digits=10, decimal_places=2, default=0)
     invoicenum = models.DecimalField("发票金额", max_digits=10, decimal_places=2, default=0,blank=True,null=True)
