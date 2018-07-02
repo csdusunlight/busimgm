@@ -47,7 +47,7 @@ OTYPE = (
 
 class Project(models.Model):
     pid =models.CharField("项目编号", max_length=11, unique=True)
-    contact=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="商务对接人",related_name="contact")
+    contact=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="商务对接人",related_name="contact",blank=True,null=True)
     audituser=models.ForeignKey(User,on_delete=models.SET_NULL,related_name="auditman",verbose_name="审核人",blank=True,null=True)
     name = models.CharField("项目名字", max_length=50)
     company= models.CharField("甲方公司名称", max_length=20)
