@@ -186,6 +186,9 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         aimfund.audit_date = datetime.date.today()
         aimfund.save(update_fields=['audituser','auditstate','audit_date'])
 
+        #同时把对应的project的settle加上
+        #aimfund.project.settle+=
+
         res = {}
         res['code'] = '0'
         return Response(res)

@@ -222,10 +222,9 @@ class RefundApplyLog(models.Model):
 
 class InvoiceApplyLog(models.Model):
     """ 时间 项目名称 开票日期  发票类型  签约公司  甲方公司名称  开票金额  备注  状态 """
-    date = models.DateField("日期", primary_key=True)
     project = models.ForeignKey(Project, verbose_name="项目", related_name='project_invoice_apply',on_delete=models.CASCADE)
     invoice_num = models.DecimalField("开票金额", max_digits=10, decimal_places=2)
-    send_time = models.DateTimeField()
+    invoice_date = models.DateField("开票日期", default=datetime.date.today)
     invoice_type= models.CharField("打款类型对公对私",choices=ACCOUNT_TYPE,max_length=2)
     audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2)
     record = models.CharField("备注", max_length=200)
