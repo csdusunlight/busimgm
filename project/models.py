@@ -61,9 +61,9 @@ class Project(models.Model):
     state= models.CharField("审核状态",choices=PAUDIT_STATE, max_length=2)
     settle = models.DecimalField("结算费用", max_digits=10, decimal_places=2, default=0)
     psettlereason= models.CharField("结项原因", max_length=20,null=True)
-    finish_time = models.DateField("结项日期", blank=True, null=True)
+    concluded_date = models.DateField("结项日期", blank=True, null=True)
     #auditstate= models.CharField("立项审核状态",choices=AUDIT_STATE, max_length=2)
-    time= models.DateField("立项日期",default=datetime.date.today)
+    lanched_date= models.DateField("立项日期",default=datetime.date.today)
     lanched_refused_reason = models.CharField("立项拒绝原因",max_length=100)
     conclued_refused_reason = models.CharField("结项拒绝原因",max_length=100)
 
@@ -93,7 +93,7 @@ class Project(models.Model):
                 self.finish_time = datetime.date.today()
         return models.Model.save(self, force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
     class Meta:
-        ordering = ["-time"]
+        ordering = ["-lanched_date"]
     #---------------------------------------------------------
     #当前的
     #按天的
@@ -180,7 +180,7 @@ class OperatorLog(models.Model):
     otype = models.CharField("操作类型",choices=OTYPE,max_length=2)
 
 
-class fund_apply_log(models.Model):
+class FundApplyLog(models.Model):
     """费用申请"""
     """时间 项目名称 打款金额 打款时间 打款截图 对公对私  甲方公司名称 审核状态  备注 """
     date = models.DateField("日期", primary_key=True)
@@ -192,8 +192,10 @@ class fund_apply_log(models.Model):
     audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2)
     record = models.CharField("备注",max_length=200)
     company = models.CharField("甲方公司名称",max_length=50)
+    apply_date = models.DateField("申请日期", default=datetime.date.today)
+    audit_date = models.DateField("审核日期", default=datetime.date.today)
 
-class refund_apply_log(models.Model):
+class RefundApplyLog(models.Model):
     """退款申请　日期  项目名称  甲方公司名称  平台名称  对公对私  是否已开票    预付款金额
        已消耗金额   退款金额   签约公司  甲方公司名称   开户行  银行帐号    退款原因  状态  """
     date = models.DateField("日期", primary_key=True)
@@ -214,7 +216,7 @@ class refund_apply_log(models.Model):
     reason = models.CharField("退款原因", max_length=50)
     state = models.CharField("项目状态", choices=PAUDIT_STATE, max_length=20)
 
-class invoice_apply_log(models.Model):
+class InvoiceApplyLog(models.Model):
     """ 时间 项目名称 开票日期  发票类型  签约公司  甲方公司名称  开票金额  备注  状态 """
     date = models.DateField("日期", primary_key=True)
     project = models.ForeignKey(Project, verbose_name="项目", related_name='project_invoice_apply',on_delete=models.CASCADE)

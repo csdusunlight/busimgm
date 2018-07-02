@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions
-from project.models import Project
-from project.serializers import ProjectSerializer
+from project.models import Project,FundApplyLog
+from project.serializers import ProjectSerializer,FundApplyLogSerializer
 from project.Filters import ProjectFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.urls.base import reverse
@@ -32,14 +32,14 @@ logger = logging.getLogger('busimgm')
 
 
 
-class ProjectDetail(viewsets.ModelViewSet,GenericAPIView):
+class ProjectDetail(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectFilter
-    ordering_fields = ('uname')
-    search_fields = ('uname')
-    ordering=('time')
+    ordering_fields = ('name')
+    search_fields = ('name')
+    ordering=('lanched_date','concluded_date')
     #permission_classes =
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
 
@@ -82,7 +82,8 @@ class ProjectDetail(viewsets.ModelViewSet,GenericAPIView):
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
         aimpro.auditstate='1'
-        aimpro.save(update_fields=['audituser','auditstate'])
+        aimpro.lanched_time=  datetime.date.today()
+        aimpro.save(update_fields=['audituser','auditstate','lanched_time'])
         res = {}
         res['code'] = '0'
         return Response(res)
@@ -95,8 +96,10 @@ class ProjectDetail(viewsets.ModelViewSet,GenericAPIView):
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
         aimpro.auditstate='2'
+        aimpro.lanched_time=  datetime.date.today()
+
         aimpro.lanched_refused_reason = lanched_refused_reason
-        aimpro.save(update_fields=['audituser','auditstate','lanched_refused_reason'])
+        aimpro.save(update_fields=['audituser','auditstate','lanched_refused_reason','lanched_time'])
         res = {}
         res['code'] = '0'
         return Response(res)
@@ -108,7 +111,8 @@ class ProjectDetail(viewsets.ModelViewSet,GenericAPIView):
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
         aimpro.auditstate='1'
-        aimpro.save(update_fields=['audituser','auditstate'])
+        aimpro.concluded_time = datetime.date.today()
+        aimpro.save(update_fields=['audituser','auditstate','concluded_time'])
         res = {}
         res['code'] = '0'
         return Response(res)
@@ -120,11 +124,27 @@ class ProjectDetail(viewsets.ModelViewSet,GenericAPIView):
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
         aimpro.auditstate='2'
+        aimpro.concluded_time = datetime.date.today()
         aimpro.conclued_refused_reason = conclued_refused_reason
-        aimpro.save(update_fields=['audituser','auditstate','conclued_refused_reason'])
+        aimpro.save(update_fields=['audituser','auditstate','conclued_refused_reason','concluded_time'])
         res = {}
         res['code'] = '0'
         return Response(res)
+
+class FundApplyLogDetail(viewsets.ModelViewSet):
+    queryset = FundApplyLog.objects.all()
+    serializer_class = FundApplyLogSerializer
+    filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
+    filter_class = ProjectFilter
+    ordering_fields = ('uname')
+    search_fields = ('uname')
+    ordering=('audit_date','apply_date')
+    #permission_classes =
+    '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+
+
+
+
 
 def import_projectdata_excel(request):
     admin_user = request.user
