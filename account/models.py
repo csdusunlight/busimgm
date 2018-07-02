@@ -71,6 +71,10 @@ class User(AbstractBaseUser):
             'explicitly assigning them.'
         ),
     )
+    project_new = models.IntegerField('新项目数',default=0)
+    FundApplyLog_new = models.IntegerField('新项目数',default=0)
+    RefundApplyLog_new = models.IntegerField('新项目数',default=0)
+    InvoiceApplyLog_new = models.IntegerField('新项目数',default=0)
     USERNAME_FIELD = 'uid'
     objects = MyUserManager()
     class Meta:

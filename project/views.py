@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions
-from project.models import Project,FundApplyLog
-from project.serializers import ProjectSerializer,FundApplyLogSerializer
-from project.Filters import ProjectFilter
+from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog
+from project.serializers import ProjectSerializer,FundApplyLogSerializer,RefundApplyLogSerializer,InvoiceApplyLogSerializer
+from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,InvoiceApplyLogFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.urls.base import reverse
 
@@ -59,6 +59,15 @@ class ProjectDetail(viewsets.ModelViewSet):
             self.partial_update(request,*args,**kwargs)
         else:
             raise Exception("do not pass no need para!")
+        res = {}
+        res['code']='0'
+        return Response(res)
+
+    @action(methods=['put'],detail=True)
+    def is_altered(self, request, pk=None,*args,**kwargs):
+        '''修改
+        字段仅仅限于is_delete'''
+        self.partial_update(request,*args,**kwargs)
         res = {}
         res['code']='0'
         return Response(res)
@@ -135,16 +144,202 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
     queryset = FundApplyLog.objects.all()
     serializer_class = FundApplyLogSerializer
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
-    filter_class = ProjectFilter
+    filter_class = FundApplyLogFilter
+    #permission_classes =
+    '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+    def perform_create(self, serializer):
+        serializer.save()
+        data = serializer.data
+        serializer._data = {}
+        serializer._data['code'] = 0
+        serializer._data['data'] = data
+
+    @action(methods=['patch'],detail=True)
+    def is_deleted(self, request, pk=None,*args,**kwargs):
+        '''删除
+        字段仅仅限于is_delete'''
+        judgeres = [True if i == "is_delete" else False for i in request.data ]
+        if all(judgeres)==True:
+            self.partial_update(request,*args,**kwargs)
+        else:
+            raise Exception("do not pass no need para!")
+        res = {}
+        res['code']='0'
+        return Response(res)
+
+    @action(methods=['put'],detail=True)
+    def is_altered(self, request, pk=None,*args,**kwargs):
+        '''修改
+        字段仅仅限于is_delete'''
+        self.partial_update(request,*args,**kwargs)
+        res = {}
+        res['code']='0'
+        return Response(res)
+
+
+    @action(methods=['post'],detail=True)
+    def apply_approved(self, request, pk=None,*args,**kwargs):
+        """审核通过"""
+        aimfund = FundApplyLog.objects.get(id=pk)
+        aimfund.audituser=request.user
+        aimfund.auditstate='1'
+        aimfund.audit_date = datetime.date.today()
+        aimfund.save(update_fields=['audituser','auditstate','audit_date'])
+
+        res = {}
+        res['code'] = '0'
+        return Response(res)
+
+
+    @action(methods=['post'],detail=True)
+    def apply_rejected(self, request, pk=None,*args,**kwargs):
+        """立项审核拒绝"""
+        reason=request.data['reason']
+        aimfund = FundApplyLog.objects.get(id=pk)
+        aimfund.audituser=request.user
+        aimfund.auditstate='2'
+        aimfund.audit_date =  datetime.date.today()
+
+        aimfund.audit_refused_reason = reason
+        aimfund.save(update_fields=['audituser','auditstate','audit_refused_reason','audit_date'])
+        res = {}
+        res['code'] = '0'
+        return Response(res)
+
+
+class RefundApplyLogDetail(viewsets.ModelViewSet):
+    queryset = RefundApplyLog.objects.all()
+    serializer_class = RefundApplyLogSerializer
+    filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
+    filter_class = RefundApplyLogFilter
     ordering_fields = ('uname')
     search_fields = ('uname')
     ordering=('audit_date','apply_date')
     #permission_classes =
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+    def perform_create(self, serializer):
+        serializer.save()
+        data = serializer.data
+        serializer._data = {}
+        serializer._data['code'] = 0
+        serializer._data['data'] = data
+
+    @action(methods=['patch'],detail=True)
+    def is_deleted(self, request, pk=None,*args,**kwargs):
+        '''删除
+        字段仅仅限于is_delete'''
+        judgeres = [True if i == "is_delete" else False for i in request.data ]
+        if all(judgeres)==True:
+            self.partial_update(request,*args,**kwargs)
+        else:
+            raise Exception("do not pass no need para!")
+        res = {}
+        res['code']='0'
+        return Response(res)
+
+    @action(methods=['put'],detail=True)
+    def is_altered(self, request, pk=None,*args,**kwargs):
+        '''修改
+        字段仅仅限于is_delete'''
+        self.partial_update(request,*args,**kwargs)
+        res = {}
+        res['code']='0'
+        return Response(res)
 
 
+    @action(methods=['post'],detail=True)
+    def apply_approved(self, request, pk=None,*args,**kwargs):
+        """审核通过"""
+        aimrefund = FundApplyLog.objects.get(id=pk)
+        aimrefund.audituser=request.user
+        aimrefund.auditstate='1'
+        aimrefund.audit_date = datetime.date.today()
+        aimrefund.save(update_fields=['audituser','auditstate','audit_date'])
+
+        res = {}
+        res['code'] = '0'
+        return Response(res)
 
 
+    @action(methods=['post'],detail=True)
+    def apply_rejected(self, request, pk=None,*args,**kwargs):
+        """立项审核拒绝"""
+        reason=request.data['reason']
+        aimrefend = FundApplyLog.objects.get(id=pk)
+        aimrefend.audituser=request.user
+        aimrefend.auditstate='2'
+        aimrefend.audit_date =  datetime.date.today()
+
+        aimrefend.audit_refused_reason = reason
+        aimrefend.save(update_fields=['audituser','auditstate','audit_refused_reason','audit_date'])
+        res = {}
+        res['code'] = '0'
+        return Response(res)
+
+class InvoiceApplyLogDetail(viewsets.ModelViewSet):
+    queryset = InvoiceApplyLog.objects.all()
+    serializer_class = InvoiceApplyLogSerializer
+    filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
+    filter_class = InvoiceApplyLogFilter
+    '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+    def perform_create(self, serializer):
+        serializer.save()
+        data = serializer.data
+        serializer._data = {}
+        serializer._data['code'] = 0
+        serializer._data['data'] = data
+
+    @action(methods=['patch'],detail=True)
+    def is_deleted(self, request, pk=None,*args,**kwargs):
+        '''删除
+        字段仅仅限于is_delete'''
+        judgeres = [True if i == "is_delete" else False for i in request.data ]
+        if all(judgeres)==True:
+            self.partial_update(request,*args,**kwargs)
+        else:
+            raise Exception("do not pass no need para!")
+        res = {}
+        res['code']='0'
+        return Response(res)
+
+    @action(methods=['put'],detail=True)
+    def is_altered(self, request, pk=None,*args,**kwargs):
+        '''修改
+        字段仅仅限于is_delete'''
+        self.partial_update(request,*args,**kwargs)
+        res = {}
+        res['code']='0'
+        return Response(res)
+
+
+    @action(methods=['post'],detail=True)
+    def apply_approved(self, request, pk=None,*args,**kwargs):
+        """审核通过"""
+        aiminvoice = FundApplyLog.objects.get(id=pk)
+        aiminvoice.audituser=request.user
+        aiminvoice.auditstate='1'
+        aiminvoice.audit_date = datetime.date.today()
+        aiminvoice.save(update_fields=['audituser','auditstate','audit_date'])
+
+        res = {}
+        res['code'] = '0'
+        return Response(res)
+
+
+    @action(methods=['post'],detail=True)
+    def apply_rejected(self, request, pk=None,*args,**kwargs):
+        """立项审核拒绝"""
+        reason=request.data['reason']
+        aiminvoice = FundApplyLog.objects.get(id=pk)
+        aiminvoice.audituser=request.user
+        aiminvoice.auditstate='2'
+        aiminvoice.audit_date =  datetime.date.today()
+
+        aiminvoice.audit_refused_reason = reason
+        aiminvoice.save(update_fields=['audituser','auditstate','audit_refused_reason','audit_date'])
+        res = {}
+        res['code'] = '0'
+        return Response(res)
 
 def import_projectdata_excel(request):
     admin_user = request.user
