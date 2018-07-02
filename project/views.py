@@ -187,7 +187,9 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         aimfund.save(update_fields=['audituser','auditstate','audit_date'])
 
         #同时把对应的project的settle加上
-        #aimfund.project.settle+=
+        aimpro = aimfund.project
+        aimpro.settle+=aimfund.fund_rec
+        aimpro.save(update_fields=['settle'])
 
         res = {}
         res['code'] = '0'
@@ -258,6 +260,10 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         aimrefund.auditstate='1'
         aimrefund.audit_date = datetime.date.today()
         aimrefund.save(update_fields=['audituser','auditstate','audit_date'])
+        aimpro = aimrefund.project
+        aimpro.settle -= aimrefund.refund_rec
+        aimpro.invoicenum -= aimrefund.refund_rec
+        aimpro.save(update_fields=['settle','invoicenum'])
 
         res = {}
         res['code'] = '0'
@@ -318,12 +324,14 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     @action(methods=['post'],detail=True)
     def apply_approved(self, request, pk=None,*args,**kwargs):
         """审核通过"""
-        aiminvoice = FundApplyLog.objects.get(id=pk)
+        aiminvoice = InvoiceApplyLog.objects.get(id=pk)
         aiminvoice.audituser=request.user
         aiminvoice.auditstate='1'
         aiminvoice.audit_date = datetime.date.today()
         aiminvoice.save(update_fields=['audituser','auditstate','audit_date'])
-
+        aimpro = aiminvoice.project
+        aimpro.invoicenum -= aiminvoice.invoice_num
+        aimpro.save(update_fields=['invoicenum'])
         res = {}
         res['code'] = '0'
         return Response(res)
