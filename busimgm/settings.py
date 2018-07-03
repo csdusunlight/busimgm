@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_filters',
     'account',
     'project',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -73,6 +74,14 @@ TEMPLATES = [
         },
     },
 ]
+
+REST_FRAMEWORK={
+     "DEFAULT_AUTHENTICATION_CLASSES":("account.permission.MyBasicAuthentication",),
+     #'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework.authentication.TokenAuthentication',),
+
+     'EXCEPTION_HANDLER':('utils.exceptionhandler.custom_exception_handler'),
+     'DEFAULT_PAGINATION_CLASS': 'utils.Mypagination.MyPageNumberPagination',
+}
 
 WSGI_APPLICATION = 'busimgm.wsgi.application'
 
@@ -120,6 +129,7 @@ USE_L10N = True
 USE_TZ = True
 AUTH_USER_MODEL = 'account.User'
 
+CORS_ORIGIN_ALLOW_ALL = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 

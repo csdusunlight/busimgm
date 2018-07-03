@@ -510,15 +510,7 @@ def import_audit_projectdata_excel(request):
     ret = {'code': -1}
     print(dir(request))
     #print(request.FILES)
-    print(request.POST)
-    print(request.COOKIES)
-    print(request.META)
-
-    print(request.FILES)
     file = request.FILES.get('file')
-    print(request.FILES)
-    print(dir(file))
-    print(file)
     #     print file.name
     with open('./out2.xls', 'wb+') as destination:
         for chunk in file.chunks():
