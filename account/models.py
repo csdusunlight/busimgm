@@ -83,4 +83,10 @@ class User(AbstractBaseUser,PermissionsMixin):
         verbose_name_plural = '用户'
 
 #class UserLog(models):
+    def get_permission(self):
+        userper =  self.upermission.all()
+        userper = [i.desc for i in userper ]
+        if self.is_staff :
+            userper.append('STAFF')
+        return userper
 

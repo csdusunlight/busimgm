@@ -10,6 +10,7 @@ from django.contrib.auth.hashers import  make_password
 import copy
 from rest_framework import status
 from utils.Exception import MyException
+from django.http.response import JsonResponse
 
 class UserList(ListCreateAPIView):
 
@@ -83,3 +84,16 @@ class UserLogoutAPIView(APIView):
                 "code":0,
                 "detail":"退出成功"}
         return Response(returndata)
+
+
+def check_user_login(request):
+    user = request.user
+    islogin = 1 if user.is_authenticated else 0
+    data = {
+        'permission':"no permission",
+        'islogin':islogin
+    }
+    if islogin:
+        permission = user.get_permission()
+        data.update(username=user.uname, mobile=user.uid, qq=user.uqq,permission=permission)
+    return JsonResponse(data)

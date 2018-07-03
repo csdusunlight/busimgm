@@ -23,7 +23,7 @@ from account import views as AccountView
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import admin
 from django.views.generic.base import TemplateView
-from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,InvoiceApplyLogDetail
+from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,InvoiceApplyLogDetail,import_audit_projectdata_excel
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -40,6 +40,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'Project/', include(router.urls)),
     url(r'^User/$', AccountView.UserList.as_view()),
+    url(r'^check_user_login/$', AccountView.check_user_login),
+    url(r'^import_audit_projectdata_excel/$',csrf_exempt(import_audit_projectdata_excel)),
     url(r'^User/(?P<pk>[0-9]+)/$', AccountView.UserDetail.as_view(), kwargs={'partial':True}),
 
 ]
