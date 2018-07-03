@@ -12,6 +12,7 @@ const invoiceExamine = () => import('@/components/invoiceExamine/invoiceExamine'
 const invoiceApply = () => import('@/components/invoiceApply/invoiceApply')
 const refundAdmin = () => import('@/components/refundAdmin/refundAdmin')
 const operationLog = () => import('@/components/operationLog/operationLog')
+const login = () => import('@/components/login/login')
 
 const routerAdmin = () => import('@/components/routerAdmin/routerAdmin')
 const test = () => import('@/components/test/test')
@@ -22,7 +23,11 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/routerAdmin'
+      redirect: login
+    },
+    {
+      path: '/login',
+      component: login
     },
     {
       path: '/routerAdmin',
