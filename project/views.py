@@ -40,7 +40,7 @@ class ProjectDetail(viewsets.ModelViewSet):
     filter_class = ProjectFilter
     ordering_fields = ('name')
     search_fields = ('name')
-    ordering=('lanched_date','concluded_date')
+    ordering=('lanched_apply_date','concluded_audit_date')
     #permission_classes =
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
 
@@ -68,7 +68,10 @@ class ProjectDetail(viewsets.ModelViewSet):
     @action(methods=['put'],detail=True)
     def is_altered(self, request, pk=None,*args,**kwargs):
         '''修改
-        字段仅仅限于is_delete'''
+        字段仅仅限于is_delete,进行中的项目要通知管理员'''
+        aimpro = Project.objects.get(id=pk)
+        #if aimpro.state in ['１',]:
+        #    写操作日志，对应visit字段为False表示未读.而每个管理员登录后，都会更新当前的未读的操作日志有多少条，但这些操作日志是共享的
         self.partial_update(request,*args,**kwargs)
         res = {}
         res['code']='0'

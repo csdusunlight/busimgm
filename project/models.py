@@ -94,7 +94,7 @@ class Project(models.Model):
                 self.finish_time = datetime.date.today()
         return models.Model.save(self, force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
     class Meta:
-        ordering = ["-lanched_date"]
+        ordering = ["-lanched_apply_date"]
     #---------------------------------------------------------
     #当前的
     #按天的
