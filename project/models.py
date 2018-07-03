@@ -99,14 +99,7 @@ class Project(models.Model):
     #当前的
     #按天的
     #---------------------------------------------------------
-    # ppreforconsume
-    # ppreallconsume
-    # allrefundnum
-    # pprechannelconsume
-    # pchannelrefundnum
-    # pprewebconsume
-    # pwebrefundnum
-    # ppreforrec
+
 
 class ProjectInvestData(models.Model):
     project = models.ForeignKey(Project, verbose_name="项目", related_name='project_investdata',on_delete=models.CASCADE)
