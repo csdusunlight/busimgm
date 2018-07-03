@@ -8,9 +8,11 @@ const dataOverview = () => import('@/components/dataOverview/dataOverview')
 const projectApply = () => import('@/components/projectApply/projectApply')
 const projectExamine = () => import('@/components/projectExamine/projectExamine')
 const costAdmin = () => import('@/components/costAdmin/costAdmin')
-const invoiceAdmin = () => import('@/components/invoiceAdmin/invoiceAdmin')
+const invoiceExamine = () => import('@/components/invoiceExamine/invoiceExamine')
+const invoiceApply = () => import('@/components/invoiceApply/invoiceApply')
 const refundAdmin = () => import('@/components/refundAdmin/refundAdmin')
 const operationLog = () => import('@/components/operationLog/operationLog')
+const login = () => import('@/components/login/login')
 
 const routerAdmin = () => import('@/components/routerAdmin/routerAdmin')
 const test = () => import('@/components/test/test')
@@ -21,7 +23,11 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/routerAdmin'
+      redirect: login
+    },
+    {
+      path: '/login',
+      component: login
     },
     {
       path: '/routerAdmin',
@@ -67,9 +73,14 @@ export default new Router({
           component: costAdmin
         },
         {
-          path: '/invoiceAdmin',
-          name: 'invoiceAdmin',
-          component: invoiceAdmin
+          path: '/invoiceExamine',
+          name: 'invoiceExamine',
+          component: invoiceExamine
+        },
+        {
+          path: '/invoiceApply',
+          name: 'invoiceApply',
+          component: invoiceApply
         },
         {
           path: '/refundAdmin',

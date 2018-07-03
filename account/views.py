@@ -2,15 +2,14 @@ from django.shortcuts import render
 from account.models import User,Group
 from account.serializers import UserSerializer
 from rest_framework.generics import ListAPIView,ListCreateAPIView,RetrieveUpdateDestroyAPIView
+from rest_framework.views import APIView
+from django.contrib.auth import  authenticate ,login , logout
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 from django.contrib.auth.hashers import  make_password
 import copy
 from rest_framework import status
-
-
-
-
+from utils.Exception import MyException
 
 class UserList(ListCreateAPIView):
 
@@ -31,12 +30,6 @@ class UserDetail(RetrieveUpdateDestroyAPIView):
         user = User.objects.get(pk=userpk)
         return Response(user.uid)
 
-
-    #，传入对应的user id如果是管理员的话，可以直接修改，如果是user自己的话，就只能修改自己的,所以要校对upk
-    #is_staff ,接口的权限仍然有对应的划分
-    #接口功能，更改密码，更改组名，更改qq,更改离职时间，更改加入时间，更改is_avtive字段来禁止登录,更改权限
-    #如果是管理员就不需要验证密码，直接更改，如果是用户，那就需要验证密码
-    #将密码独立出来，而其他字段就统一partial update 。
     def put(self, request, *args, **kwargs):
             #可以执行条件
         #首先判断用户名是否
@@ -62,3 +55,31 @@ class UserDetail(RetrieveUpdateDestroyAPIView):
                 "detail":"add success"
         }
         return Response(returndata,status=status.HTTP_200_OK)
+
+
+class UserLoginAPIView(APIView):
+    authentication_classes = ()
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        username = data.get('uid')
+        password = data.get('upwd')
+        user = authenticate(username=username, password=password)
+        if not user:
+            raise MyException(detail="用戶名或密码输入错误",code=1)
+        if user.is_active == False: #如果用戶被禁止登錄則爲false
+            raise MyException(detail="用戶被禁止登录",code=2)
+        login(request, user)
+        returndata ={
+                "code":0,
+                "detail":"登录成功"}
+        return Response(returndata)
+
+class UserLogoutAPIView(APIView):
+    authentication_classes = ()
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        returndata ={
+                "code":0,
+                "detail":"退出成功"}
+        return Response(returndata)

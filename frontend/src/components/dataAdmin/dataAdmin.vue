@@ -91,10 +91,75 @@
         </div>
       </el-col>
     </el-row>
+    <el-row class="row_top row_bottom">
+      <div class="table-list">
+        <el-table v-loading="loading" :data="dataList.data" style="width: 100%" @sort-change="sortChange">
+          <el-table-column label="项目编号" prop="date" sortable="custom" width="100"></el-table-column>
+          <el-table-column label="项目名称" prop="string"></el-table-column>
+          <el-table-column label="投资日期" prop="integer"></el-table-column>
+          <el-table-column label="是否复投" prop="integer"></el-table-column>
+          <el-table-column label="提交手机号" prop="qq_number" width="100"></el-table-column>
+          <el-table-column label="投资金额" prop="float"></el-table-column>
+          <el-table-column label="投资标期" prop="integer"></el-table-column>
+          <el-table-column label="预估消耗" prop="integer"></el-table-column>
+          <el-table-column label="投资来源" prop="integer"></el-table-column>
+          <el-table-column label="返现金额" prop="integer"></el-table-column>
+          <el-table-column label="审核状态" prop="integer"></el-table-column>
+          <el-table-column label="审核时间" prop="integer"></el-table-column>
+          <el-table-column label="备注" prop="integer"></el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <div class="operation_button">
+                <div class="op_button_padding"><el-button size="mini" type="danger" @click="toExamine(scope.row)">审核</el-button></div>
+                <div class="op_button_padding"><el-button size="mini" type="warning" @click="toExamine(scope.$index, scope.row)">删除</el-button></div>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="pagination">
+        <el-pagination
+          background
+          @current-change="handleCurrentChange"
+          :page-size="10"
+          :current-page="this.currentPage"
+          layout="prev, pager, next, total, jumper"
+          :total="this.dataList.total">
+        </el-pagination>
+      </div>
+      <el-dialog
+        title="审核数据"
+        :visible.sync="dialogVisible"
+        width="35%"
+        >
+        <div class="form_table">
+          <el-form :model="examineReason" :rules="rules" ref="examineReason" label-width="120px" class="demo-ruleForm">
+            <el-form-item label="项目来源" prop="resource">
+              <el-radio-group v-model="examineReason.resource">
+                <el-radio label="网站"></el-radio>
+                <el-radio label="渠道"></el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="返现金额" prop="num">
+              <el-input v-model="examineReason.num"></el-input>
+            </el-form-item>
+            <el-form-item label="电话号码">
+              <el-input v-model="examineReason.sname"></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        </span>
+      </el-dialog>
+    </el-row>
   </div>
 </template>
 
 <script>
+import {dataPage} from '@/api/api'
+
 export default {
   data () {
     return {
@@ -108,6 +173,25 @@ export default {
       investvalue: '0',
       inmodevalue: '0',
       examinestate: '0',
+      dataList: [],
+      loading: true,
+      dialogVisible: false,
+      currentPage: 1,
+      param: {
+        page: 1
+      },
+      examineReason: {
+        resource: '',
+        num: ''
+      },
+      rules: {
+        resource: [
+          { required: true, message: '请选择项目来源', trigger: 'blur' }
+        ],
+        num: [
+          { required: true, message: '请输入返现金额', trigger: 'blur' }
+        ]
+      },
       investment: [
         {
           value: '0',
@@ -150,6 +234,36 @@ export default {
           label: '待审核'
         }
       ]
+    }
+  },
+  created () {
+    this.getDatalist()
+  },
+  methods: {
+    getDatalist () {
+      dataPage(this.param).then((res) => {
+        console.log(res)
+        this.dataList = res.data
+        this.loading = false
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    handleCurrentChange (val) {
+      this.datalist = []
+      this.loading = true
+      this.currentPage = val
+      this.param.page = val
+      this.getDatalist()
+    },
+    toExamine (row) {
+      this.dialogVisible = true
+    },
+    sortChange (val) {
+      console.log(val)
+    },
+    tableSelectionChange (val) {
+      console.log(val)
     }
   }
 }
@@ -196,4 +310,7 @@ export default {
     margin-top: 35px;
     display: flex;
     justify-content: flex-end;
+    font-size: 14px;
+  .form_table
+    padding-right: 60px;
 </style>
