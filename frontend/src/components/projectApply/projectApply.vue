@@ -62,32 +62,200 @@
               </el-option>
             </el-select>
           </div>
-          <div class="select margin_left">
-            <label class="label">审核状态</label>
-            <el-select size="medium" v-model="examinestate" placeholder="请选择">
-              <el-option
-                v-for="item in examineOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </div>
         </div>
       </el-col>
     </el-row>
     <el-row class="row_top">
       <el-col :span="24">
         <div class="flexright">
-          <el-button size="medium" type="info">新增项目</el-button>
+          <el-button size="medium" @click="newAddproject()" type="info">新增项目</el-button>
         </div>
       </el-col>
+      <el-dialog
+        title="项目申请"
+        :visible.sync="dialogVisible"
+        width="50%"
+        >
+        <div class="form_table">
+          <el-form :model="addProject" :rules="rules" ref="addProject" label-width="120px" class="demo-ruleForm">
+            <el-form-item label="项目名称" prop="name">
+              <el-input v-model="addProject.name" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="甲方公司名称" prop="company">
+              <el-input v-model="addProject.company" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="平台名称" prop="platname">
+              <el-input v-model="addProject.platname" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="对公对私" prop="paccountype">
+              <el-select size="medium" v-model="addProject.paccountype" placeholder="请选择">
+                <el-option
+                  v-for="item in paccountypeops"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="结算方式" prop="settleway">
+              <el-select size="medium" v-model="addProject.settleway" placeholder="请选择">
+                <el-option
+                  v-for="item in settlewayops"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="签约公司" prop="contract_company">
+              <el-input v-model="addProject.contract_company" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="结算详情" prop="settle_detail">
+              <el-input v-model="addProject.settle_detail" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="合作详情" prop="pcoperatedetail">
+              <el-input v-model="addProject.pcoperatedetail" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="备注">
+              <el-input type="textarea" v-model="addProject.remark" size="medium"></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="subPostProject('addProject')">确 定</el-button>
+        </span>
+      </el-dialog>
+    </el-row>
+    <el-row class="row_top row_bottom">
+      <div class="table-list">
+        <el-table v-loading="loading" :data="dataList.results" style="width: 100%">
+          <el-table-column label="日期" prop="lanched_date"></el-table-column>
+          <el-table-column label="项目名称" prop="name"></el-table-column>
+          <el-table-column label="项目状态" prop="state">
+            <template slot-scope="scope">
+              <span class="cursou" @click="clickthcout" v-if="scope.row.state !== '5'">{{stateFilter[scope.row.state]}}</span>
+              <span class="cursou" @click="clickthcout" v-else>{{stateFilter[scope.row.state]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="结项日期" prop="concluded_date"></el-table-column>
+          <el-table-column label="消耗费用" prop="consume"></el-table-column>
+          <el-table-column label="已结算费用" prop="settle" width="95"></el-table-column>
+          <el-table-column label="待结算/消耗费用" prop="topay_amount"></el-table-column>
+          <el-table-column label="已开票金额" prop="invoicenum"></el-table-column>
+          <el-table-column label="备注" prop="remark"></el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <div class="operation_button">
+                <div class="op_button_padding"><el-button size="mini" type="primary" @click="lookProject(scope.row)">查看</el-button></div>
+                <div class="op_button_padding"><el-button size="mini" type="danger" @click="modifyproject(scope.row)">修改</el-button></div>
+                <div class="op_button_padding"><el-button size="mini" type="warning" @click="deleteProject(scope.row)">删除</el-button></div>
+                <div class="op_button_padding"><el-button size="mini" type="success" @click="modifyproject(scope.row)">结项</el-button></div>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="pagination">
+        <el-pagination
+          background
+          @current-change="handleCurrentChange"
+          :page-size="10"
+          :current-page="this.currentPage"
+          layout="prev, pager, next, total, jumper"
+          :total="this.dataList.recordCount">
+        </el-pagination>
+      </div>
+      <el-dialog title="项目数据" :visible.sync="lookProjectTable" width="70%">
+        <div class="table-list">
+          <el-table :data="detailsList.results" style="width: 100%" @row-click='handleRowHandle'>
+            <el-table-column label="日期" prop="lanched_date"></el-table-column>
+            <el-table-column label="项目名称" prop="name"></el-table-column>
+            <el-table-column label="投资人数" prop="state"></el-table-column>
+            <el-table-column label="投资金额" prop="concluded_date"></el-table-column>
+            <el-table-column label="消耗费用" prop="consume"></el-table-column>
+            <el-table-column label="返现投资人数" prop="settle" width="95"></el-table-column>
+            <el-table-column label="返现投资金额" prop="topay_amount"></el-table-column>
+            <el-table-column label="返现费用" prop="invoicenum"></el-table-column>
+          </el-table>
+        </div>
+        <div class="pagination">
+          <el-pagination
+            background
+            @current-change="detailsCurrentChange"
+            :page-size="10"
+            :current-page="this.detailsCurrentPage"
+            layout="prev, pager, next, total, jumper"
+            :total="this.detailsList.recordCount">
+          </el-pagination>
+        </div>
+      </el-dialog>
+      <el-dialog title="项目修改" :visible.sync="modifyProjectfrom" width="50%">
+        <div class="form_table">
+          <el-form :model="modifyProject"  ref="modifyProject" label-width="120px" class="demo-ruleForm">
+            <el-form-item label="项目名称">
+              <el-input v-model="modifyProject.name" size="medium" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="甲方公司名称" prop="company">
+              <el-input v-model="modifyProject.company" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="平台名称" prop="platname">
+              <el-input v-model="modifyProject.platname" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="对公对私" prop="paccountype">
+              <el-select size="medium" v-model="modifyProject.paccountype" placeholder="请选择">
+                <el-option
+                  v-for="item in paccountypeops"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="结算方式" prop="settleway">
+              <el-select size="medium" v-model="modifyProject.settleway" placeholder="请选择">
+                <el-option
+                  v-for="item in settlewayops"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="签约公司" prop="contract_company">
+              <el-input v-model="modifyProject.contract_company" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="结算详情" prop="settle_detail">
+              <el-input v-model="modifyProject.settle_detail" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="合作详情" prop="pcoperatedetail">
+              <el-input v-model="modifyProject.pcoperatedetail" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="备注">
+              <el-input type="textarea" v-model="modifyProject.remark" size="medium"></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="modifyProjectfrom = false">取 消</el-button>
+          <el-button type="primary" @click="subModiftProject('modifyProject')">确 定</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog title="结项详情" :visible.sync="stateOver" width="30%">
+        <ul class="stateover">
+          <li><label>项目成本：</label><i>8156.00</i></li>
+          <li><label>成本备注：</label><i>游泳健身了解一下撩妹套路了解一下</i></li>
+          <li><label>项目毛利：</label><i>741.52</i></li>
+        </ul>
+      </el-dialog>
     </el-row>
   </div>
 </template>
 
 <script>
-import {examineOption} from '@/common/js/options'
+import {postNewProject, getProjectList, getprojectDetails} from '@/api/api'
+import {paccounOption, settlewayopsoption} from '@/common/js/options'
+
 export default {
   data () {
     return {
@@ -100,6 +268,57 @@ export default {
       settlement: '0',
       projectstate: '0',
       examinestate: '0',
+      dataList: '',
+      detailsList: '',
+      dialogVisible: false,
+      lookProjectTable: false,
+      stateOver: false,
+      modifyProjectfrom: false,
+      currentPage: 1,
+      detailsCurrentPage: 1,
+      loading: true,
+      stateOperation: '',
+      searchDetailsName: '',
+      addProject: {
+        name: '',
+        company: '',
+        platname: '',
+        paccountype: '',
+        settleway: '',
+        contract_company: '',
+        contact: '',
+        settle_detail: '',
+        pcoperatedetail: ''
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入项目名称', trigger: 'blur' }
+        ],
+        company: [
+          { required: true, message: '请输入甲方公司名称', trigger: 'blur' }
+        ],
+        platname: [
+          { required: true, message: '请输入平台名称', trigger: 'blur' }
+        ],
+        paccountype: [
+          { required: true, message: '请选择对公对私', trigger: 'blur' }
+        ],
+        settleway: [
+          { required: true, message: '请选择结算方式', trigger: 'blur' }
+        ],
+        contract_company: [
+          { required: true, message: '请输入签约公司', trigger: 'blur' }
+        ],
+        settle_detail: [
+          { required: true, message: '请输入结算详情', trigger: 'blur' }
+        ],
+        contact: [
+          { required: true, message: '请输入商务对接人', trigger: 'blur' }
+        ],
+        pcoperatedetail: [
+          { required: true, message: '请输入合作详情', trigger: 'blur' }
+        ]
+      },
       options: [
         {
           value: '0',
@@ -117,18 +336,114 @@ export default {
       proOptions: [
         {
           value: '0',
-          label: '全部'
+          label: '待审核'
         },
         {
           value: '1',
-          label: '预付款'
+          label: '进行中'
         },
         {
           value: '2',
-          label: '后付款'
+          label: '审核未通过'
+        },
+        {
+          value: '4',
+          label: '结项中'
+        },
+        {
+          value: '5',
+          label: '已结项'
+        },
+        {
+          value: '6',
+          label: '结项失败'
         }
       ],
-      examineOptions: examineOption
+      stateFilter: {0: '待审核', 1: '进行中', 2: '审核未通过', 4: '结项中', 5: '已结项', 6: '结项失败'},
+      settlewayops: settlewayopsoption,
+      paccountypeops: paccounOption,
+      modifyProject: {}
+    }
+  },
+  created () {
+    this.getProjectdata()
+  },
+  methods: {
+    /* 打开新建项目 */
+    newAddproject () {
+      this.dialogVisible = true
+    },
+    /* 获取项目列表 */
+    getProjectdata () {
+      getProjectList(this.currentPage).then((res) => {
+        console.log(res)
+        this.dataList = res.data
+        this.loading = false
+        this.stateOperation = this.dataList.results.state
+        if (res.code) {
+        } else {
+          /* this.$message(res.data.detail) */
+        }
+      }).catch((err) => {
+        console.log('error')
+        console.log(err)
+      })
+    },
+    /* 提交新建项目 */
+    subPostProject (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          postNewProject(this.addProject).then((res) => {
+            console.log(res)
+          }).catch((err) => {
+            console.log(err)
+          })
+        } else {
+          this.$message.error('提交有误，请检查后重新提交！')
+          return false
+        }
+      })
+    },
+    /* 分页 */
+    handleCurrentChange (val) {
+      this.loading = true
+      this.currentPage = val
+      this.getProjectdata()
+    },
+    modifyproject (row) {
+      this.modifyProjectfrom = true
+      Object.assign(this.modifyProject, row)
+    },
+    /* 详情搜索 */
+    getDetailsList (data) {
+      getprojectDetails(this.detailsCurrentPage, data).then((res) => {
+        console.log(res)
+        this.detailsList = res.data
+      })
+    },
+    /* 点击查看按钮详情 */
+    lookProject (row) {
+      this.searchDetailsName = row.name
+      this.getDetailsList(this.searchDetailsName)
+      this.lookProjectTable = true
+    },
+    /* 点击 行 查看详情 */
+    handleRowHandle (val) {
+      this.searchDetailsName = val.name
+      this.getDetailsList(this.searchDetailsName)
+      this.lookProjectTable = true
+    },
+    /* 详情分页 */
+    detailsCurrentChange (val) {
+      this.detailsCurrentPage = val
+      this.getDetailsList(this.searchDetailsName)
+    },
+    /* 已结项详情 */
+    clickthcout () {
+      this.stateOver = true
+    },
+    /* 提交修改项目 */
+    subModiftProject (froms) {
     }
   }
 }
@@ -165,4 +480,9 @@ export default {
   .flexright
     display: flex;
     justify-content: flex-end;
+  .cursou
+    cursor: pointer;
+  .stateover
+    li
+      padding: 10px 0;
 </style>

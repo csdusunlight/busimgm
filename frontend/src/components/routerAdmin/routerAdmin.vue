@@ -39,9 +39,13 @@
               <i class="iconfont iconchange">&#xe608;</i>
               <span slot="title">费用申请</span>
             </el-menu-item>
-            <el-menu-item index="/invoiceAdmin">
+            <el-menu-item index="/invoiceApply">
               <i class="iconfont iconchange">&#xe654;</i>
-              <span slot="title">发票管理</span>
+              <span slot="title">发票申请</span>
+            </el-menu-item>
+            <el-menu-item index="/invoiceExamine">
+              <i class="iconfont iconchange">&#xe654;</i>
+              <span slot="title">发票审核</span>
             </el-menu-item>
             <el-menu-item index="/refundAdmin">
               <i class="iconfont iconchange">&#xe617;</i>
@@ -51,7 +55,7 @@
               <i class="iconfont iconchange iconsize">&#xe600;</i>
               <span class="iconsizetext" slot="title">操作日志</span>
             </el-menu-item>
-            <el-menu-item index="/test">
+            <el-menu-item index="/test" v-show="false">
               <i class="iconfont iconchange">&#xe617;</i>
               <span slot="title">test</span>
             </el-menu-item>

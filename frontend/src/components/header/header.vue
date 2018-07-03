@@ -10,17 +10,23 @@
           <el-dropdown-item><span>退出</span></el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <p class="user_id" >{{userip}}</p>
+      <p class="user_id" >{{this.username}}</p>
     </div>
   </div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 export default {
   data () {
     return {
       userip: '16574146663'
     }
+  },
+  computed: {
+    ...mapGetters([
+      'username'
+    ])
   }
 }
 </script>
