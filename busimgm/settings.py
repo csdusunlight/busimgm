@@ -26,7 +26,7 @@ SECRET_KEY = 'i_h@rw_1orgt7i+vk-8&0jn%k42+$)c44_x%1=)i(z_$(jea4n'
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['192.168.1.149','127.0.0.1','192.168.1.113','www.wafuli.cn']
+ALLOWED_HOSTS = ['192.168.1.149','127.0.0.1','192.168.1.113','www.wafuli.cn','mgm.fuliunion.com']
 
 
 # Application definition
@@ -58,11 +58,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'busimgm.urls'
 
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'frontend', 'dist'),os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,7 +77,7 @@ TEMPLATES = [
 ]
 
 REST_FRAMEWORK={
-     "DEFAULT_AUTHENTICATION_CLASSES":("account.permission.MyBasicAuthentication",),
+     "DEFAULT_AUTHENTICATION_CLASSES":("account.permissions.MyBasicAuthentication",),
      #'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework.authentication.TokenAuthentication',),
 
      'EXCEPTION_HANDLER':('utils.exceptionhandler.custom_exception_handler'),
