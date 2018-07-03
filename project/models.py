@@ -185,6 +185,8 @@ class FundApplyLog(models.Model):
     """时间 项目名称 打款金额 打款时间 打款截图 对公对私  甲方公司名称 审核状态  备注 """
    # date = models.DateField("日期", primary_key=True)
     project = models.ForeignKey(Project, verbose_name="项目名", related_name='project_fund_apply',on_delete=models.CASCADE)
+    apply_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="申请人",related_name="fundapplyuser",blank=True,null=True)
+    audit_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="审核人",related_name="fundaudituser",blank=True,null=True)
     fund_rec = models.DecimalField("打款金额", max_digits=10, decimal_places=2)
     send_pic = models.CharField("打款截图",max_length=200)
     fundtype= models.CharField("打款类型对公对私",choices=ACCOUNT_TYPE,max_length=2)
@@ -201,6 +203,8 @@ class RefundApplyLog(models.Model):
     """退款申请　日期  项目名称  甲方公司名称  平台名称  对公对私  是否已开票    预付款金额
        已消耗金额   退款金额   签约公司  甲方公司名称   开户行  银行帐号    退款原因  状态  """
     project = models.ForeignKey(Project, verbose_name="项目", related_name='project_refund_apply',on_delete=models.CASCADE)
+    apply_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="申请人",related_name="refundapplyuser",blank=True,null=True)
+    audit_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="审核人",related_name="refundaudituser",blank=True,null=True)
     inprest = models.DecimalField("预付款金额", max_digits=10, decimal_places=2)
     refund_rec = models.DecimalField("退款金额", max_digits=10, decimal_places=2)
     consume_sum = models.DecimalField("已消耗金额", max_digits=10, decimal_places=2)
@@ -223,6 +227,8 @@ class RefundApplyLog(models.Model):
 class InvoiceApplyLog(models.Model):
     """ 时间 项目名称 开票日期  发票类型  签约公司  甲方公司名称  开票金额  备注  状态 """
     project = models.ForeignKey(Project, verbose_name="项目", related_name='project_invoice_apply',on_delete=models.CASCADE)
+    apply_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="申请人",related_name="invoiceapplyuser",blank=True,null=True)
+    audit_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="审核人",related_name="invoiceaudituser",blank=True,null=True)
     invoice_num = models.DecimalField("开票金额", max_digits=10, decimal_places=2)
     invoice_date = models.DateField("开票日期", default=datetime.date.today)
     invoice_type= models.CharField("打款类型对公对私",choices=ACCOUNT_TYPE,max_length=2)

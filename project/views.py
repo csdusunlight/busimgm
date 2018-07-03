@@ -24,7 +24,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route,action
 from rest_framework import viewsets
-
+from utils.Mypagination import MyPageNumberPagination
 logger = logging.getLogger('busimgm')
 
 
@@ -35,6 +35,7 @@ logger = logging.getLogger('busimgm')
 class ProjectDetail(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectFilter
     ordering_fields = ('name')
@@ -44,7 +45,8 @@ class ProjectDetail(viewsets.ModelViewSet):
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
 
     def perform_create(self, serializer):
-        serializer.save()
+        user = self.request.user
+        serializer.save(contact=user)
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -143,12 +145,14 @@ class ProjectDetail(viewsets.ModelViewSet):
 class FundApplyLogDetail(viewsets.ModelViewSet):
     queryset = FundApplyLog.objects.all()
     serializer_class = FundApplyLogSerializer
+    pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = FundApplyLogFilter
     #permission_classes =
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def perform_create(self, serializer):
-        serializer.save()
+        user= self.request.user
+        serializer.save(apply_man=user)
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -181,7 +185,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
     def apply_approved(self, request, pk=None,*args,**kwargs):
         """审核通过"""
         aimfund = FundApplyLog.objects.get(id=pk)
-        aimfund.audituser=request.user
+        aimfund.audit_man=request.user
         aimfund.auditstate='1'
         aimfund.audit_date = datetime.date.today()
         aimfund.save(update_fields=['audituser','auditstate','audit_date'])
@@ -201,7 +205,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         """立项审核拒绝"""
         reason=request.data['reason']
         aimfund = FundApplyLog.objects.get(id=pk)
-        aimfund.audituser=request.user
+        aimfund.audit_man=request.user
         aimfund.auditstate='2'
         aimfund.audit_date =  datetime.date.today()
 
@@ -215,6 +219,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
 class RefundApplyLogDetail(viewsets.ModelViewSet):
     queryset = RefundApplyLog.objects.all()
     serializer_class = RefundApplyLogSerializer
+    pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = RefundApplyLogFilter
     ordering_fields = ('uname')
@@ -223,7 +228,8 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     #permission_classes =
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def perform_create(self, serializer):
-        serializer.save()
+        user=self.request.user
+        serializer.save(apply_man=user)
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -256,7 +262,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     def apply_approved(self, request, pk=None,*args,**kwargs):
         """审核通过"""
         aimrefund = FundApplyLog.objects.get(id=pk)
-        aimrefund.audituser=request.user
+        aimrefund.audit_man=request.user
         aimrefund.auditstate='1'
         aimrefund.audit_date = datetime.date.today()
         aimrefund.save(update_fields=['audituser','auditstate','audit_date'])
@@ -275,7 +281,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         """立项审核拒绝"""
         reason=request.data['reason']
         aimrefend = FundApplyLog.objects.get(id=pk)
-        aimrefend.audituser=request.user
+        aimrefend.audit_man=request.user
         aimrefend.auditstate='2'
         aimrefend.audit_date =  datetime.date.today()
 
@@ -288,11 +294,13 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
 class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     queryset = InvoiceApplyLog.objects.all()
     serializer_class = InvoiceApplyLogSerializer
+    pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = InvoiceApplyLogFilter
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def perform_create(self, serializer):
-        serializer.save()
+        user=self.request.user
+        serializer.save(apply_man=user)
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -325,7 +333,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     def apply_approved(self, request, pk=None,*args,**kwargs):
         """审核通过"""
         aiminvoice = InvoiceApplyLog.objects.get(id=pk)
-        aiminvoice.audituser=request.user
+        aiminvoice.audit_man=request.user
         aiminvoice.auditstate='1'
         aiminvoice.audit_date = datetime.date.today()
         aiminvoice.save(update_fields=['audituser','auditstate','audit_date'])
@@ -342,7 +350,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         """立项审核拒绝"""
         reason=request.data['reason']
         aiminvoice = FundApplyLog.objects.get(id=pk)
-        aiminvoice.audituser=request.user
+        aiminvoice.audit_man=request.user
         aiminvoice.auditstate='2'
         aiminvoice.audit_date =  datetime.date.today()
 
