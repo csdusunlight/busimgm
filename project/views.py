@@ -93,8 +93,8 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
         aimpro.auditstate='1'
-        aimpro.lanched_time=  datetime.date.today()
-        aimpro.save(update_fields=['audituser','auditstate','lanched_time'])
+        aimpro.lanched_apply_date=  datetime.date.today()
+        aimpro.save(update_fields=['audituser','auditstate','lanched_apply_date'])
         res = {}
         res['code'] = '0'
         return Response(res)
@@ -107,10 +107,26 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
         aimpro.auditstate='2'
-        aimpro.lanched_time=  datetime.date.today()
+        aimpro.lanched_apply_date=  datetime.date.today()
 
         aimpro.lanched_refused_reason = lanched_refused_reason
-        aimpro.save(update_fields=['audituser','auditstate','lanched_refused_reason','lanched_time'])
+        aimpro.save(update_fields=['audituser','auditstate','lanched_refused_reason','lanched_apply_date'])
+        res = {}
+        res['code'] = '0'
+        return Response(res)
+
+    @action(methods=['post'], detail=True)
+    def concludedpro_apply(self, request, pk=None, *args, **kwargs):
+        """结项申请,有结算金额和结算原因"""
+        settle = request.POST.get("settle")
+        psettlereason = request.POST.get("reason")
+        aimpro = Project.objects.get(id=pk)
+        aimpro.audituser = request.user
+        aimpro.auditstate = "4" #"结项待审核"
+        aimpro.settle = settle
+        aimpro.psettlereason = psettlereason
+        aimpro.concluded_apply_date = datetime.date.today()
+        aimpro.save(update_fields=['audituser', 'auditstate', 'settle','psettlereason','concluded_apply_time'])
         res = {}
         res['code'] = '0'
         return Response(res)
@@ -118,12 +134,12 @@ class ProjectDetail(viewsets.ModelViewSet):
 
     @action(methods=['post'],detail=True)
     def concludedpro_approved(self, request, pk=None,*args,**kwargs):
-        """结项审核通过"""
+        """结项审核通过,"""
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
         aimpro.auditstate='1'
-        aimpro.concluded_time = datetime.date.today()
-        aimpro.save(update_fields=['audituser','auditstate','concluded_time'])
+        aimpro.concluded_audit_date = datetime.date.today()
+        aimpro.save(update_fields=['audituser','auditstate','concluded_audit_time'])
         res = {}
         res['code'] = '0'
         return Response(res)
@@ -135,9 +151,9 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
         aimpro.auditstate='2'
-        aimpro.concluded_time = datetime.date.today()
+        aimpro.concluded_audit_date = datetime.date.today()
         aimpro.conclued_refused_reason = conclued_refused_reason
-        aimpro.save(update_fields=['audituser','auditstate','conclued_refused_reason','concluded_time'])
+        aimpro.save(update_fields=['audituser','auditstate','conclued_refused_reason','concluded_audit_date'])
         res = {}
         res['code'] = '0'
         return Response(res)
