@@ -34,7 +34,7 @@ export function getProjectList (page) {
 /* 新建项目提交 */
 export function postNewProject (data) {
   let url = `${http}/Project/projects/`
-  return axios.post(url, data, config)
+  return axios.post(url, data)
 }
 /* 获取项目详情 */
 export function getprojectDetails (page, project) {
