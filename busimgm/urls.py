@@ -36,6 +36,7 @@ router.register(r'invoiceapplys', InvoiceApplyLogDetail, base_name='invoiceapply
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name="index.html")),
+    url(r'^login/$', csrf_exempt(AccountView.UserLoginAPIView.as_view())),
     path('admin/', admin.site.urls),
     url(r'Project/', include(router.urls)),
     url(r'^User/$', AccountView.UserList.as_view()),
