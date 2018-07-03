@@ -26,7 +26,7 @@ class Permission(models.Model):
 
 class MyUserManager(BaseUserManager):
 
-    def _create_user(self, uid, password,
+    def _create_user(self, uid, password,uname,uqq,
                      is_staff, is_superuser):
         """
         Creates and saves a User with the given username, email and password.
@@ -34,18 +34,18 @@ class MyUserManager(BaseUserManager):
         now = datetime.datetime.now()
         if not uid  :
             raise ValueError('The given qq, mobile and username must be set')
-        user = self.model(uid=uid,
+        user = self.model(uid=uid,uname=uname,uqq=uqq,
                           is_staff=is_staff,
                           is_active=True, is_superuser=is_superuser)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, uid, password=None, **extra_fields):
-        return self._create_user(uid, password, False, False)
+    def create_user(self, uid,uname,uqq, password=None, **extra_fields):
+        return self._create_user(uid, password,uname,uqq, False, False)
 
-    def create_superuser(self, uid, password):
-        return self._create_user(uid, password, True, True)
+    def create_superuser(self, uid,uname,uqq, password):
+        return self._create_user(uid,uname,uqq,password, True, True)
 
 class User(AbstractBaseUser,PermissionsMixin):
 
