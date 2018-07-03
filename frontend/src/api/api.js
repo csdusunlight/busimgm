@@ -1,13 +1,11 @@
 import axios from 'axios'
 import qs from 'qs'
+axios.defaults.withCredentials = true
 
 let base = ''
 let pageSize = 10
 let URL = 'http://120.79.187.115'
 let http = 'http://mgm.fuliunion.com'
-let config = {
-  withCredentials: true
-}
 
 export const requestData = params => { return axios.get(`${base}/data/list/`, { params: params }) }
 export const dataPage = params => { return axios.get(`${base}/data/listPage/`, { params: params }) }
