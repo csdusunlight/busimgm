@@ -76,7 +76,7 @@ TEMPLATES = [
 ]
 
 REST_FRAMEWORK={
-     "DEFAULT_AUTHENTICATION_CLASSES":("account.permission.MyBasicAuthentication",),
+     "DEFAULT_AUTHENTICATION_CLASSES":("account.permissions.MyBasicAuthentication",),
      #'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework.authentication.TokenAuthentication',),
 
      'EXCEPTION_HANDLER':('utils.exceptionhandler.custom_exception_handler'),

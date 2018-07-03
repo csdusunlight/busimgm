@@ -20,7 +20,7 @@ class MyUserAdmin(UserAdmin):
     add_fieldsets = (
     (None, {
             'classes': ('wide',),
-            'fields': ('uid','password1', 'password2')}
+            'fields': ('uid','uname','uqq','password1', 'password2')}
             ),
     )
     search_fields = ('uid','uname','uqq')
