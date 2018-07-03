@@ -18,15 +18,27 @@ from django.conf.urls import include, url
 
 from django.urls import path
 from project import views as ProjectView
+from account import views as AccountView
+
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import admin
 from django.views.generic.base import TemplateView
+from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,InvoiceApplyLogDetail
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'projects', ProjectDetail, base_name='project')
+router.register(r'fundapplys', FundApplyLogDetail, base_name='fundapply')
+router.register(r'refundapplys', RefundApplyLogDetail, base_name='refundapply')
+router.register(r'invoiceapplys', InvoiceApplyLogDetail, base_name='invoiceapply')
 
 
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name="index.html")),
     path('admin/', admin.site.urls),
-    url(r'^Project/$', ProjectView.ProjectList.as_view()),
+    url(r'Project/', include(router.urls)),
+    url(r'^User/$', AccountView.UserList.as_view()),
+    url(r'^User/(?P<pk>[0-9]+)/$', AccountView.UserDetail.as_view(), kwargs={'partial':True}),
 
 ]
