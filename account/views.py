@@ -111,7 +111,7 @@ def check_user_login(request):
 
 
 class QiniuTokenView(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    #permission_classes = (permissions.IsAuthenticated,)
     def get(self, request):
         q = Auth(access_key, secret_key)
         bucket_name = 'fulitianxia'
