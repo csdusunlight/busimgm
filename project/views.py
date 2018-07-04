@@ -25,6 +25,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route,action
 from rest_framework import viewsets
 from utils.Mypagination import MyPageNumberPagination
+#import django.core.cache
 logger = logging.getLogger('busimgm')
 
 class ProjectDetail(viewsets.ModelViewSet):
@@ -377,7 +378,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
 def import_projectdata_excel(request):
     print("****************")
     admin_user = request.user
-    if not (admin_user.is_authenticated() and admin_user.is_staff):
+    if not (admin_user.is_authenticated and admin_user.is_staff):
         raise Http404
     ret = {'code': -1}
     file = request.FILES.get('file')
@@ -401,6 +402,8 @@ def import_projectdata_excel(request):
             for j in range(ncols):
                 cell = table.cell(i, j)
                 value = cell.value
+                print(value)
+
                 if j == 0:
                     id = int(value)
                     project = Project.objects.get(id=id)
@@ -442,7 +445,8 @@ def import_projectdata_excel(request):
                     temp.append(value)
             tid = temp[0]
             if not temp[2]:
-                if dup.has_key(tid):
+                print(dup)
+                if tid in dup:
                     if temp[4] in dup[tid]:
                         continue
                     else:
@@ -450,7 +454,7 @@ def import_projectdata_excel(request):
                 else:
                     dup[tid] = [temp[4], ]
 
-            if rtable.has_key(tid):
+            if tid in rtable:
                 rtable[tid].append(temp)
             else:
                 rtable[tid] = [temp, ]
@@ -458,7 +462,7 @@ def import_projectdata_excel(request):
 
         logger.info(e)
         #             traceback.print_exc()
-        ret['msg'] = e
+        ret['msg'] = e.__str__()
         return JsonResponse(ret)
     ####开始去重
     investdata_list = []
@@ -490,7 +494,7 @@ def import_projectdata_excel(request):
     except Exception as e:
         logger.info(e)
         #             traceback.print_exc()
-        ret['msg'] = e
+        ret['msg'] = e.__str__()
         return JsonResponse(ret)
     succ_num = len(investdata_list)
     duplic_num2 = len(duplicate_mobile_list)
@@ -501,7 +505,6 @@ def import_projectdata_excel(request):
 
 
 def import_audit_projectdata_excel(request):
-    print("***********")
     admin_user = request.user
     # print(admin_user)
     # print("aaaaa")
@@ -509,18 +512,13 @@ def import_audit_projectdata_excel(request):
         raise Http404
     ret = {'code': -1}
     # print(dir(request))
-    print(request.FILES)
-    print(request.POST)
-    print(request)
     file = request.FILES.get('file')
-    print(dir(file))
-    filename = request.FILES.get('filename')
-    print(dir(filename))
     with open('./out2.xls', 'wb+') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
     data = xlrd.open_workbook('./out2.xls')
     table = data.sheets()[0]
+    print(table)
     nrows = table.nrows
     ncols = table.ncols
     if ncols != 13:
@@ -582,8 +580,9 @@ def import_audit_projectdata_excel(request):
             rtable.append(temp)
     except Exception as  e:
         logger.info(e)
+        print(e)
         #             traceback.print_exc()
-        ret['msg'] = e
+        ret['msg'] = e.__str__()
         return JsonResponse(ret)
         ####开始去重
         admin_user = request.user
@@ -600,6 +599,7 @@ def import_audit_projectdata_excel(request):
             state = row['state']
             date = row['date']
             term = row['term']
+            print("hiiiiiiiiii")
             event = ProjectInvestData.objects.get(id=id)
             #             if event.state != '1':
             #                 continue
@@ -619,9 +619,9 @@ def import_audit_projectdata_excel(request):
         ret['code'] = 0
     except Exception as e:
         exstr = traceback.format_exc()
-        logger.info(unicode(exstr))
+        logger.info(exstr)
         ret['code'] = 1
-        ret['msg'] = unicode(e)
+        ret['msg'] = e.__str__()
     ret['num'] = suc_num
     return JsonResponse(ret)
 

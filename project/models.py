@@ -10,9 +10,9 @@ ACCOUNT_TYPE = {
     ('1','对私'),
 }
 SETTLE_STATE=(
-    ('advance', "预付款"),
-    ('later', "后付款"),
-    ('daily', "日结"),
+    ('0', "预付款"),
+    ('1', "后付款"),
+    ('2', "日结"),
 )
 AUDIT_STATE = (
     ('0', '待审核'),
@@ -53,7 +53,7 @@ class Project(models.Model):
     company= models.CharField("甲方公司名称", max_length=20)
     platname= models.CharField("平台名字", max_length=20)
     paccountype= models.CharField("账户类型",choices=ACCOUNT_TYPE,max_length=2)
-    settleway= models.CharField("结算方式",choices=SETTLE_STATE, max_length=2)
+    settleway= models.CharField("结算方式",choices=SETTLE_STATE, max_length=10)
     settle_detail= models.CharField("结算详情", max_length=30,blank=True,null=True)
     contract_company = models.CharField("签约公司", max_length=50)
     pcoperatedetail= models.CharField("合作详情", max_length=200)
