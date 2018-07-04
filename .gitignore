@@ -31,4 +31,4 @@ db.sqlite3
 
 frontend/package-lock.json
 celerybeat*
-db.sqlite3
+/static/
