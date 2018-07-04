@@ -198,7 +198,7 @@ class FundApplyLog(models.Model):
     audit_refused_reason = models.CharField("拒绝原因", max_length=100,blank=True,null=True)
     audit_date = models.DateField("审核日期", default=datetime.date.today)
     is_delete = models.BooleanField("是否被删除",default=False)
-
+    is_delete2 = models.BooleanField("是否被删除", default=False)
 
 class RefundApplyLog(models.Model):
     """退款申请　日期  项目名称  甲方公司名称  平台名称  对公对私  是否已开票    预付款金额
