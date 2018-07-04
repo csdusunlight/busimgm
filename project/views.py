@@ -503,15 +503,19 @@ def import_projectdata_excel(request):
 def import_audit_projectdata_excel(request):
     print("***********")
     admin_user = request.user
-    print(admin_user)
-    print("aaaaa")
+    # print(admin_user)
+    # print("aaaaa")
     if not (admin_user.is_authenticated and admin_user.is_staff):
         raise Http404
     ret = {'code': -1}
-    print(dir(request))
-    #print(request.FILES)
+    # print(dir(request))
+    print(request.FILES)
+    print(request.POST)
+    print(request)
     file = request.FILES.get('file')
-    #     print file.name
+    print(dir(file))
+    filename = request.FILES.get('filename')
+    print(dir(filename))
     with open('./out2.xls', 'wb+') as destination:
         for chunk in file.chunks():
             destination.write(chunk)

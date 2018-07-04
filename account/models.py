@@ -26,13 +26,13 @@ class Permission(models.Model):
 
 class MyUserManager(BaseUserManager):
 
-    def _create_user(self, uid, password,uname,uqq,
+    def _create_user(self, uid,uname,uqq,password,
                      is_staff, is_superuser):
         """
         Creates and saves a User with the given username, email and password.
         """
         now = datetime.datetime.now()
-        if not uid  :
+        if not uid or not uname or not uqq :
             raise ValueError('The given qq, mobile and username must be set')
         user = self.model(uid=uid,uname=uname,uqq=uqq,
                           is_staff=is_staff,
@@ -42,7 +42,7 @@ class MyUserManager(BaseUserManager):
         return user
 
     def create_user(self, uid,uname,uqq, password=None, **extra_fields):
-        return self._create_user(uid, password,uname,uqq, False, False)
+        return self._create_user(uid,uname,uqq,password, False, False)
 
     def create_superuser(self, uid,uname,uqq, password):
         return self._create_user(uid,uname,uqq,password, True, True)
@@ -78,6 +78,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     InvoiceApplyLog_new = models.IntegerField('新项目数',default=0)
     USERNAME_FIELD = 'uid'
     objects = MyUserManager()
+    REQUIRED_FIELDS = ['uname','uqq']
     class Meta:
         verbose_name = '用户'
         verbose_name_plural = '用户'
