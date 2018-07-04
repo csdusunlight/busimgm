@@ -1,6 +1,7 @@
 from rest_framework import generics, permissions
 from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog
-from project.serializers import ProjectSerializer,FundApplyLogSerializer,RefundApplyLogSerializer,InvoiceApplyLogSerializer
+from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
+    RefundApplyLogSerializer,InvoiceApplyLogSerializer,FundApplyLogListSerializer,RefundApplyLogListSerializer,InvoiceApplyLogListSerializer
 from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,InvoiceApplyLogFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.urls.base import reverse
@@ -165,6 +166,17 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = FundApplyLogFilter
     #permission_classes =
+
+    def get_serializer(self, *args, **kwargs):
+        if self.request.method == "GET":
+            serializer_class = FundApplyLogListSerializer
+        elif self.request.method == "POST":
+            serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        return serializer_class(*args, **kwargs)
+
+
+
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def perform_create(self, serializer):
         user= self.request.user
@@ -243,6 +255,15 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     ordering=('audit_date','apply_date')
     #permission_classes =
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+
+    def get_serializer(self, *args, **kwargs):
+        if self.request.method == "GET":
+            serializer_class = RefundApplyLogListSerializer
+        elif self.request.method == "POST":
+            serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        return serializer_class(*args, **kwargs)
+
     def perform_create(self, serializer):
         user=self.request.user
         serializer.save(apply_man=user,audit_state='0')
@@ -314,6 +335,15 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = InvoiceApplyLogFilter
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+
+    def get_serializer(self, *args, **kwargs):
+        if self.request.method == "GET":
+            serializer_class = InvoiceApplyLogListSerializer
+        elif self.request.method == "POST":
+            serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        return serializer_class(*args, **kwargs)
+
     def perform_create(self, serializer):
         user=self.request.user
         serializer.save(apply_man=user,audit_state='0')
@@ -471,7 +501,7 @@ def import_projectdata_excel(request):
     try:
         with transaction.atomic():
             with cache.lock('investdata_first' , timeout=2):
-                db_key = DBlock.objects.select_for_update().get(index='investdata')
+                #db_key = DBlock.objects.select_for_update().get(index='investdata')
                 for id, values in rtable.items():
                     temp = ProjectInvestData.objects.filter(project_id=id).values('invest_mobile')
                     db_mobile_list = map(lambda x: x['invest_mobile'], temp)
