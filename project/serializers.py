@@ -15,13 +15,14 @@ class ProjectSerializer(serializers.ModelSerializer):
         read_only_fields = ('id','settleway_des','consume','state_des', 'time','profit','topay_amount')
 
 class  FundApplyLogSerializer(serializers.ModelSerializer):
-
+    project = serializers.CharField(source="project.id", read_only=True)
     class Meta:
         model = FundApplyLog
         fields = '__all__'
 
 
 class  RefundApplyLogSerializer(serializers.ModelSerializer):
+    project = serializers.CharField(source="project.id", read_only=True)
     class Meta:
         model = RefundApplyLog
         fields = '__all__'
@@ -29,6 +30,7 @@ class  RefundApplyLogSerializer(serializers.ModelSerializer):
 
 
 class  InvoiceApplyLogSerializer(serializers.ModelSerializer):
+    project = serializers.CharField(source="project.id", read_only=True)
     class Meta:
         model = InvoiceApplyLog
         fields = '__all__'

@@ -24,6 +24,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route,action
 from rest_framework import viewsets
+from django.core.cache import cache
 from utils.Mypagination import MyPageNumberPagination
 #import django.core.cache
 logger = logging.getLogger('busimgm')
@@ -167,7 +168,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def perform_create(self, serializer):
         user= self.request.user
-        serializer.save(apply_man=user)
+        serializer.save(apply_man=user,audit_state='0')
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -244,7 +245,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def perform_create(self, serializer):
         user=self.request.user
-        serializer.save(apply_man=user)
+        serializer.save(apply_man=user,audit_state='0')
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -315,7 +316,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def perform_create(self, serializer):
         user=self.request.user
-        serializer.save(apply_man=user)
+        serializer.save(apply_man=user,audit_state='0')
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -469,28 +470,29 @@ def import_projectdata_excel(request):
     duplicate_mobile_list = []
     try:
         with transaction.atomic():
-            db_key = DBlock.objects.select_for_update().get(index='investdata')
-            for id, values in rtable.items():
-                temp = ProjectInvestData.objects.filter(project_id=id).values('invest_mobile')
-                db_mobile_list = map(lambda x: x['invest_mobile'], temp)
-                for item in values:
-                    pid = item[0]
-                    time = item[3]
-                    mob = item[4]
-                    is_futou = item[2]
-                    amount = item[5]
-                    term = item[6]
-                    settle = item[7]
-                    source = ''
-                    remark = ''
-                    if not is_futou and mob in db_mobile_list:
-                        duplicate_mobile_list.append(mob)
-                    else:
-                        obj = ProjectInvestData(project_id=pid, invest_mobile=mob, settle_amount=settle,
-                                                invest_amount=amount, invest_term=term, invest_time=time,
-                                                state='1', remark=remark, source=source, is_futou=is_futou)
-                        investdata_list.append(obj)
-            ProjectInvestData.objects.bulk_create(investdata_list)
+            with cache.lock('investdata_first' , timeout=2):
+                db_key = DBlock.objects.select_for_update().get(index='investdata')
+                for id, values in rtable.items():
+                    temp = ProjectInvestData.objects.filter(project_id=id).values('invest_mobile')
+                    db_mobile_list = map(lambda x: x['invest_mobile'], temp)
+                    for item in values:
+                        pid = item[0]
+                        time = item[3]
+                        mob = item[4]
+                        is_futou = item[2]
+                        amount = item[5]
+                        term = item[6]
+                        settle = item[7]
+                        source = ''
+                        remark = ''
+                        if not is_futou and mob in db_mobile_list:
+                            duplicate_mobile_list.append(mob)
+                        else:
+                            obj = ProjectInvestData(project_id=pid, invest_mobile=mob, settle_amount=settle,
+                                                    invest_amount=amount, invest_term=term, invest_time=time,
+                                                    state='1', remark=remark, source=source, is_futou=is_futou)
+                            investdata_list.append(obj)
+                ProjectInvestData.objects.bulk_create(investdata_list)
     except Exception as e:
         logger.info(e)
         #             traceback.print_exc()
