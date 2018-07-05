@@ -76,6 +76,8 @@ class Project(models.Model):
     concluded_apply_date = models.DateField("结项申请日期", blank=True, null=True)
     concluded_audit_date = models.DateField("结项审核日期", blank=True, null=True)
     concluded_audit_time = models.DateField("结项审日期", blank=True, null=True)
+    concluded_apply_time = models.DateField("结项le日期", blank=True, null=True)
+
 
     #auditstate= models.CharField("立项审核状态",choices=AUDIT_STATE, max_length=2)
     lanched_apply_date= models.DateField("立项申请日期",default=datetime.date.today)
