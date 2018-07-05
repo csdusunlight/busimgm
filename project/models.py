@@ -168,12 +168,12 @@ class DayStatis(models.Model):
         ordering = ['-date']
 
 
-class DBlock1(models.Model):
+class DBlock(models.Model):
     index = models.CharField("name",max_length=10,primary_key=True)
     description = models.CharField("description",max_length=30)
 
 
-class OperatorLog1(models.Model):
+class OperatorLog(models.Model):
     """只记录删除，修改和导入数据的操作"""
     otime = models.DateTimeField("操作时间", default=timezone.now)
     oman = models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="操作人",related_name="oman")
