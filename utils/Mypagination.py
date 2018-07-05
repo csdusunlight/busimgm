@@ -5,10 +5,10 @@ class MyPageNumberPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'pageSize'
     def get_paginated_response(self, data):
-        if self.page.paginator.count>0:
-            code = 1
-        else:
-            code = 0
+        # if self.page.paginator.count>0:
+        #     code = 1
+        # else:
+        code = 0
         return Response(OrderedDict([
             ('code', code),
             ('recordCount', self.page.paginator.count),
