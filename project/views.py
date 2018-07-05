@@ -146,7 +146,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         """结项审核通过,"""
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
-        aimpro.state='1'
+        aimpro.state='５'
         aimpro.concluded_audit_date = datetime.date.today()
         aimpro.save(update_fields=['audituser','state','concluded_audit_time'])
         res = {}
@@ -159,7 +159,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         conclued_refused_reason=request.data['reason']
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
-        aimpro.state='2'
+        aimpro.state='6'
         aimpro.concluded_audit_date = datetime.date.today()
         aimpro.conclued_refused_reason = conclued_refused_reason
         aimpro.save(update_fields=['audituser','state','conclued_refused_reason','concluded_audit_date'])
