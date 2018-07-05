@@ -248,8 +248,8 @@ class InvoiceApplyLog(models.Model):
     invoice_num = models.DecimalField("开票金额", max_digits=10, decimal_places=2)
     invoice_date = models.DateField("开票日期", default=datetime.date.today)
     invoice_type= models.CharField("发票类型",choices=INVOICE_TYPE,max_length=2)
-    invoice_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2)
-    audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2)
+    invoice_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,blank=True)
+    audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,blank=True)
     record = models.CharField("备注", max_length=200,null=True,blank=True)
     company = models.CharField("甲方公司名称",max_length=50)
     putaxmanid= models.CharField("纳税人识别号",max_length=50)
@@ -259,11 +259,11 @@ class InvoiceApplyLog(models.Model):
     regaddress = models.CharField('注册地址', max_length=50)
     mobile = models.CharField('电话', max_length=13)
     apply_date = models.DateField("申请日期", default=datetime.date.today)
-    audit_refused_reason = models.CharField("拒绝原因", max_length=100)
+    audit_refused_reason = models.CharField("拒绝原因", max_length=100,blank=True)
     audit_date = models.DateField("审核日期", default=datetime.date.today)
     is_delete = models.BooleanField("是否被删除",default=False)
     audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2)
-    return_num = models.DecimalField("返现金额", max_digits=10, decimal_places=2)
+    return_num = models.DecimalField("返现金额", max_digits=10, decimal_places=2,blank=True)
 
 
 
