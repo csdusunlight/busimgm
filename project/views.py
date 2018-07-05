@@ -41,6 +41,12 @@ class ProjectDetail(viewsets.ModelViewSet):
     ordering=('lanched_apply_date','concluded_audit_date')
     #permission_classes =
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        ret={}
+        ret['code']='0'
+        return Response(ret)
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -167,6 +173,12 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
     filter_class = FundApplyLogFilter
     #permission_classes =
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        ret={}
+        ret['code']='0'
+        return Response(ret)
 
     def get_serializer(self, *args, **kwargs):
         print("1111")
@@ -263,6 +275,13 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     #permission_classes =
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        ret={}
+        ret['code']='0'
+        return Response(ret)
+
     def get_serializer(self, *args, **kwargs):
         if self.request.method == "GET":
             serializer_class = RefundApplyLogListSerializer
@@ -346,6 +365,13 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = InvoiceApplyLogFilter
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        ret={}
+        ret['code']='0'
+        return Response(ret)
 
     def get_serializer(self, *args, **kwargs):
         if self.request.method == "GET":
