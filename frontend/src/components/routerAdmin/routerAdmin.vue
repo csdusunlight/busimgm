@@ -35,9 +35,13 @@
               <i class="iconfont iconchange">&#xe6c2;</i>
               <span slot="title">项目审核</span>
             </el-menu-item>
-            <el-menu-item index="/costAdmin">
+            <el-menu-item index="/costApply">
               <i class="iconfont iconchange">&#xe608;</i>
               <span slot="title">费用申请</span>
+            </el-menu-item>
+            <el-menu-item index="/costExamine">
+              <i class="iconfont iconchange">&#xe608;</i>
+              <span slot="title">费用审核</span>
             </el-menu-item>
             <el-menu-item index="/invoiceApply">
               <i class="iconfont iconchange">&#xe654;</i>
@@ -47,9 +51,13 @@
               <i class="iconfont iconchange">&#xe654;</i>
               <span slot="title">发票审核</span>
             </el-menu-item>
-            <el-menu-item index="/refundAdmin">
+            <el-menu-item index="/refundApply">
               <i class="iconfont iconchange">&#xe617;</i>
-              <span slot="title">退款管理</span>
+              <span slot="title">退款申请</span>
+            </el-menu-item>
+            <el-menu-item index="/refundExamine">
+              <i class="iconfont iconchange">&#xe617;</i>
+              <span slot="title">退款审核</span>
             </el-menu-item>
             <el-menu-item index="/operationLog">
               <i class="iconfont iconchange iconsize">&#xe600;</i>

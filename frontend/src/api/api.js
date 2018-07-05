@@ -53,9 +53,9 @@ export function getToken () {
 }
 /* 删除项目 */
 export function deleteProject (id) {
-  let url = `${http}/Project/projects/${id}/is_deleted/`
+  let url = `${http}/Project/projects/${id}/`
   console.log(url)
-  return axios.patch(url, {is_delete: true})
+  return axios.delete(url)
 }
 /* 立项项目审核 */
 export function addProjectConfirm (id) {
@@ -104,16 +104,27 @@ export function postCost (data) {
   let url = `${http}/Project/fundapplys/`
   return axios.post(url, data)
 }
-
+/* 修改费用申请 */
+export function putCost (id, data) {
+  let url = `${http}/Project/fundapplys/${id}/is_altered/`
+  console.log(url)
+  return axios.put(url, data)
+}
+/* 删除费用申请 */
+export function deleteCost (id) {
+  let url = `${http}/Project/fundapplys/${id}/`
+  console.log(url)
+  return axios.delete(url)
+}
 /* 新建发票申请 */
 export function postInvoice (data) {
   let url = `${http}/Project/invoiceapplys/`
   return axios.post(url, data)
 }
 /* 发票列表 */
-export function getInvoice (page) {
+export function getInvoice (page, data) {
   let url = `${http}/Project/invoiceapplys/?page=${page}&pageSize=${pageSize}`
-  return axios.get(url)
+  return axios.get(url, data)
 }
 /* 发票修改 */
 export function putInvoice (id, data) {
@@ -123,7 +134,29 @@ export function putInvoice (id, data) {
 }
 /* 删除发票 */
 export function deleteInvoice (id) {
-  let url = `${http}/Project/invoiceapplys/${id}/is_deleted/`
+  let url = `${http}/Project/invoiceapplys/${id}/`
   console.log(url)
   return axios.delete(url)
+}
+/* 新建退款申请 */
+export function postRefund (data) {
+  let url = `${http}/Project/refundapplys/`
+  return axios.post(url, data)
+}
+/* 获取退款申请列表 */
+export function getRefundList (page, data) {
+  let url = `${http}/Project/refundapplys/?page=${page}&pageSize=${pageSize}`
+  console.log(url)
+  return axios.get(url, data)
+}
+/* 获取项目列表 */
+export function allGetProject () {
+  let data = {
+    params: {
+      state: '1'
+    }
+  }
+  let url = `${http}/Project/projects/?page=1&pageSize=999`
+  console.log(url)
+  return axios.get(url, data)
 }
