@@ -201,7 +201,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def perform_create(self, serializer):
         user= self.request.user
-        serializer.save(apply_man=user,audit_state='0')
+        serializer.save(apply_man=user,state='0')
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -271,9 +271,6 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = RefundApplyLogFilter
-    ordering_fields = ('uname')
-    search_fields = ('uname')
-    ordering=('audit_date','apply_date')
     #permission_classes =
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
 
@@ -298,7 +295,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user=self.request.user
-        serializer.save(apply_man=user,audit_state='0')
+        serializer.save(apply_man=user,state='0')
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -389,7 +386,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user=self.request.user
-        serializer.save(apply_man=user,audit_state='0')
+        serializer.save(apply_man=user,state='0')
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -683,7 +680,6 @@ def import_audit_projectdata_excel(request):
             state = row['state']
             date = row['date']
             term = row['term']
-            print("hiiiiiiiiii")
             event = ProjectInvestData.objects.get(id=id)
             #             if event.state != '1':
             #                 continue
