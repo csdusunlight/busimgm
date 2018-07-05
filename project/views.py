@@ -101,9 +101,9 @@ class ProjectDetail(viewsets.ModelViewSet):
         """立项审核通过"""
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
-        aimpro.auditstate='1'
+        aimpro.state='1'
         aimpro.lanched_apply_date=  datetime.date.today()
-        aimpro.save(update_fields=['audituser','auditstate','lanched_apply_date'])
+        aimpro.save(update_fields=['audituser','state','lanched_apply_date'])
         res = {}
         res['code'] = '0'
         return Response(res)
@@ -115,11 +115,11 @@ class ProjectDetail(viewsets.ModelViewSet):
         lanched_refused_reason=request.data['reason']
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
-        aimpro.auditstate='2'
+        aimpro.state='2'
         aimpro.lanched_apply_date=  datetime.date.today()
 
         aimpro.lanched_refused_reason = lanched_refused_reason
-        aimpro.save(update_fields=['audituser','auditstate','lanched_refused_reason','lanched_apply_date'])
+        aimpro.save(update_fields=['audituser','state','lanched_refused_reason','lanched_apply_date'])
         res = {}
         res['code'] = '0'
         return Response(res)
@@ -131,11 +131,11 @@ class ProjectDetail(viewsets.ModelViewSet):
         psettlereason = request.POST.get("reason")
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser = request.user
-        aimpro.auditstate = "4" #"结项待审核"
+        aimpro.state = "4" #"结项待审核"
         aimpro.settle = settle
         aimpro.psettlereason = psettlereason
         aimpro.concluded_apply_date = datetime.date.today()
-        aimpro.save(update_fields=['audituser', 'auditstate', 'settle','psettlereason','concluded_apply_time'])
+        aimpro.save(update_fields=['audituser', 'state', 'settle','psettlereason','concluded_apply_time'])
         res = {}
         res['code'] = '0'
         return Response(res)
@@ -146,9 +146,9 @@ class ProjectDetail(viewsets.ModelViewSet):
         """结项审核通过,"""
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
-        aimpro.auditstate='1'
+        aimpro.state='1'
         aimpro.concluded_audit_date = datetime.date.today()
-        aimpro.save(update_fields=['audituser','auditstate','concluded_audit_time'])
+        aimpro.save(update_fields=['audituser','state','concluded_audit_time'])
         res = {}
         res['code'] = '0'
         return Response(res)
@@ -159,10 +159,10 @@ class ProjectDetail(viewsets.ModelViewSet):
         conclued_refused_reason=request.data['reason']
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
-        aimpro.auditstate='2'
+        aimpro.state='2'
         aimpro.concluded_audit_date = datetime.date.today()
         aimpro.conclued_refused_reason = conclued_refused_reason
-        aimpro.save(update_fields=['audituser','auditstate','conclued_refused_reason','concluded_audit_date'])
+        aimpro.save(update_fields=['audituser','state','conclued_refused_reason','concluded_audit_date'])
         res = {}
         res['code'] = '0'
         return Response(res)
@@ -235,9 +235,9 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         """审核通过"""
         aimfund = FundApplyLog.objects.get(id=pk)
         aimfund.audit_man=request.user
-        aimfund.auditstate='1'
+        aimfund.state='1'
         aimfund.audit_date = datetime.date.today()
-        aimfund.save(update_fields=['audituser','auditstate','audit_date'])
+        aimfund.save(update_fields=['audituser','state','audit_date'])
 
         #同时把对应的project的settle加上
         aimpro = aimfund.project
@@ -255,11 +255,11 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         reason=request.data['reason']
         aimfund = FundApplyLog.objects.get(id=pk)
         aimfund.audit_man=request.user
-        aimfund.auditstate='2'
+        aimfund.state='2'
         aimfund.audit_date =  datetime.date.today()
 
         aimfund.audit_refused_reason = reason
-        aimfund.save(update_fields=['audituser','auditstate','audit_refused_reason','audit_date'])
+        aimfund.save(update_fields=['audituser','state','audit_refused_reason','audit_date'])
         res = {}
         res['code'] = '0'
         return Response(res)
@@ -332,9 +332,9 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         """审核通过"""
         aimrefund = FundApplyLog.objects.get(id=pk)
         aimrefund.audit_man=request.user
-        aimrefund.auditstate='1'
+        aimrefund.state='1'
         aimrefund.audit_date = datetime.date.today()
-        aimrefund.save(update_fields=['audituser','auditstate','audit_date'])
+        aimrefund.save(update_fields=['audituser','state','audit_date'])
         aimpro = aimrefund.project
         aimpro.settle -= aimrefund.refund_rec
         aimpro.invoicenum -= aimrefund.refund_rec
@@ -351,11 +351,11 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         reason=request.data['reason']
         aimrefend = FundApplyLog.objects.get(id=pk)
         aimrefend.audit_man=request.user
-        aimrefend.auditstate='2'
+        aimrefend.state='2'
         aimrefend.audit_date =  datetime.date.today()
 
         aimrefend.audit_refused_reason = reason
-        aimrefend.save(update_fields=['audituser','auditstate','audit_refused_reason','audit_date'])
+        aimrefend.save(update_fields=['audituser','state','audit_refused_reason','audit_date'])
         res = {}
         res['code'] = '0'
         return Response(res)
@@ -423,9 +423,9 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         """审核通过"""
         aiminvoice = InvoiceApplyLog.objects.get(id=pk)
         aiminvoice.audit_man=request.user
-        aiminvoice.auditstate='1'
+        aiminvoice.state='1'
         aiminvoice.audit_date = datetime.date.today()
-        aiminvoice.save(update_fields=['audituser','auditstate','audit_date'])
+        aiminvoice.save(update_fields=['audituser','state','audit_date'])
         aimpro = aiminvoice.project
         aimpro.invoicenum -= aiminvoice.invoice_num
         aimpro.save(update_fields=['invoicenum'])
@@ -440,11 +440,11 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         reason=request.data['reason']
         aiminvoice = FundApplyLog.objects.get(id=pk)
         aiminvoice.audit_man=request.user
-        aiminvoice.auditstate='2'
+        aiminvoice.state='2'
         aiminvoice.audit_date =  datetime.date.today()
 
         aiminvoice.audit_refused_reason = reason
-        aiminvoice.save(update_fields=['audituser','auditstate','audit_refused_reason','audit_date'])
+        aiminvoice.save(update_fields=['audituser','state','audit_refused_reason','audit_date'])
         res = {}
         res['code'] = '0'
         return Response(res)
