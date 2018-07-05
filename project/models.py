@@ -179,7 +179,13 @@ class DBlock(models.Model):
 
 
 class OperatorLog(models.Model):
-    """只记录删除，修改和导入数据的操作"""
+    """只记录删除，修改和导入数据的操作
+        关于项目立项的操作，修改的操作
+    普通用户只能看自己的记录
+    管理员能看所有的记录
+
+    """
+
     otime = models.DateTimeField("操作时间", default=timezone.now)
     oman = models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="操作人",related_name="oman")
     oobj = models.CharField("操作资源uri",max_length=200)#如果是导入表格的话，记录导入表格的路径

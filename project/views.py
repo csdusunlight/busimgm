@@ -1,8 +1,10 @@
 from rest_framework import generics, permissions
-from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog
+from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog
 from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
-    RefundApplyLogSerializer,InvoiceApplyLogSerializer,FundApplyLogListSerializer,RefundApplyLogListSerializer,InvoiceApplyLogListSerializer
-from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,InvoiceApplyLogFilter
+    RefundApplyLogSerializer,InvoiceApplyLogSerializer,FundApplyLogListSerializer,\
+    RefundApplyLogListSerializer,InvoiceApplyLogListSerializer,OperatorLogSerializer
+from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,\
+    InvoiceApplyLogFilter,OperatorLogFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.urls.base import reverse
 
@@ -446,6 +448,15 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         res = {}
         res['code'] = '0'
         return Response(res)
+
+class OperatorLogDetail(viewsets.ModelViewSet):
+    queryset = OperatorLog.objects.all()
+    serializer_class = OperatorLogSerializer
+    pagination_class = MyPageNumberPagination
+    filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
+    filter_class = OperatorLogFilter
+
+
 
 def import_projectdata_excel(request):
     print("****************")
