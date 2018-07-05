@@ -10,6 +10,11 @@ ACCOUNT_TYPE = {
     ('1','对私'),
 }
 
+IS_INVOICE = {
+    ('0','是'),
+    ('1','否'),
+}
+
 INVOICE_TYPE = {
     ('0','专票'),
     ('1','普票'),
@@ -70,6 +75,10 @@ class Project(models.Model):
     psettlereason= models.CharField("结项原因", max_length=20,null=True)
     concluded_apply_date = models.DateField("结项申请日期", blank=True, null=True)
     concluded_audit_date = models.DateField("结项审核日期", blank=True, null=True)
+    concluded_audit_time = models.DateField("结项审日期", blank=True, null=True)
+    concluded_apply_time = models.DateField("结项le日期", blank=True, null=True)
+
+
     #auditstate= models.CharField("立项审核状态",choices=AUDIT_STATE, max_length=2)
     lanched_apply_date= models.DateField("立项申请日期",default=datetime.date.today)
     lanched_audit_date= models.DateField("立项审核日期",blank=True, null=True)
@@ -168,13 +177,19 @@ class DayStatis(models.Model):
         ordering = ['-date']
 
 
-class DBlock1(models.Model):
+class DBlock(models.Model):
     index = models.CharField("name",max_length=10,primary_key=True)
     description = models.CharField("description",max_length=30)
 
 
-class OperatorLog1(models.Model):
-    """只记录删除，修改和导入数据的操作"""
+class OperatorLog(models.Model):
+    """只记录删除，修改和导入数据的操作
+        关于项目立项的操作，修改的操作
+    普通用户只能看自己的记录
+    管理员能看所有的记录
+
+    """
+
     otime = models.DateTimeField("操作时间", default=timezone.now)
     oman = models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="操作人",related_name="oman")
     oobj = models.CharField("操作资源uri",max_length=200)#如果是导入表格的话，记录导入表格的路径
@@ -191,7 +206,7 @@ class FundApplyLog(models.Model):
     fund_rec = models.DecimalField("打款金额", max_digits=10, decimal_places=2)
     send_pic = models.CharField("打款截图",max_length=200)
     fundtype= models.CharField("打款类型对公对私",choices=ACCOUNT_TYPE,max_length=2)
-    audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,blank=True,null=True)
+    state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,blank=True,null=True)
     record = models.CharField("备注",max_length=200,blank=True,null=True)
     company = models.CharField("甲方公司名称",max_length=50)
     apply_date = models.DateField("申请日期", default=datetime.date.today)
@@ -209,21 +224,22 @@ class RefundApplyLog(models.Model):
     audit_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="审核人",related_name="refundaudituser",blank=True,null=True)
     inprest = models.DecimalField("预付款金额", max_digits=10, decimal_places=2)
     refund_rec = models.DecimalField("退款金额", max_digits=10, decimal_places=2)
+    platname= models.CharField("平台名字", max_length=20)
     consume_sum = models.DecimalField("已消耗金额", max_digits=10, decimal_places=2)
-    send_pic = models.CharField("退款截图",max_length=200)
+    refund_reason = models.CharField("退款原因",max_length=200)
     fundtype= models.CharField("打款类型对公对私",choices=ACCOUNT_TYPE,max_length=2)
-    is_invoice= models.CharField("是否已开票",choices=ACCOUNT_TYPE,max_length=2)
+    is_invoice= models.CharField("是否已开票",choices=IS_INVOICE,max_length=2)
     record = models.CharField("备注",max_length=200,blank=True,null=True)
     company = models.CharField("甲方公司名称",max_length=50)
     contract_company = models.CharField("签约公司", max_length=50)
     bank_account = models.CharField("银行账号", max_length=50)
     bank = models.CharField('开户银行', max_length=50)
-    state = models.CharField("项目状态", choices=PAUDIT_STATE, max_length=20)
+    #state = models.CharField("项目状态", choices=PAUDIT_STATE, max_length=20)
     apply_date = models.DateField("申请日期", default=datetime.date.today)
-    audit_refused_reason = models.CharField("拒绝原因", max_length=100)
+    audit_refused_reason = models.CharField("拒绝原因", max_length=100,blank=True)
     audit_date = models.DateField("审核日期", default=datetime.date.today)
     is_delete = models.BooleanField("是否被删除",default=False)
-    audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2)
+    state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,blank=True,default='0')
 
 
 class InvoiceApplyLog(models.Model):
@@ -234,8 +250,8 @@ class InvoiceApplyLog(models.Model):
     invoice_num = models.DecimalField("开票金额", max_digits=10, decimal_places=2)
     invoice_date = models.DateField("开票日期", default=datetime.date.today)
     invoice_type= models.CharField("发票类型",choices=INVOICE_TYPE,max_length=2)
-    invoice_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2)
-    audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2)
+    #invoice_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,blank=True)
+    audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,blank=True)
     record = models.CharField("备注", max_length=200,null=True,blank=True)
     company = models.CharField("甲方公司名称",max_length=50)
     putaxmanid= models.CharField("纳税人识别号",max_length=50)
@@ -245,11 +261,11 @@ class InvoiceApplyLog(models.Model):
     regaddress = models.CharField('注册地址', max_length=50)
     mobile = models.CharField('电话', max_length=13)
     apply_date = models.DateField("申请日期", default=datetime.date.today)
-    audit_refused_reason = models.CharField("拒绝原因", max_length=100)
+    audit_refused_reason = models.CharField("拒绝原因", max_length=100,blank=True)
     audit_date = models.DateField("审核日期", default=datetime.date.today)
     is_delete = models.BooleanField("是否被删除",default=False)
-    audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2)
-    return_num = models.DecimalField("返现金额", max_digits=10, decimal_places=2)
+    state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,default='0')
+    return_num = models.DecimalField("返现金额", max_digits=10, decimal_places=2,blank=True,null=True)
 
 
 

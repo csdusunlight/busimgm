@@ -23,15 +23,21 @@ from account import views as AccountView
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import admin
 from django.views.generic.base import TemplateView
+
+from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,\
+    InvoiceApplyLogDetail,import_audit_projectdata_excel,import_projectdata_excel,\
+    import_audit_projectdata_excel_except,export_investdata_excel
+
 #from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,\
 #    InvoiceApplyLogDetail,import_audit_projectdata_excel,import_projectdata_excel
+
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-#router.register(r'projects', ProjectDetail, base_name='project')
-#router.register(r'fundapplys', FundApplyLogDetail, base_name='fundapply')
-#router.register(r'refundapplys', RefundApplyLogDetail, base_name='refundapply')
-#router.register(r'invoiceapplys', InvoiceApplyLogDetail, base_name='invoiceapply')
+router.register(r'projects', ProjectDetail, base_name='project')
+router.register(r'fundapplys', FundApplyLogDetail, base_name='fundapply')
+router.register(r'refundapplys', RefundApplyLogDetail, base_name='refundapply')
+router.register(r'invoiceapplys', InvoiceApplyLogDetail, base_name='invoiceapply')
 
 
 
@@ -39,12 +45,14 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name="index.html")),
     url(r'^login/$', csrf_exempt(AccountView.UserLoginAPIView.as_view())),
     path('admin/', admin.site.urls),
- #   url(r'Project/', include(router.urls)),
+    url(r'Project/', include(router.urls)),
     url(r'^User/$', AccountView.UserList.as_view()),
     url(r'^check_user_login/$', AccountView.check_user_login),
-#    url(r'^import_projectdata_excel/$', csrf_exempt(import_projectdata_excel)),
 
-#   url(r'^import_audit_projectdata_excel/$',csrf_exempt(import_audit_projectdata_excel)),
+    url(r'^import_projectdata_excel/$', csrf_exempt(import_projectdata_excel)),
+    url(r'^import_audit_projectdata_excel/$',csrf_exempt(import_audit_projectdata_excel)),
+    url(r'^import_audit_projectdata_excel_except/$',csrf_exempt(import_audit_projectdata_excel_except)),
+    url(r'^export_investdata_excel/$', csrf_exempt(export_investdata_excel)),
     url(r'^get_upload_token/$', AccountView.QiniuTokenView.as_view()),
     url(r'^User/(?P<pk>[0-9]+)/$', AccountView.UserDetail.as_view(), kwargs={'partial':True}),
 
