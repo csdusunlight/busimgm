@@ -6,6 +6,7 @@ from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import  AbstractBaseUser,PermissionsMixin
 # Create your models here.
 class Group(models.Model):
+
     gname = models.CharField('分组名',max_length=10, unique=True)
     def __str__(self):
         return self.gname
@@ -53,9 +54,10 @@ class User(AbstractBaseUser,PermissionsMixin):
     uname = models.CharField("用户名字",max_length=10, unique=True)
     ugroup = models.ForeignKey(Group,on_delete=models.SET_NULL,null=True,verbose_name="用户组")
     upermission = models.ManyToManyField(Permission,verbose_name="权限设置")
-    uqq = models.CharField("QQ号", max_length=15)
+    uqq1 = models.CharField("QQ号", max_length=15)
+    uqq = models.CharField("QQ号", max_length=20)
     #picture = models.ImageField(upload_to='photos/user_headphoto', verbose_name=u"个人头像")
-#     uaddtime = models.DateTimeField(default=timezone.now)
+  # uaddtime = models.DateTimeField(default=timezone.now)
     ujointime = models.DateTimeField('注册时间', default=timezone.now)
     uleavetime = models.DateTimeField('离职时间', null=True, blank=True)
     uremarks = models.CharField('用户管理备注',max_length=50,blank=True)
