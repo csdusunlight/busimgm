@@ -59,80 +59,95 @@
         >
         <div class="form_table">
           <el-form :model="invoice" :rules="rules" ref="invoice" label-width="120px" class="demo-ruleForm">
-            <el-form-item label="项目名称" prop="resource">
-            <el-select size="medium" v-model="invoice.resource" placeholder="请选择">
+            <el-form-item label="项目名称" prop="project">
+            <el-select size="medium" v-model="invoice.project" placeholder="请选择">
               <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
+                label="小明有限公司"
+                value="小明有限公司">
+              </el-option>
+              <el-option
+                label="小方有限公司"
+                value="小方有限公司">
+              </el-option>
+              <el-option
+                label="小云有限公司"
+                value="小云有限公司">
+              </el-option>
+              <el-option
+                label="小园有限公司"
+                value="小园有限公司">
               </el-option>
             </el-select>
             </el-form-item>
-            <el-form-item label="发票类型" prop="resource">
-              <el-radio-group v-model="invoice.resource">
-                <el-radio label="专票"></el-radio>
-                <el-radio label="普票"></el-radio>
+            <el-form-item label="发票类型" prop="invoice_type">
+              <el-radio-group v-model="invoice.invoice_type">
+                <el-radio :label="0">专票</el-radio>
+                <el-radio :label="1">普票</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="返现金额" prop="resource">
-              <el-input v-model="invoice.resource" size="medium"></el-input>
+            <el-form-item label="开票日期" prop="invoice_date">
+              <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="invoice.invoice_date" size="medium" type="date" placeholder="选择日期"></el-date-picker>
             </el-form-item>
-            <el-form-item label="开票日期">
-              <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="invoice.resource" size="medium" type="date" placeholder="选择日期"></el-date-picker>
+            <el-form-item label="签约公司" prop="contract_company">
+              <el-input v-model="invoice.contract_company" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="签约公司" prop="resource">
-              <el-input v-model="invoice.resource" size="medium"></el-input>
+            <el-form-item label="甲方公司名称" prop="company">
+              <el-input v-model="invoice.company" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="甲方公司名称" prop="resource">
-              <el-input v-model="invoice.resource" size="medium"></el-input>
+            <el-form-item label="纳税人识别号" prop="putaxmanid">
+              <el-input v-model="invoice.putaxmanid" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="纳税人识别号" prop="resource">
-              <el-input v-model="invoice.resource" size="medium"></el-input>
+            <el-form-item label="注册地址" prop="regaddress">
+              <el-input v-model="invoice.regaddress" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="注册地址" prop="resource">
-              <el-input v-model="invoice.resource" size="medium"></el-input>
+            <el-form-item label="银行账号" prop="bank_account">
+              <el-input v-model="invoice.bank_account" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="银行账号" prop="resource">
-              <el-input v-model="invoice.resource" size="medium"></el-input>
+            <el-form-item label="开户行" prop="bank">
+              <el-input v-model="invoice.bank" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="开户行" prop="resource">
-              <el-input v-model="invoice.resource" size="medium"></el-input>
+            <el-form-item label="电话" prop="mobile">
+              <el-input v-model="invoice.mobile" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="电话" prop="resource">
-              <el-input v-model="invoice.resource" size="medium"></el-input>
+            <el-form-item label="开票金额" prop="invoice_num">
+              <el-input v-model="invoice.invoice_num" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="开票金额" prop="resource">
-              <el-input v-model="invoice.resource" size="medium"></el-input>
-            </el-form-item>
-            <el-form-item label="备注" prop="resource">
-              <el-input type="textarea" v-model="invoice.resource" size="medium"></el-input>
+            <el-form-item label="备注" prop="record">
+              <el-input type="textarea" v-model="invoice.record" size="medium"></el-input>
             </el-form-item>
           </el-form>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+          <el-button type="primary" @click="subInvoiceForm('invoice')">确 定</el-button>
         </span>
       </el-dialog>
     </el-row>
     <el-row class="row_top row_bottom">
       <div class="table-list">
-        <el-table v-loading="loading" :data="dataList.data" style="width: 100%" @sort-change="sortChange">
-          <el-table-column label="日期" prop="date" sortable="custom" width="100"></el-table-column>
-          <el-table-column label="项目名称" prop="string"></el-table-column>
-          <el-table-column label="开票日期" prop="integer"></el-table-column>
-          <el-table-column label="发票类型" prop="integer"></el-table-column>
-          <el-table-column label="签约公司" prop="qq_number" width="100"></el-table-column>
-          <el-table-column label="甲方公司名称" prop="float"></el-table-column>
-          <el-table-column label="开票金额" prop="integer"></el-table-column>
-          <el-table-column label="审核状态" prop="integer"></el-table-column>
-          <el-table-column label="备注" prop="integer"></el-table-column>
+        <el-table v-loading="loading" :data="dataList.results" style="width: 100%">
+          <el-table-column label="日期" prop="apply_date" width="100"></el-table-column>
+          <el-table-column label="项目名称" prop="project"></el-table-column>
+          <el-table-column label="开票日期" prop="invoice_date"></el-table-column>
+          <el-table-column label="发票类型" prop="invoice_type">
+            <template slot-scope="scope">
+              <span>{{invoiceFilter[scope.row.invoice_state]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="签约公司" prop="contract_company" width="100"></el-table-column>
+          <el-table-column label="甲方公司名称" prop="company"></el-table-column>
+          <el-table-column label="开票金额" prop="invoice_num"></el-table-column>
+          <el-table-column label="审核状态" prop="invoice_state">
+            <template slot-scope="scope">
+              <span>{{stateFilter[scope.row.invoice_state]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="备注" prop="record"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
               <div class="operation_button">
                 <div class="op_button_padding"><el-button size="mini" type="danger" @click="opInvoice(scope.row)">修改</el-button></div>
-                <div class="op_button_padding"><el-button size="mini" type="warning" @click="opInvoice(scope.row)">删除</el-button></div>
+                <div class="op_button_padding"><el-button size="mini" type="warning" @click="deleteInvoiceBtn(scope.row)">删除</el-button></div>
               </div>
             </template>
           </el-table-column>
@@ -145,7 +160,7 @@
           :page-size="10"
           :current-page="this.currentPage"
           layout="prev, pager, next, total, jumper"
-          :total="this.dataList.total">
+          :total="this.dataList.recordCount">
         </el-pagination>
       </div>
       <el-dialog
@@ -154,61 +169,66 @@
         width="50%"
         >
         <div class="form_table">
-          <el-form :model="mdyInvoice" :rules="mdyrules" ref="mdyInvoice" label-width="120px" class="demo-ruleForm">
-            <el-form-item label="项目名称" prop="resource">
-            <el-select size="medium" v-model="mdyInvoice.resource" placeholder="请选择">
+          <el-form :model="modifyInvoice" :rules="modifyInvoice" ref="modifyInvoice" label-width="120px" class="demo-ruleForm">
+            <el-form-item label="项目名称" prop="project">
+            <el-select size="medium" v-model="modifyInvoice.project" placeholder="请选择">
               <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
+                label="小明有限公司"
+                value="小明有限公司">
+              </el-option>
+              <el-option
+                label="小方有限公司"
+                value="小方有限公司">
+              </el-option>
+              <el-option
+                label="小云有限公司"
+                value="小云有限公司">
+              </el-option>
+              <el-option
+                label="小园有限公司"
+                value="小园有限公司">
               </el-option>
             </el-select>
             </el-form-item>
-            <el-form-item label="发票类型" prop="resource">
-              <el-radio-group v-model="mdyInvoice.resource">
-                <el-radio label="专票"></el-radio>
-                <el-radio label="普票"></el-radio>
-              </el-radio-group>
+            <el-form-item label="发票类型" prop="invoice_type">
+              <el-radio v-model="modifyInvoice.invoice_type" label="0">专票</el-radio>
+              <el-radio v-model="modifyInvoice.invoice_type" label="1">普票</el-radio>
             </el-form-item>
-            <el-form-item label="返现金额" prop="resource">
-              <el-input v-model="mdyInvoice.resource" size="medium"></el-input>
+            <el-form-item label="开票日期" prop="invoice_date">
+              <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="modifyInvoice.invoice_date" size="medium" type="date" placeholder="选择日期"></el-date-picker>
             </el-form-item>
-            <el-form-item label="开票日期">
-              <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="mdyInvoice.resource" size="medium" type="date" placeholder="选择日期"></el-date-picker>
+            <el-form-item label="签约公司" prop="contract_company">
+              <el-input v-model="modifyInvoice.contract_company" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="签约公司" prop="resource">
-              <el-input v-model="mdyInvoice.resource" size="medium"></el-input>
+            <el-form-item label="甲方公司名称" prop="company">
+              <el-input v-model="modifyInvoice.company" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="甲方公司名称" prop="resource">
-              <el-input v-model="mdyInvoice.resource" size="medium"></el-input>
+            <el-form-item label="纳税人识别号" prop="putaxmanid">
+              <el-input v-model="modifyInvoice.putaxmanid" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="纳税人识别号" prop="resource">
-              <el-input v-model="mdyInvoice.resource" size="medium"></el-input>
+            <el-form-item label="注册地址" prop="regaddress">
+              <el-input v-model="modifyInvoice.regaddress" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="注册地址" prop="resource">
-              <el-input v-model="mdyInvoice.resource" size="medium"></el-input>
+            <el-form-item label="银行账号" prop="bank_account">
+              <el-input v-model="modifyInvoice.bank_account" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="银行账号" prop="resource">
-              <el-input v-model="mdyInvoice.resource" size="medium"></el-input>
+            <el-form-item label="开户行" prop="bank">
+              <el-input v-model="modifyInvoice.bank" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="开户行" prop="resource">
-              <el-input v-model="mdyInvoice.resource" size="medium"></el-input>
+            <el-form-item label="电话" prop="mobile">
+              <el-input v-model="modifyInvoice.mobile" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="电话" prop="resource">
-              <el-input v-model="mdyInvoice.resource" size="medium"></el-input>
+            <el-form-item label="开票金额" prop="invoice_num">
+              <el-input v-model="modifyInvoice.invoice_num" size="medium"></el-input>
             </el-form-item>
-            <el-form-item label="开票金额" prop="resource">
-              <el-input v-model="mdyInvoice.resource" size="medium"></el-input>
-            </el-form-item>
-            <el-form-item label="备注" prop="resource">
-              <el-input type="textarea" v-model="mdyInvoice.resource" size="medium"></el-input>
+            <el-form-item label="备注" prop="record">
+              <el-input type="textarea" v-model="modifyInvoice.record" size="medium"></el-input>
             </el-form-item>
           </el-form>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="invoiceVisible = false">取 消</el-button>
-          <el-button type="primary" @click="invoiceVisible = false">确 定</el-button>
+          <el-button type="primary" @click="subModifyInvoice">确 定</el-button>
         </span>
       </el-dialog>
     </el-row>
@@ -216,8 +236,8 @@
 </template>
 
 <script>
-import {examineOption} from '@/common/js/options'
-import {dataPage} from '@/api/api'
+import {examineOption, examineFilter} from '@/common/js/options'
+import {postInvoice, getInvoice, putInvoice, deleteInvoice} from '@/api/api'
 
 export default {
   data () {
@@ -235,24 +255,60 @@ export default {
       loading: true,
       currentPage: 1,
       dataList: [],
-      param: {
-        page: 1
-      },
+      stateFilter: examineFilter,
+      invoiceFilter: {0: '专票', 1: '普票'},
+      putId: '',
       invoice: {
-        resource: ''
+        project: '',
+        invoice_type: '',
+        invoice_date: '',
+        contract_company: '',
+        company: '',
+        putaxmanid: '',
+        regaddress: '',
+        bank_account: '',
+        bank: '',
+        mobile: '',
+        invoice_num: '',
+        record: ''
       },
       rules: {
-        resource: [
-          { required: true, message: '项目名称', trigger: 'blur' }
+        project: [
+          { required: true, message: '选择项目', trigger: 'blur' }
+        ],
+        invoice_type: [
+          { required: true, message: '选择发票类型', trigger: 'blur' }
+        ],
+        invoice_date: [
+          { required: true, message: '选择开票时间', trigger: 'blur' }
+        ],
+        contract_company: [
+          { required: true, message: '请输入签约公司', trigger: 'blur' }
+        ],
+        company: [
+          { required: true, message: '请输入甲方公司公司', trigger: 'blur' }
+        ],
+        putaxmanid: [
+          { required: true, message: '请输入纳税人识别号', trigger: 'blur' }
+        ],
+        regaddress: [
+          { required: true, message: '请输入注册地址', trigger: 'blur' }
+        ],
+        bank_account: [
+          { required: true, message: '请输入银行账号', trigger: 'blur' }
+        ],
+        bank: [
+          { required: true, message: '请输入开户行', trigger: 'blur' }
+        ],
+        mobile: [
+          { required: true, message: '请输入电话', trigger: 'blur' }
+        ],
+        invoice_num: [
+          { required: true, message: '请输入金额', trigger: 'blur' }
         ]
       },
-      mdyInvoice: {
-        resource: ''
-      },
-      mdyrules: {
-        resource: [
-          { required: true, message: '项目名称', trigger: 'blur' }
-        ]
+      modifyInvoice: {
+        id: ''
       }
     }
   },
@@ -263,8 +319,9 @@ export default {
     invoiceApply () {
       this.dialogVisible = true
     },
+    /* 获取列表 */
     getDatalist () {
-      dataPage(this.param).then((res) => {
+      getInvoice(this.currentPage).then((res) => {
         console.log(res)
         this.dataList = res.data
         this.loading = false
@@ -272,19 +329,81 @@ export default {
         console.log(err)
       })
     },
+    /* 分页 */
     handleCurrentChange (val) {
       this.datalist = []
       this.loading = true
       this.currentPage = val
-      this.param.page = val
       this.getDatalist()
     },
-    sortChange (val) {
-      console.log(val)
+    /* 新建发票提交 */
+    subInvoiceForm (invoice) {
+      this.$refs[invoice].validate((valid) => {
+        if (valid) {
+          postInvoice(this.invoice).then((res) => {
+            if (res.data.code === 0) {
+              /* this.invoice = this.initInvoice */
+              this.$refs[invoice].resetFields()
+              this.$message({
+                type: 'success',
+                message: '发票申请成功!'
+              })
+              this.dialogVisible = false
+              this.getProjectdata()
+            } else {
+              this.dialogVisible = false
+              this.$message(res.data.detail)
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
+        } else {
+          this.$message.error('提交有误，请检查提交项！')
+          return false
+        }
+      })
     },
+    /* 发票修改 */
+    subModifyInvoice () {
+      putInvoice(this.modifyInvoice.id, this.modifyInvoice).then((res) => {
+        console.log(res)
+        this.$message({
+          type: 'success',
+          message: '修改成功!'
+        })
+        this.invoiceVisible = false
+        this.getDatalist()
+      }).catch((err) => {
+        this.invoiceVisible = false
+        console.log(err)
+      })
+    },
+    /* 打开发票修改对话框 */
     opInvoice (row) {
       this.invoiceVisible = true
-      console.log(row)
+      Object.assign(this.modifyInvoice, row)
+      console.log(this.modifyInvoice)
+    },
+    /* 发票删除 */
+    deleteInvoiceBtn (row) {
+      this.$confirm('此操作将永久删除该发票, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteInvoice(row.id).then((res) => {
+          console.log(res)
+        })
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
   }
 }
