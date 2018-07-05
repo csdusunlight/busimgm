@@ -3,6 +3,9 @@ media/
 *.rar
 debug.log
 migrations/
+project/migrations/
+account/migrations/
+
 runitem/settings.py
 settings.py
 .settings/
