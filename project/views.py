@@ -167,12 +167,19 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
     filter_class = FundApplyLogFilter
     #permission_classes =
 
+
     def get_serializer(self, *args, **kwargs):
+        print("1111")
+
         if self.request.method == "GET":
             serializer_class = FundApplyLogListSerializer
-        elif self.request.method in ["POST","put","patch"]:
+            print(serializer_class)
+        elif self.request.method in ["POST","PUT","PATCH"]:
             serializer_class = self.get_serializer_class()
+            print(serializer_class)
+
         kwargs['context'] = self.get_serializer_context()
+        print(serializer_class)
         return serializer_class(*args, **kwargs)
 
 
@@ -258,10 +265,14 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
 
     def get_serializer(self, *args, **kwargs):
         if self.request.method == "GET":
-            serializer_class = RefundApplyLogListSerializer
+            serializer_class = FundApplyLogListSerializer
+            print(serializer_class)
         elif self.request.method in ["POST","put","patch"]:
             serializer_class = self.get_serializer_class()
+            print(serializer_class)
+
         kwargs['context'] = self.get_serializer_context()
+        print(serializer_class)
         return serializer_class(*args, **kwargs)
 
     def perform_create(self, serializer):
@@ -338,10 +349,14 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
 
     def get_serializer(self, *args, **kwargs):
         if self.request.method == "GET":
-            serializer_class = InvoiceApplyLogListSerializer
-        elif  self.request.method in ["POST","put","patch"]:
+            serializer_class = FundApplyLogListSerializer
+            print(serializer_class)
+        elif self.request.method in ["POST","put","patch"]:
             serializer_class = self.get_serializer_class()
+            print(serializer_class)
+
         kwargs['context'] = self.get_serializer_context()
+        print(serializer_class)
         return serializer_class(*args, **kwargs)
 
     def perform_create(self, serializer):
