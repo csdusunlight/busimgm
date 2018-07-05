@@ -57,6 +57,36 @@ export function deleteProject (id) {
   console.log(url)
   return axios.patch(url, {is_delete: true})
 }
+/* 立项项目审核 */
+export function addProjectConfirm (id) {
+  let url = `${http}/Project/projects/${id}/lanchedpro_approved/`
+  console.log(url)
+  return axios.post(url)
+}
+/* 立项项目拒绝 */
+export function addProjectRefuse (id, data) {
+  let url = `${http}/Project/projects/${id}/lanchedpro_rejected/`
+  console.log(url)
+  return axios.post(url, data)
+}
+/* 结项项目申请 */
+export function endProjectApply (id, data) {
+  let url = `${http}/Project/projects/${id}/concludedpro_apply/`
+  console.log(url)
+  return axios.post(url, data)
+}
+/* 结项项目审核 */
+export function endProjectConfirm (id) {
+  let url = `${http}/Project/projects/${id}/concludedpro_approved/`
+  console.log(url)
+  return axios.post(url)
+}
+/* 结项项目拒绝 */
+export function endProjectRefuse (id, data) {
+  let url = `${http}/Project/projects/${id}/concludedpro_rejected/`
+  console.log(url)
+  return axios.post(url, data)
+}
 /* 搜索项目 */
 export function searchProject (page, data) {
   let url = `${http}/Project/projects/?page=${page}&pageSize=${pageSize}`

@@ -274,7 +274,7 @@
 </template>
 
 <script>
-import {postNewProject, getProjectList, getprojectDetails, deleteProject, putProject} from '@/api/api'
+import {postNewProject, getProjectList, getprojectDetails, deleteProject, putProject, endProjectApply} from '@/api/api'
 import {paccounOption, settlewayopsoption} from '@/common/js/options'
 
 export default {
@@ -354,7 +354,12 @@ export default {
           { required: true, message: '请输入合作详情', trigger: 'blur' }
         ]
       },
-      addJunctions: {},
+      addJunctions: {
+        settle_detail: '',
+        pcoperatedetail: '',
+        remark: ''
+      },
+      projectId: '',
       options: [
         {
           value: '',
@@ -563,11 +568,27 @@ export default {
       })
     },
     /* 结项 */
-    junctions () {
+    junctions (row) {
+      this.projectId = row.id
       this.junctionsVisible = true
     },
     /* 提交结项内容 */
-    subJunctionsProject () {},
+    subJunctionsProject () {
+      console.log(this.addJunctions)
+      endProjectApply(this.projectId, this.addJunctions).then((res) => {
+        if (res.code === '0') {
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.detail
+          })
+        }
+      })
+    },
     /* 搜索 */
     searchBtn () {
       this.searchState = 2
