@@ -3,6 +3,9 @@ media/
 *.rar
 debug.log
 migrations/
+project/migrations/
+account/migrations/
+
 runitem/settings.py
 settings.py
 .settings/
@@ -31,4 +34,4 @@ db.sqlite3
 
 frontend/package-lock.json
 celerybeat*
-db.sqlite3
+/static/

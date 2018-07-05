@@ -1,6 +1,7 @@
 from rest_framework import generics, permissions
 from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog
-from project.serializers import ProjectSerializer,FundApplyLogSerializer,RefundApplyLogSerializer,InvoiceApplyLogSerializer
+from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
+    RefundApplyLogSerializer,InvoiceApplyLogSerializer,FundApplyLogListSerializer,RefundApplyLogListSerializer,InvoiceApplyLogListSerializer
 from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,InvoiceApplyLogFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.urls.base import reverse
@@ -24,7 +25,9 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route,action
 from rest_framework import viewsets
+from django.core.cache import cache
 from utils.Mypagination import MyPageNumberPagination
+#import django.core.cache
 logger = logging.getLogger('busimgm')
 
 class ProjectDetail(viewsets.ModelViewSet):
@@ -163,10 +166,21 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = FundApplyLogFilter
     #permission_classes =
+
+    def get_serializer(self, *args, **kwargs):
+        if self.request.method == "GET":
+            serializer_class = FundApplyLogListSerializer
+        elif self.request.method == "POST":
+            serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        return serializer_class(*args, **kwargs)
+
+
+
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def perform_create(self, serializer):
         user= self.request.user
-        serializer.save(apply_man=user)
+        serializer.save(apply_man=user,audit_state='0')
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -241,9 +255,18 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     ordering=('audit_date','apply_date')
     #permission_classes =
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+
+    def get_serializer(self, *args, **kwargs):
+        if self.request.method == "GET":
+            serializer_class = RefundApplyLogListSerializer
+        elif self.request.method == "POST":
+            serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        return serializer_class(*args, **kwargs)
+
     def perform_create(self, serializer):
         user=self.request.user
-        serializer.save(apply_man=user)
+        serializer.save(apply_man=user,audit_state='0')
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -312,9 +335,18 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = InvoiceApplyLogFilter
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+
+    def get_serializer(self, *args, **kwargs):
+        if self.request.method == "GET":
+            serializer_class = InvoiceApplyLogListSerializer
+        elif self.request.method == "POST":
+            serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        return serializer_class(*args, **kwargs)
+
     def perform_create(self, serializer):
         user=self.request.user
-        serializer.save(apply_man=user)
+        serializer.save(apply_man=user,audit_state='0')
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -377,7 +409,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
 def import_projectdata_excel(request):
     print("****************")
     admin_user = request.user
-    if not (admin_user.is_authenticated() and admin_user.is_staff):
+    if not (admin_user.is_authenticated and admin_user.is_staff):
         raise Http404
     ret = {'code': -1}
     file = request.FILES.get('file')
@@ -401,6 +433,8 @@ def import_projectdata_excel(request):
             for j in range(ncols):
                 cell = table.cell(i, j)
                 value = cell.value
+                print(value)
+
                 if j == 0:
                     id = int(value)
                     project = Project.objects.get(id=id)
@@ -442,7 +476,8 @@ def import_projectdata_excel(request):
                     temp.append(value)
             tid = temp[0]
             if not temp[2]:
-                if dup.has_key(tid):
+                print(dup)
+                if tid in dup:
                     if temp[4] in dup[tid]:
                         continue
                     else:
@@ -450,7 +485,7 @@ def import_projectdata_excel(request):
                 else:
                     dup[tid] = [temp[4], ]
 
-            if rtable.has_key(tid):
+            if tid in rtable:
                 rtable[tid].append(temp)
             else:
                 rtable[tid] = [temp, ]
@@ -458,39 +493,40 @@ def import_projectdata_excel(request):
 
         logger.info(e)
         #             traceback.print_exc()
-        ret['msg'] = e
+        ret['msg'] = e.__str__()
         return JsonResponse(ret)
     ####开始去重
     investdata_list = []
     duplicate_mobile_list = []
     try:
         with transaction.atomic():
-            db_key = DBlock.objects.select_for_update().get(index='investdata')
-            for id, values in rtable.items():
-                temp = ProjectInvestData.objects.filter(project_id=id).values('invest_mobile')
-                db_mobile_list = map(lambda x: x['invest_mobile'], temp)
-                for item in values:
-                    pid = item[0]
-                    time = item[3]
-                    mob = item[4]
-                    is_futou = item[2]
-                    amount = item[5]
-                    term = item[6]
-                    settle = item[7]
-                    source = ''
-                    remark = ''
-                    if not is_futou and mob in db_mobile_list:
-                        duplicate_mobile_list.append(mob)
-                    else:
-                        obj = ProjectInvestData(project_id=pid, invest_mobile=mob, settle_amount=settle,
-                                                invest_amount=amount, invest_term=term, invest_time=time,
-                                                state='1', remark=remark, source=source, is_futou=is_futou)
-                        investdata_list.append(obj)
-            ProjectInvestData.objects.bulk_create(investdata_list)
+            with cache.lock('investdata_first' , timeout=2):
+                #db_key = DBlock.objects.select_for_update().get(index='investdata')
+                for id, values in rtable.items():
+                    temp = ProjectInvestData.objects.filter(project_id=id).values('invest_mobile')
+                    db_mobile_list = map(lambda x: x['invest_mobile'], temp)
+                    for item in values:
+                        pid = item[0]
+                        time = item[3]
+                        mob = item[4]
+                        is_futou = item[2]
+                        amount = item[5]
+                        term = item[6]
+                        settle = item[7]
+                        source = ''
+                        remark = ''
+                        if not is_futou and mob in db_mobile_list:
+                            duplicate_mobile_list.append(mob)
+                        else:
+                            obj = ProjectInvestData(project_id=pid, invest_mobile=mob, settle_amount=settle,
+                                                    invest_amount=amount, invest_term=term, invest_time=time,
+                                                    state='1', remark=remark, source=source, is_futou=is_futou)
+                            investdata_list.append(obj)
+                ProjectInvestData.objects.bulk_create(investdata_list)
     except Exception as e:
         logger.info(e)
         #             traceback.print_exc()
-        ret['msg'] = e
+        ret['msg'] = e.__str__()
         return JsonResponse(ret)
     succ_num = len(investdata_list)
     duplic_num2 = len(duplicate_mobile_list)
@@ -501,30 +537,20 @@ def import_projectdata_excel(request):
 
 
 def import_audit_projectdata_excel(request):
-    print("***********")
     admin_user = request.user
-    print(admin_user)
-    print("aaaaa")
+    # print(admin_user)
+    # print("aaaaa")
     if not (admin_user.is_authenticated and admin_user.is_staff):
         raise Http404
     ret = {'code': -1}
-    print(dir(request))
-    #print(request.FILES)
-    print(request.POST)
-    print(request.COOKIES)
-    print(request.META)
-
-    print(request.FILES)
+    # print(dir(request))
     file = request.FILES.get('file')
-    print(request.FILES)
-    print(dir(file))
-    print(file)
-    #     print file.name
     with open('./out2.xls', 'wb+') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
     data = xlrd.open_workbook('./out2.xls')
     table = data.sheets()[0]
+    print(table)
     nrows = table.nrows
     ncols = table.ncols
     if ncols != 13:
@@ -586,8 +612,9 @@ def import_audit_projectdata_excel(request):
             rtable.append(temp)
     except Exception as  e:
         logger.info(e)
+        print(e)
         #             traceback.print_exc()
-        ret['msg'] = e
+        ret['msg'] = e.__str__()
         return JsonResponse(ret)
         ####开始去重
         admin_user = request.user
@@ -604,6 +631,7 @@ def import_audit_projectdata_excel(request):
             state = row['state']
             date = row['date']
             term = row['term']
+            print("hiiiiiiiiii")
             event = ProjectInvestData.objects.get(id=id)
             #             if event.state != '1':
             #                 continue
@@ -623,9 +651,9 @@ def import_audit_projectdata_excel(request):
         ret['code'] = 0
     except Exception as e:
         exstr = traceback.format_exc()
-        logger.info(unicode(exstr))
+        logger.info(exstr)
         ret['code'] = 1
-        ret['msg'] = unicode(e)
+        ret['msg'] = e.__str__()
     ret['num'] = suc_num
     return JsonResponse(ret)
 

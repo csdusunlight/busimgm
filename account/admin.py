@@ -11,16 +11,16 @@ class MyUserAdmin(UserAdmin):
     add_form = MyUserCreationForm
     # The fields to be used in displaying the User model.
     fieldsets = (
-        (None, {'fields': ('uid','uname','ugroup','password')}),
+        (None, {'fields': ('uid','uname','Group','password')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser',
-                                       'groups','upermission')}),
+                                       'Group','upermission')}),
 #         ('Important dates', {'fields': ('qq_name', 'type', 'level', 'profile', 'with_total','accu_income', 'date_joined', )}),
 #         ('others', {'fields': ('balance', 'margin_account','domain_name', 'cs_qq', 'invite_code', 'inviter','zhifubao')}),
     )
     add_fieldsets = (
     (None, {
             'classes': ('wide',),
-            'fields': ('uid','password1', 'password2')}
+            'fields': ('uid','uname','uqq','password1', 'password2')}
             ),
     )
     search_fields = ('uid','uname','uqq')
