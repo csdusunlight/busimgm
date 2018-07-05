@@ -33,7 +33,7 @@
       </el-col>
       <el-col :span="4">
         <div class="flexright">
-          <el-button size="medium" type="primary">搜索</el-button>
+          <el-button size="medium" type="primary" @click="searchBtn">搜索</el-button>
         </div>
       </el-col>
     </el-row>
@@ -79,7 +79,7 @@
         <div class="form_table">
           <el-form :model="addProject" :rules="rules" ref="addProject" label-width="120px" class="demo-ruleForm">
             <el-form-item label="项目名称" prop="name">
-              <el-input v-model="addProject.name" size="medium"></el-input>
+              <el-input v-model="addProject.name" size="medium" placeholder="平台名称+日期，如：钱宝宝180601"></el-input>
             </el-form-item>
             <el-form-item label="甲方公司名称" prop="company">
               <el-input v-model="addProject.company" size="medium"></el-input>
@@ -130,15 +130,17 @@
     <el-row class="row_top row_bottom">
       <div class="table-list">
         <el-table v-loading="loading" :data="dataList.results" style="width: 100%">
-          <el-table-column label="日期" prop="lanched_date"></el-table-column>
+          <el-table-column label="项目编号" prop="id"></el-table-column>
+          <el-table-column label="日期" prop="lanched_apply_date"></el-table-column>
           <el-table-column label="项目名称" prop="name"></el-table-column>
           <el-table-column label="项目状态" prop="state">
             <template slot-scope="scope">
-              <span class="cursou" @click="clickthcout" v-if="scope.row.state !== '5'">{{stateFilter[scope.row.state]}}</span>
+              <span v-if="scope.row.state !== '5' && scope.row.state !== '6'">{{stateFilter[scope.row.state]}}</span>
+              <span class="cursou" @click="clickthcout" v-else-if="scope.row.state === '6'">{{stateFilter[scope.row.state]}}</span>
               <span class="cursou" @click="clickthcout" v-else>{{stateFilter[scope.row.state]}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="结项日期" prop="concluded_date"></el-table-column>
+          <el-table-column label="结项日期" prop="concluded_audit_date"></el-table-column>
           <el-table-column label="消耗费用" prop="consume"></el-table-column>
           <el-table-column label="已结算费用" prop="settle" width="95"></el-table-column>
           <el-table-column label="待结算/消耗费用" prop="topay_amount"></el-table-column>
@@ -148,9 +150,9 @@
             <template slot-scope="scope">
               <div class="operation_button">
                 <div class="op_button_padding"><el-button size="mini" type="primary" @click="lookProject(scope.row)">查看</el-button></div>
-                <div class="op_button_padding"><el-button size="mini" type="danger" @click="modifyproject(scope.row)">修改</el-button></div>
-                <div class="op_button_padding"><el-button size="mini" type="warning" @click="deleteProject(scope.row)">删除</el-button></div>
-                <div class="op_button_padding"><el-button size="mini" type="success" @click="modifyproject(scope.row)">结项</el-button></div>
+                <div class="op_button_padding" v-if="scope.row.state === '0' || scope.row.state === '1'"><el-button size="mini" type="danger" @click="modifyproject(scope.row)">修改</el-button></div>
+                <div class="op_button_padding" v-if="scope.row.state === '0'"><el-button size="mini" type="warning" @click="deleteProject(scope.row)">删除</el-button></div>
+                <div class="op_button_padding" v-if="scope.row.state === '1'"><el-button size="mini" type="success" @click="junctions(scope.row)">结项</el-button></div>
               </div>
             </template>
           </el-table-column>
@@ -169,7 +171,7 @@
       <el-dialog title="项目数据" :visible.sync="lookProjectTable" width="70%">
         <div class="table-list">
           <el-table :data="detailsList.results" style="width: 100%" @row-click='handleRowHandle'>
-            <el-table-column label="日期" prop="lanched_date"></el-table-column>
+            <el-table-column label="日期" prop="lanched_apply_date"></el-table-column>
             <el-table-column label="项目名称" prop="name"></el-table-column>
             <el-table-column label="投资人数" prop="state"></el-table-column>
             <el-table-column label="投资金额" prop="concluded_date"></el-table-column>
@@ -248,12 +250,31 @@
           <li><label>项目毛利：</label><i>741.52</i></li>
         </ul>
       </el-dialog>
+      <el-dialog title="结项" :visible.sync="junctionsVisible" width="30%">
+        <div class="form_table">
+          <el-form :model="addJunctions"  ref="addJunctions" label-width="120px" class="demo-ruleForm">
+            <el-form-item label="结算详情" prop="settle_detail">
+              <el-input v-model="addJunctions.settle_detail" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="合作详情" prop="pcoperatedetail">
+              <el-input v-model="addJunctions.pcoperatedetail" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="备注">
+              <el-input type="textarea" v-model="addJunctions.remark" size="medium"></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="junctionsVisible = false">取 消</el-button>
+          <el-button type="primary" @click="subJunctionsProject('addJunctions')">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-row>
   </div>
 </template>
 
 <script>
-import {postNewProject, getProjectList, getprojectDetails} from '@/api/api'
+import {postNewProject, getProjectList, getprojectDetails, deleteProject, putProject} from '@/api/api'
 import {paccounOption, settlewayopsoption} from '@/common/js/options'
 
 export default {
@@ -265,7 +286,7 @@ export default {
       projectname: '',
       takeover: '',
       signingCp: '',
-      settlement: '0',
+      settlement: '',
       projectstate: '0',
       examinestate: '0',
       dataList: '',
@@ -274,11 +295,13 @@ export default {
       lookProjectTable: false,
       stateOver: false,
       modifyProjectfrom: false,
+      junctionsVisible: false,
       currentPage: 1,
       detailsCurrentPage: 1,
       loading: true,
       stateOperation: '',
       searchDetailsName: '',
+      searchState: 0,
       addProject: {
         name: '',
         company: '',
@@ -289,6 +312,18 @@ export default {
         contact: '',
         settle_detail: '',
         pcoperatedetail: ''
+      },
+      initAddProject: {
+        name: '',
+        company: '',
+        platname: '',
+        paccountype: '',
+        settleway: '',
+        contract_company: '',
+        contact: '',
+        settle_detail: '',
+        pcoperatedetail: '',
+        remark: ''
       },
       rules: {
         name: [
@@ -319,17 +354,18 @@ export default {
           { required: true, message: '请输入合作详情', trigger: 'blur' }
         ]
       },
+      addJunctions: {},
       options: [
         {
-          value: '0',
+          value: '',
           label: '全部'
         },
         {
-          value: '1',
+          value: '0',
           label: '预付款'
         },
         {
-          value: '2',
+          value: '1',
           label: '后付款'
         }
       ],
@@ -362,7 +398,10 @@ export default {
       stateFilter: {0: '待审核', 1: '进行中', 2: '审核未通过', 4: '结项中', 5: '已结项', 6: '结项失败'},
       settlewayops: settlewayopsoption,
       paccountypeops: paccounOption,
-      modifyProject: {}
+      modifyProject: {
+        paccountype: '',
+        settleway: ''
+      }
     }
   },
   created () {
@@ -375,11 +414,11 @@ export default {
     },
     /* 获取项目列表 */
     getProjectdata () {
-      getProjectList(this.currentPage).then((res) => {
+      let data = this.conditionDate()
+      getProjectList(this.currentPage, data).then((res) => {
         console.log(res)
         this.dataList = res.data
         this.loading = false
-        this.stateOperation = this.dataList.results.state
         if (res.code) {
         } else {
           /* this.$message(res.data.detail) */
@@ -389,17 +428,60 @@ export default {
         console.log(err)
       })
     },
+    /* 搜索条件拼接 */
+    conditionDate () {
+      let Data = {}
+      if (this.searchState === 0) {
+        Data = {
+          params: {
+            state: this.projectstate
+          }
+        }
+      } else if (this.searchState === 1) {
+        Data = {
+          params: {
+            settleway: this.settlement
+          }
+        }
+      } else {
+        Data = {
+          params: {
+            lanched_apply_date_0: this.inputdate0,
+            lanched_apply_date_1: this.inputdate1,
+            id: this.projectnum,
+            name: this.projectname,
+            contact: this.takeover,
+            contract_company: this.signingCp,
+            settleway: this.settlement,
+            state: this.projectstate
+          }
+        }
+      }
+      return Data
+    },
     /* 提交新建项目 */
     subPostProject (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           postNewProject(this.addProject).then((res) => {
-            console.log(res)
+            if (res.data.code === 0) {
+              this.addProject = this.initAddProject
+              this.$refs[formName].resetFields()
+              this.$message({
+                type: 'success',
+                message: '新建项目成功!'
+              })
+              this.dialogVisible = false
+              this.getProjectdata()
+            } else {
+              this.dialogVisible = false
+              this.$message(res.data.detail)
+            }
           }).catch((err) => {
             console.log(err)
           })
         } else {
-          this.$message.error('提交有误，请检查后重新提交！')
+          this.$message.error('提交有误，请检查提交项！')
           return false
         }
       })
@@ -410,6 +492,7 @@ export default {
       this.currentPage = val
       this.getProjectdata()
     },
+    /* 打开项目修改对话框 */
     modifyproject (row) {
       this.modifyProjectfrom = true
       Object.assign(this.modifyProject, row)
@@ -443,7 +526,65 @@ export default {
       this.stateOver = true
     },
     /* 提交修改项目 */
-    subModiftProject (froms) {
+    subModiftProject () {
+      console.log(111)
+      putProject(this.modifyProject.id, this.modifyProject).then((res) => {
+        console.log(res)
+        this.$message({
+          type: 'success',
+          message: '修改成功!'
+        })
+        this.modifyProjectfrom = false
+        this.getProjectdata()
+      }).catch((err) => {
+        this.modifyProjectfrom = false
+        console.log(err)
+      })
+    },
+    /* 删除项目 */
+    deleteProject (row) {
+      this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteProject(row.id).then((res) => {
+          console.log(res)
+        })
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    /* 结项 */
+    junctions () {
+      this.junctionsVisible = true
+    },
+    /* 提交结项内容 */
+    subJunctionsProject () {},
+    /* 搜索 */
+    searchBtn () {
+      this.searchState = 2
+      this.currentPage = 1
+      this.getProjectdata()
+    }
+  },
+  watch: {
+    settlement () {
+      this.searchState = 1
+      this.currentPage = 1
+      this.getProjectdata()
+    },
+    projectstate () {
+      this.searchState = 0
+      this.currentPage = 1
+      this.getProjectdata()
     }
   }
 }
@@ -482,6 +623,7 @@ export default {
     justify-content: flex-end;
   .cursou
     cursor: pointer;
+    text-decoration: underline;
   .stateover
     li
       padding: 10px 0;
