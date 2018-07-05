@@ -26,21 +26,12 @@
     </el-row>
     <el-row class="row_top">
       <el-col :span="20">
-        <div class="search marginvi inputmaxwidth">
-          <label class="labeltext">签约公司</label>
-          <el-input size="medium" v-model="signingCp"></el-input>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="flexright">
-          <el-button size="medium" type="primary" @click="searchBtn">搜索</el-button>
-        </div>
-      </el-col>
-    </el-row>
-    <el-row class="row_top">
-      <el-col :span="24">
         <div class="flex_default">
-          <div class="select margin_clear">
+          <div class="search marginvi inputmaxwidth">
+            <label class="labeltext">签约公司</label>
+            <el-input size="medium" v-model="signingCp"></el-input>
+          </div>
+          <div class="select margin_left">
             <label class="label">结算方式</label>
             <el-select size="medium" v-model="settlement" placeholder="请选择">
               <el-option
@@ -62,6 +53,11 @@
               </el-option>
             </el-select>
           </div>
+        </div>
+      </el-col>
+      <el-col :span="4">
+        <div class="flexright">
+          <el-button size="medium" type="primary" @click="searchBtn">搜索</el-button>
         </div>
       </el-col>
     </el-row>
@@ -151,7 +147,7 @@
               <div class="operation_button">
                 <div class="op_button_padding"><el-button size="mini" type="primary" @click="lookProject(scope.row)">查看</el-button></div>
                 <div class="op_button_padding" v-if="scope.row.state === '0' || scope.row.state === '1'"><el-button size="mini" type="danger" @click="modifyproject(scope.row)">修改</el-button></div>
-                <div class="op_button_padding" v-if="scope.row.state === '0'"><el-button size="mini" type="warning" @click="deleteProject(scope.row)">删除</el-button></div>
+                <div class="op_button_padding" v-if="scope.row.state === '0'"><el-button size="mini" type="warning" @click="deleteProjectBtn(scope.row)">删除</el-button></div>
                 <div class="op_button_padding" v-if="scope.row.state === '1'"><el-button size="mini" type="success" @click="junctions(scope.row)">结项</el-button></div>
               </div>
             </template>
@@ -435,31 +431,16 @@ export default {
     },
     /* 搜索条件拼接 */
     conditionDate () {
-      let Data = {}
-      if (this.searchState === 0) {
-        Data = {
-          params: {
-            state: this.projectstate
-          }
-        }
-      } else if (this.searchState === 1) {
-        Data = {
-          params: {
-            settleway: this.settlement
-          }
-        }
-      } else {
-        Data = {
-          params: {
-            lanched_apply_date_0: this.inputdate0,
-            lanched_apply_date_1: this.inputdate1,
-            id: this.projectnum,
-            name: this.projectname,
-            contact: this.takeover,
-            contract_company: this.signingCp,
-            settleway: this.settlement,
-            state: this.projectstate
-          }
+      let Data = {
+        params: {
+          lanched_apply_date_0: this.inputdate0,
+          lanched_apply_date_1: this.inputdate1,
+          id: this.projectnum,
+          name: this.projectname,
+          contact: this.takeover,
+          contract_company: this.signingCp,
+          settleway: this.settlement,
+          state: this.projectstate
         }
       }
       return Data
@@ -532,7 +513,6 @@ export default {
     },
     /* 提交修改项目 */
     subModiftProject () {
-      console.log(111)
       putProject(this.modifyProject.id, this.modifyProject).then((res) => {
         console.log(res)
         this.$message({
@@ -547,7 +527,7 @@ export default {
       })
     },
     /* 删除项目 */
-    deleteProject (row) {
+    deleteProjectBtn (row) {
       this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -555,10 +535,11 @@ export default {
       }).then(() => {
         deleteProject(row.id).then((res) => {
           console.log(res)
-        })
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.getProjectdata()
         })
       }).catch(() => {
         this.$message({
@@ -591,19 +572,16 @@ export default {
     },
     /* 搜索 */
     searchBtn () {
-      this.searchState = 2
       this.currentPage = 1
       this.getProjectdata()
     }
   },
   watch: {
     settlement () {
-      this.searchState = 1
       this.currentPage = 1
       this.getProjectdata()
     },
     projectstate () {
-      this.searchState = 0
       this.currentPage = 1
       this.getProjectdata()
     }

@@ -21,7 +21,14 @@
           </div>
           <div class="search">
             <label class="labeltext">发票类型</label>
-            <el-input size="medium" v-model="invoicetype"></el-input>
+            <el-select size="medium" v-model="invoicetype" placeholder="请选择">
+              <el-option
+                v-for="item in invoicetypeop"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
           </div>
         </div>
       </el-col>
@@ -42,7 +49,7 @@
       </el-col>
       <el-col :span="4">
         <div class="flexright">
-          <el-button size="medium" type="primary">搜索</el-button>
+          <el-button size="medium" type="primary" @click="searchBtn">搜索</el-button>
         </div>
       </el-col>
     </el-row>
@@ -60,24 +67,14 @@
         <div class="form_table">
           <el-form :model="invoice" :rules="rules" ref="invoice" label-width="120px" class="demo-ruleForm">
             <el-form-item label="项目名称" prop="project">
-            <el-select size="medium" v-model="invoice.project" placeholder="请选择">
-              <el-option
-                label="小明有限公司"
-                value="小明有限公司">
-              </el-option>
-              <el-option
-                label="小方有限公司"
-                value="小方有限公司">
-              </el-option>
-              <el-option
-                label="小云有限公司"
-                value="小云有限公司">
-              </el-option>
-              <el-option
-                label="小园有限公司"
-                value="小园有限公司">
-              </el-option>
-            </el-select>
+              <el-select size="medium" v-model="invoice.project" placeholder="请选择">
+                <el-option
+                  v-for="item in projectOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="发票类型" prop="invoice_type">
               <el-radio-group v-model="invoice.invoice_type">
@@ -127,11 +124,11 @@
       <div class="table-list">
         <el-table v-loading="loading" :data="dataList.results" style="width: 100%">
           <el-table-column label="日期" prop="apply_date" width="100"></el-table-column>
-          <el-table-column label="项目名称" prop="project"></el-table-column>
+          <el-table-column label="项目名称" prop="projectname"></el-table-column>
           <el-table-column label="开票日期" prop="invoice_date"></el-table-column>
-          <el-table-column label="发票类型" prop="invoice_type">
+          <el-table-column label="发票类型">
             <template slot-scope="scope">
-              <span>{{invoiceFilter[scope.row.invoice_state]}}</span>
+              <span>{{invoiceFilter[scope.row.invoice_type]}}</span>
             </template>
           </el-table-column>
           <el-table-column label="签约公司" prop="contract_company" width="100"></el-table-column>
@@ -139,11 +136,11 @@
           <el-table-column label="开票金额" prop="invoice_num"></el-table-column>
           <el-table-column label="审核状态" prop="invoice_state">
             <template slot-scope="scope">
-              <span>{{stateFilter[scope.row.invoice_state]}}</span>
+              <span>{{stateFilter[scope.row.state]}}</span>
             </template>
           </el-table-column>
           <el-table-column label="备注" prop="record"></el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" v-if="operationShow">
             <template slot-scope="scope">
               <div class="operation_button">
                 <div class="op_button_padding"><el-button size="mini" type="danger" @click="opInvoice(scope.row)">修改</el-button></div>
@@ -171,24 +168,14 @@
         <div class="form_table">
           <el-form :model="modifyInvoice" :rules="modifyInvoice" ref="modifyInvoice" label-width="120px" class="demo-ruleForm">
             <el-form-item label="项目名称" prop="project">
-            <el-select size="medium" v-model="modifyInvoice.project" placeholder="请选择">
-              <el-option
-                label="小明有限公司"
-                value="小明有限公司">
-              </el-option>
-              <el-option
-                label="小方有限公司"
-                value="小方有限公司">
-              </el-option>
-              <el-option
-                label="小云有限公司"
-                value="小云有限公司">
-              </el-option>
-              <el-option
-                label="小园有限公司"
-                value="小园有限公司">
-              </el-option>
-            </el-select>
+              <el-select size="medium" filterable v-model="invoice.project" placeholder="请选择">
+                <el-option
+                  v-for="item in projectOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="发票类型" prop="invoice_type">
               <el-radio v-model="modifyInvoice.invoice_type" label="0">专票</el-radio>
@@ -237,7 +224,7 @@
 
 <script>
 import {examineOption, examineFilter} from '@/common/js/options'
-import {postInvoice, getInvoice, putInvoice, deleteInvoice} from '@/api/api'
+import {postInvoice, getInvoice, putInvoice, deleteInvoice, allGetProject} from '@/api/api'
 
 export default {
   data () {
@@ -253,11 +240,27 @@ export default {
       dialogVisible: false,
       invoiceVisible: false,
       loading: true,
+      operationShow: true,
       currentPage: 1,
       dataList: [],
       stateFilter: examineFilter,
+      invoicetypeop: [
+        {
+          value: '',
+          label: '全部'
+        },
+        {
+          value: '0',
+          label: '专票'
+        },
+        {
+          value: '1',
+          label: '普票'
+        }
+      ],
       invoiceFilter: {0: '专票', 1: '普票'},
       putId: '',
+      projectOption: [],
       invoice: {
         project: '',
         invoice_type: '',
@@ -308,7 +311,8 @@ export default {
         ]
       },
       modifyInvoice: {
-        id: ''
+        id: '',
+        invoice_type: ''
       }
     }
   },
@@ -321,13 +325,34 @@ export default {
     },
     /* 获取列表 */
     getDatalist () {
-      getInvoice(this.currentPage).then((res) => {
+      let data = this.conditionDate()
+      if (this.examinestate === '0') {
+        this.operationShow = true
+      } else {
+        this.operationShow = false
+      }
+      getInvoice(this.currentPage, data).then((res) => {
         console.log(res)
         this.dataList = res.data
         this.loading = false
       }).catch((err) => {
         console.log(err)
       })
+    },
+    /* 搜索条件拼接 */
+    conditionDate () {
+      let Data = {
+        params: {
+          apply_date_0: this.inputdate0,
+          apply_date_1: this.inputdate1,
+          invoice_date_0: this.inputdate2,
+          invoice_date_1: this.inputdate3,
+          projectname: this.projectname,
+          invoice_type: this.invoicetype,
+          state: this.examinestate
+        }
+      }
+      return Data
     },
     /* 分页 */
     handleCurrentChange (val) {
@@ -349,7 +374,7 @@ export default {
                 message: '发票申请成功!'
               })
               this.dialogVisible = false
-              this.getProjectdata()
+              this.getDatalist()
             } else {
               this.dialogVisible = false
               this.$message(res.data.detail)
@@ -392,11 +417,15 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteInvoice(row.id).then((res) => {
-          console.log(res)
-        })
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
+          if (res.code === 0) {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.getDatalist()
+          } else {
+            this.$message('删除失败')
+          }
         })
       }).catch(() => {
         this.$message({
@@ -404,6 +433,37 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    /* 获取项目 */
+    getProjectList () {
+      allGetProject().then((res) => {
+        console.log(res.data)
+        res.data.results.forEach((val, i) => {
+          this.projectOption.push({
+            'value': val.id.toString(),
+            'label': val.name
+          })
+        })
+        console.log(this.projectOption)
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    /* 搜索 */
+    searchBtn () {
+      this.currentPage = 1
+      this.getDatalist()
+    }
+  },
+  mounted () {
+    this.getProjectList()
+  },
+  watch: {
+    examinestate () {
+      this.dataList = []
+      this.loading = true
+      this.currentPage = 1
+      this.getDatalist()
     }
   }
 }
