@@ -10,6 +10,11 @@ ACCOUNT_TYPE = {
     ('1','对私'),
 }
 
+IS_INVOICE = {
+    ('0','是'),
+    ('1','否'),
+}
+
 INVOICE_TYPE = {
     ('0','专票'),
     ('1','普票'),
@@ -209,10 +214,11 @@ class RefundApplyLog(models.Model):
     audit_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="审核人",related_name="refundaudituser",blank=True,null=True)
     inprest = models.DecimalField("预付款金额", max_digits=10, decimal_places=2)
     refund_rec = models.DecimalField("退款金额", max_digits=10, decimal_places=2)
+    platname= models.CharField("平台名字", max_length=20)
     consume_sum = models.DecimalField("已消耗金额", max_digits=10, decimal_places=2)
-    send_pic = models.CharField("退款截图",max_length=200)
+    refund_reason = models.CharField("退款原因",max_length=200)
     fundtype= models.CharField("打款类型对公对私",choices=ACCOUNT_TYPE,max_length=2)
-    is_invoice= models.CharField("是否已开票",choices=ACCOUNT_TYPE,max_length=2)
+    is_invoice= models.CharField("是否已开票",choices=IS_INVOICE,max_length=2)
     record = models.CharField("备注",max_length=200,blank=True,null=True)
     company = models.CharField("甲方公司名称",max_length=50)
     contract_company = models.CharField("签约公司", max_length=50)
