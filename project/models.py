@@ -265,7 +265,7 @@ class InvoiceApplyLog(models.Model):
     audit_date = models.DateField("审核日期", default=datetime.date.today)
     is_delete = models.BooleanField("是否被删除",default=False)
     state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,default='0')
-    return_num = models.DecimalField("返现金额", max_digits=10, decimal_places=2,blank=True)
+    return_num = models.DecimalField("返现金额", max_digits=10, decimal_places=2,blank=True,null=True)
 
 
 
