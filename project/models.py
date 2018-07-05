@@ -236,10 +236,10 @@ class RefundApplyLog(models.Model):
     bank = models.CharField('开户银行', max_length=50)
     #state = models.CharField("项目状态", choices=PAUDIT_STATE, max_length=20)
     apply_date = models.DateField("申请日期", default=datetime.date.today)
-    audit_refused_reason = models.CharField("拒绝原因", max_length=100)
+    audit_refused_reason = models.CharField("拒绝原因", max_length=100,blank=True)
     audit_date = models.DateField("审核日期", default=datetime.date.today)
     is_delete = models.BooleanField("是否被删除",default=False)
-    state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2)
+    state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,blank=True,default='0')
 
 
 class InvoiceApplyLog(models.Model):
@@ -250,7 +250,7 @@ class InvoiceApplyLog(models.Model):
     invoice_num = models.DecimalField("开票金额", max_digits=10, decimal_places=2)
     invoice_date = models.DateField("开票日期", default=datetime.date.today)
     invoice_type= models.CharField("发票类型",choices=INVOICE_TYPE,max_length=2)
-    invoice_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,blank=True)
+    #invoice_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,blank=True)
     audit_state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,blank=True)
     record = models.CharField("备注", max_length=200,null=True,blank=True)
     company = models.CharField("甲方公司名称",max_length=50)
