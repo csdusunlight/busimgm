@@ -170,7 +170,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
     def get_serializer(self, *args, **kwargs):
         if self.request.method == "GET":
             serializer_class = FundApplyLogListSerializer
-        elif self.request.method == "POST":
+        elif self.request.method in ["POST","put","patch"]:
             serializer_class = self.get_serializer_class()
         kwargs['context'] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)
@@ -259,7 +259,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     def get_serializer(self, *args, **kwargs):
         if self.request.method == "GET":
             serializer_class = RefundApplyLogListSerializer
-        elif self.request.method == "POST":
+        elif self.request.method in ["POST","put","patch"]:
             serializer_class = self.get_serializer_class()
         kwargs['context'] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)
@@ -339,7 +339,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     def get_serializer(self, *args, **kwargs):
         if self.request.method == "GET":
             serializer_class = InvoiceApplyLogListSerializer
-        elif self.request.method == "POST":
+        elif  self.request.method in ["POST","put","patch"]:
             serializer_class = self.get_serializer_class()
         kwargs['context'] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)
