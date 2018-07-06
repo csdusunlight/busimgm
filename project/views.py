@@ -10,7 +10,6 @@ from django.urls.base import reverse
 
 import django_filters
 from django.http.response import Http404, JsonResponse, HttpResponse
-from project.models import ProjectInvestData
 from django.views.decorators.csrf import csrf_exempt
 import xlrd
 import logging
@@ -146,7 +145,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         """结项审核通过,"""
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
-        aimpro.state='５'
+        aimpro.state='5'
         aimpro.concluded_audit_date = datetime.date.today()
         aimpro.save(update_fields=['audituser','state','concluded_audit_time'])
         res = {}
