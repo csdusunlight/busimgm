@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from project.models import Project,FundApplyLog,\
-    RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestData
+    RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestDataModel
 
 class ProjectSerializer(serializers.ModelSerializer):
     state_des = serializers.CharField(source='get_state_display', read_only=True)
@@ -62,5 +62,5 @@ class  OperatorLogSerializer(serializers.ModelSerializer):
 
 class  ProjectInvestDataSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProjectInvestData
+        model = ProjectInvestDataModel
         fields = '__all__'
