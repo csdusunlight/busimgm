@@ -48,8 +48,8 @@
     </el-row>
     <el-row class="row_top row_bottom">
       <div class="table-list">
-        <el-table v-loading="loading" :data="dataList.data" style="width: 100%" @sort-change="sortChange">
-          <el-table-column label="日期" prop="date" sortable="custom" width="100"></el-table-column>
+        <el-table v-loading="loading" :data="dataList.data" style="width: 100%">
+          <el-table-column label="日期" prop="date" width="100"></el-table-column>
           <el-table-column label="项目名称" prop="string"></el-table-column>
           <el-table-column label="开票日期" prop="integer"></el-table-column>
           <el-table-column label="发票类型" prop="integer"></el-table-column>
@@ -101,7 +101,7 @@
 
 <script>
 import {examineOption} from '@/common/js/options'
-import {dataPage} from '@/api/api'
+import {getInvoice} from '@/api/api'
 
 export default {
   data () {
@@ -114,6 +114,7 @@ export default {
       invoicetype: '',
       examinestate: '0',
       options: examineOption,
+      operationShow: true,
       currentPage: 1,
       dataList: [],
       param: {
@@ -135,14 +136,36 @@ export default {
     this.getDatalist()
   },
   methods: {
+    /* 获取列表 */
     getDatalist () {
-      dataPage(this.param).then((res) => {
+      let data = this.conditionDate()
+      if (this.examinestate === '0') {
+        this.operationShow = true
+      } else {
+        this.operationShow = false
+      }
+      getInvoice(this.currentPage, data).then((res) => {
         console.log(res)
         this.dataList = res.data
         this.loading = false
       }).catch((err) => {
         console.log(err)
       })
+    },
+    /* 搜索条件拼接 */
+    conditionDate () {
+      let Data = {
+        params: {
+          apply_date_0: this.inputdate0,
+          apply_date_1: this.inputdate1,
+          invoice_date_0: this.inputdate2,
+          invoice_date_1: this.inputdate3,
+          projectname: this.projectname,
+          invoice_type: this.invoicetype,
+          state: this.examinestate
+        }
+      }
+      return Data
     },
     handleCurrentChange (val) {
       this.dataList = []
@@ -195,7 +218,7 @@ export default {
     .el-input__suffix
       right: 0;
     .el-input
-      width: 140px;
+      width: 150px;
   .flexright
     display: flex;
     justify-content: flex-end;

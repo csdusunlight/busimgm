@@ -397,6 +397,7 @@ export default {
           message: '修改成功!'
         })
         this.invoiceVisible = false
+        this.loading = true
         this.getDatalist()
       }).catch((err) => {
         this.invoiceVisible = false
@@ -417,14 +418,15 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteInvoice(row.id).then((res) => {
-          if (res.code === 0) {
+          if (res.data.code === '0') {
             this.$message({
               type: 'success',
               message: '删除成功!'
             })
+            this.loading = true
             this.getDatalist()
           } else {
-            this.$message('删除失败')
+            this.$message(res.data.detail)
           }
         })
       }).catch(() => {
@@ -451,6 +453,7 @@ export default {
     },
     /* 搜索 */
     searchBtn () {
+      this.loading = true
       this.currentPage = 1
       this.getDatalist()
     }
