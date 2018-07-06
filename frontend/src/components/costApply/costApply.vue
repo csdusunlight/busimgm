@@ -481,13 +481,17 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteCost(row.id).then((res) => {
-          console.log(res)
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-          this.loading = true
-          this.getCostDatalist()
+          if (res.data.code === '0') {
+            console.log(res)
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.loading = true
+            this.getCostDatalist()
+          } else {
+            this.$message(res.data.detail)
+          }
         })
       }).catch(() => {
         this.$message({

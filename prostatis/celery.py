@@ -9,6 +9,7 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 
+
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'runitem.settings')
 
@@ -20,15 +21,10 @@ app = Celery('busimgm')
 #   should have a `CELERY_` prefix.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
-        'add-every-4-seconds': {
-            'task': 'Activity.tasks.mul',
+        'add-every-hour': {
+            'task': 'prostatis.tasks.add',
             'schedule': 4.0,
-            'args': (16, 16)
-        },
-        'add-every-day-1:00': {
-            'task': 'tasks.add',
-            'schedule': crontab(hour=1, minute=0),
-            'args': (16, 16),
+          #  'args': (16, 16)
         },
 }
 # @app.on_after_configure.connect
