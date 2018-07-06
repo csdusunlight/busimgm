@@ -222,7 +222,7 @@ class InvoiceApplyLog(models.Model):
 #     invoice_num = models.DecimalField("开票金额", max_digits=10, decimal_places=2)
 #     invoice_date = models.DateField("开票日期", default=datetime.date.today)
 
-class ProjectInvestData(models.Model):
+class ProjectInvestDataModel(models.Model):
     project = models.ForeignKey(Project, verbose_name="项目", related_name='project_investdata',on_delete=models.CASCADE)
     is_futou = models.BooleanField("是否复投", default=False)
     source = models.CharField("投资来源", choices=SOURCE, max_length=10)
@@ -240,7 +240,23 @@ class ProjectInvestData(models.Model):
     def futou_des(self):
         return "复投" if self.is_futou else "首投"
 
+class ProjectInvestData(models.Model):
+    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_investdata',on_delete=models.CASCADE)
+    is_futou = models.BooleanField("是否复投", default=False)
+    source = models.CharField("投资来源", choices=SOURCE, max_length=10)
+    invest_mobile = models.CharField("投资手机号", max_length=11)
+    invest_time = models.DateField("投资时间")
+    invest_amount = models.DecimalField("投资金额", max_digits=10, decimal_places=2)
+    invest_term = models.CharField("投资标期", max_length=13)
+    settle_amount = models.DecimalField("结算金额", max_digits=10, decimal_places=2)
+    return_amount = models.DecimalField("返现金额", max_digits=10, decimal_places=2, default=0)
+    audit_time = models.DateTimeField("审核时间（二次导入时间）", null=True)
+    state = models.CharField("审核状态", max_length=10, choices=AUDIT_STATE)
+    remark = models.CharField("备注", max_length=100)
 
+
+    def futou_des(self):
+        return "复投" if self.is_futou else "首投"
 
 # class ProDumpRecord(models):
 #     project =models.ForeignKey(Project,on_delete=models.SET_NULL,verbose_name="项目")
