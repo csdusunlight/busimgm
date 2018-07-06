@@ -469,7 +469,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         else:
             serializer.save()
 
-    @action(methods=['post'],detail=True)
+    @action(methods=['post'],detail=False)
     def export_investdata_excel(self,request):
         item_list = self.filter_queryset(self.get_queryset())
         data = []
@@ -523,7 +523,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         response.write(sio.getvalue())
         return response
 
-    @action(methods=['post'], detail=True)
+    @action(methods=['post'], detail=False)
     def import_audit_projectdata_excel_except(self,request):
         admin_user = request.user
         if not (admin_user.is_authenticated() and admin_user.is_staff):
@@ -626,7 +626,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         return JsonResponse(ret)
 
 
-    @action(methods=['post'], detail=True)
+    @action(methods=['post'], detail=False)
     def import_audit_projectdata_excel(self,request):
         admin_user = request.user
         # print(admin_user)
@@ -748,7 +748,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         return JsonResponse(ret)
 
 
-    @action(methods=['post'], detail=True)
+    @action(methods=['post'], detail=False)
     def import_audit_projectdata_excel(self,request):
         admin_user = request.user
         # print(admin_user)
@@ -870,7 +870,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         return JsonResponse(ret)
 
 
-    @action(methods=['post'], detail=True)
+    @action(methods=['post'], detail=False)
     def import_projectdata_excel(self,request):
         admin_user = request.user
         if not (admin_user.is_authenticated and admin_user.is_staff):
