@@ -149,7 +149,7 @@ class FundApplyLog(models.Model):
     project = models.ForeignKey(Project, verbose_name="项目名", related_name='project_fund_apply',on_delete=models.CASCADE)
     apply_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="申请人",related_name="fundapplyuser",blank=True,null=True)
     audit_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="审核人",related_name="fundaudituser",blank=True,null=True)
-    audituser = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name="审核人", related_name="fundaudituser1",blank=True, null=True)
+   # audituser = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name="审核人", related_name="fundaudituser1",blank=True, null=True)
     fund_rec = models.DecimalField("打款金额", max_digits=10, decimal_places=2)
     send_pic = models.CharField("打款截图",max_length=200)
     fundtype= models.CharField("打款类型对公对私",choices=ACCOUNT_TYPE,max_length=2)
