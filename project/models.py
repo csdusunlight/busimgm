@@ -241,7 +241,7 @@ class ProjectInvestDataModel(models.Model):
         return "复投" if self.is_futou else "首投"
 
 class ProjectInvestData(models.Model):
-    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_investdata',on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_investdata2',on_delete=models.CASCADE)
     is_futou = models.BooleanField("是否复投", default=False)
     source = models.CharField("投资来源", choices=SOURCE, max_length=10)
     invest_mobile = models.CharField("投资手机号", max_length=11)
