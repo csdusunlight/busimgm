@@ -117,64 +117,10 @@ class Project(models.Model):
     #---------------------------------------------------------
 
 
-class ProjectInvestData(models.Model):
-    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_investdata',on_delete=models.CASCADE)
-    is_futou = models.BooleanField("是否复投", default=False)
-    source = models.CharField("投资来源", choices=SOURCE, max_length=10)
-    invest_mobile = models.CharField("投资手机号", max_length=11)
-    invest_time = models.DateField("投资时间")
-    invest_amount = models.DecimalField("投资金额", max_digits=10, decimal_places=2)
-    invest_term = models.CharField("投资标期", max_length=13)
-    settle_amount = models.DecimalField("结算金额", max_digits=10, decimal_places=2)
-    return_amount = models.DecimalField("返现金额", max_digits=10, decimal_places=2, default=0)
-    audit_time = models.DateTimeField("审核时间（二次导入时间）", null=True)
-    state = models.CharField("审核状态", max_length=10, choices=AUDIT_STATE)
-    remark = models.CharField("备注", max_length=100)
 
 
-    def futou_des(self):
-        return "复投" if self.is_futou else "首投"
 
 
-class ProjectStatis(models.Model):
-    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_statis',on_delete=models.CASCADE)
-    channel_consume = models.DecimalField("渠道消耗", max_digits=10, decimal_places=2, default=0)
-    channel_return = models.DecimalField("渠道返现金额", max_digits=10, decimal_places=2, default=0)
-    site_consume = models.DecimalField("网站消耗", max_digits=10, decimal_places=2, default=0)
-    site_return = models.DecimalField("网站返现金额", max_digits=10, decimal_places=2, default=0)
-    def consume(self):
-        return self.channel_consume + self.site_consume
-    def ret(self):
-        return self.channel_return + self.site_return
-    def __unicode__(self):
-        return str(self.project_id) + self.project.name
-    class Meta:
-        ordering = ["-project__time"]
-
-#点击查看项目详情：日期  项目名称  当前总待收  预估利润  昨日结算金额
-
-class ProjectDetail(models.Model):
-    date = models.DateField("日期", primary_key=True)
-    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_detail',on_delete=models.CASCADE)
-    total_to_rec = models.DecimalField("总待收", max_digits=10, decimal_places=2, null=True)
-    budgeted_income = models.DecimalField("预估利润", max_digits=10, decimal_places=2, null=True)
-    lastday_settle_num = models.DecimalField("昨日结算金额", max_digits=10, decimal_places=2, null=True)
-
-
-class DayStatis(models.Model):
-    date = models.DateField("日期", primary_key=True)
-    start_num = models.IntegerField("正在进行的项目数")
-    finish_num = models.IntegerField("已结项的项目数")
-    invest_count = models.IntegerField("投资人数")
-    ret_count = models.IntegerField("返现人数")
-    invest_sum = models.DecimalField("投资金额", max_digits=10, decimal_places=2, null=True)
-    consume_sum = models.DecimalField("消耗金额", max_digits=10, decimal_places=2, null=True)
-    ret_invest_sum = models.DecimalField("返现投资金额", max_digits=10, decimal_places=2, null=True)
-    ret_sum = models.DecimalField("返现费用", max_digits=10, decimal_places=2, null=True)
-    def __unicode__(self):
-        return self.date.strftime("%Y-%m-%d")
-    class Meta:
-        ordering = ['-date']
 
 
 class DBlock(models.Model):
@@ -267,9 +213,31 @@ class InvoiceApplyLog(models.Model):
     state = models.CharField("审核状态",choices=AUDIT_STATE,max_length=2,default='0')
     return_num = models.DecimalField("返现金额", max_digits=10, decimal_places=2,blank=True,null=True)
 
+# class ProjectRecord(models.Model):
+#     """ 项目详情 """
+#     project = models.ForeignKey(Project, verbose_name="项目", related_name='project_invoice_apply',on_delete=models.CASCADE)
+#     apply_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="申请人",related_name="invoiceapplyuser",blank=True,null=True)
+#     audit_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="审核人",related_name="invoiceaudituser",blank=True,null=True)
+#     invoice_num = models.DecimalField("开票金额", max_digits=10, decimal_places=2)
+#     invoice_date = models.DateField("开票日期", default=datetime.date.today)
+
+class ProjectInvestData(models.Model):
+    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_investdata',on_delete=models.CASCADE)
+    is_futou = models.BooleanField("是否复投", default=False)
+    source = models.CharField("投资来源", choices=SOURCE, max_length=10)
+    invest_mobile = models.CharField("投资手机号", max_length=11)
+    invest_time = models.DateField("投资时间")
+    invest_amount = models.DecimalField("投资金额", max_digits=10, decimal_places=2)
+    invest_term = models.CharField("投资标期", max_length=13)
+    settle_amount = models.DecimalField("结算金额", max_digits=10, decimal_places=2)
+    return_amount = models.DecimalField("返现金额", max_digits=10, decimal_places=2, default=0)
+    audit_time = models.DateTimeField("审核时间（二次导入时间）", null=True)
+    state = models.CharField("审核状态", max_length=10, choices=AUDIT_STATE)
+    remark = models.CharField("备注", max_length=100)
 
 
-
+    def futou_des(self):
+        return "复投" if self.is_futou else "首投"
 
 
 

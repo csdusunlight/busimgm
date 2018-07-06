@@ -1,5 +1,5 @@
 import django_filters
-from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog
+from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestData
 class ProjectFilter(django_filters.rest_framework.FilterSet):
     lanched_apply_date = django_filters.DateFromToRangeFilter(name="lanched_apply_date")
     lanched_audit_date = django_filters.DateFromToRangeFilter(name="lanched_audit_date")
@@ -54,3 +54,12 @@ class OperatorLogFilter(django_filters.rest_framework.FilterSet):
     class Meta:
         model = OperatorLog
         fields = "__all__"
+
+
+class ProjectInvestDataFilter(django_filters.rest_framework.FilterSet):
+    investtime = django_filters.DateFromToRangeFilter(name="invest_time")
+    audittime = django_filters.DateTimeFromToRangeFilter(name="audit_time")
+    projectname = django_filters.CharFilter(name="project", lookup_expr='name__contains')
+    class Meta:
+        model = ProjectInvestData
+        fields = ['is_futou', 'invest_time', 'project', 'projectname', 'investtime','state', 'invest_mobile', 'audittime', 'source']
