@@ -33,17 +33,6 @@
             <label class="labeltext">提交手机号</label>
             <el-input size="medium" v-model="subphone"></el-input>
           </div>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="flexright">
-          <el-button size="medium" type="primary">搜索</el-button>
-        </div>
-      </el-col>
-    </el-row>
-    <el-row class="row_top">
-      <el-col :span="24">
-        <div class="flex_default">
           <div class="select margin_clear">
             <label class="label">项目状态</label>
             <el-select size="medium" v-model="investvalue" placeholder="请选择">
@@ -79,15 +68,29 @@
           </div>
         </div>
       </el-col>
+      <el-col :span="4">
+        <div class="flexright">
+          <el-button size="medium" type="primary">搜索</el-button>
+        </div>
+      </el-col>
     </el-row>
     <el-row>
       <el-col :span="24">
         <div class="flexright">
-          <el-button size="medium" type="info">审核数据导入</el-button>
-          <el-button size="medium" type="info">异常数据导出</el-button>
-          <el-button size="medium" type="info">获取初始导入模板</el-button>
-          <el-button size="medium" type="info">导入</el-button>
+          <el-upload
+            class="avatar-uploader"
+            :action="uploadURL1"
+            :name="uploadName"
+            :with-credentials= "true"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload">
+            <el-button size="medium" type="info">导入</el-button>
+          </el-upload>
           <el-button size="medium" type="info">导出</el-button>
+          <el-button size="medium" type="info">审核数据导入</el-button>
+          <el-button size="medium" type="info">异常数据导入</el-button>
+          <el-button size="medium" type="info">获取初始导入模板</el-button>
         </div>
       </el-col>
     </el-row>
@@ -158,8 +161,6 @@
 </template>
 
 <script>
-import {dataPage} from '@/api/api'
-
 export default {
   data () {
     return {
@@ -169,10 +170,13 @@ export default {
       inputdate3: '',
       projectnum: '',
       projectname: '',
+      uploadURL1: 'http://mgm.fuliunion.com/Project/projectinvestdata/import_projectdata_excel/',
+      uploadName: 'file',
       subphone: '',
       investvalue: '0',
       inmodevalue: '0',
       examinestate: '0',
+      dataAdminDetails: {},
       dataList: [],
       loading: true,
       dialogVisible: false,
@@ -241,13 +245,6 @@ export default {
   },
   methods: {
     getDatalist () {
-      dataPage(this.param).then((res) => {
-        console.log(res)
-        this.dataList = res.data
-        this.loading = false
-      }).catch((err) => {
-        console.log(err)
-      })
     },
     handleCurrentChange (val) {
       this.datalist = []
@@ -255,6 +252,15 @@ export default {
       this.currentPage = val
       this.param.page = val
       this.getDatalist()
+    },
+    /* 上传文件成功回调 */
+    handleAvatarSuccess (response, file) {
+      console.log(response)
+      this.dataAdminDetails = response
+      this.$message('上传成功...')
+    },
+    beforeAvatarUpload () {
+      this.$message('正在上传...')
     },
     toExamine (row) {
       this.dialogVisible = true
