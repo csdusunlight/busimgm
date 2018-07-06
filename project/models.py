@@ -97,7 +97,10 @@ class Project(models.Model):
 
 
     def paid_minus_cost(self):
-        return self.settle-self.cost
+        if self.paccountype=="0":
+            return self.settle-self.cost
+        elif self.paccountype =="1":
+            return self.settle*0.94-self.cost
     profit = property(paid_minus_cost)
 
     def save(self, force_insert=False, force_update=False, using=None,

@@ -601,7 +601,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 project_id = row['project_id']
                 state = row['state']
                 date = row['date']
-                event = ProjectInvestData.objects.get(id=id)
+                event = ProjectInvestDataModel.objects.get(id=id)
                 #             if event.state != '1':
                 #                 continue
                 event.state = state
