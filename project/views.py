@@ -436,7 +436,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     def apply_rejected(self, request, pk=None,*args,**kwargs):
         """立项审核拒绝"""
         reason=request.data['reason']
-        aiminvoice = FundApplyLog.objects.get(id=pk)
+        aiminvoice =  InvoiceApplyLog.objects.get(id=pk)
         aiminvoice.audit_man=request.user
         aiminvoice.state='2'
         aiminvoice.audit_date =  datetime.date.today()
