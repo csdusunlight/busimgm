@@ -172,6 +172,7 @@ class RefundApplyLog(models.Model):
     project = models.ForeignKey(Project, verbose_name="项目", related_name='project_refund_apply',on_delete=models.CASCADE)
     apply_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="申请人",related_name="refundapplyuser",blank=True,null=True)
     audit_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="审核人",related_name="refundaudituser",blank=True,null=True)
+    audituser = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="审核人1", related_name="refundaudituser1",blank=True, null=True)
     inprest = models.DecimalField("预付款金额", max_digits=10, decimal_places=2)
     refund_rec = models.DecimalField("退款金额", max_digits=10, decimal_places=2)
     platname= models.CharField("平台名字", max_length=20)
