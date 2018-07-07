@@ -328,7 +328,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     @action(methods=['post'],detail=True)
     def apply_approved(self, request, pk=None,*args,**kwargs):
         """审核通过"""
-        aimrefund = FundApplyLog.objects.get(id=pk)
+        aimrefund = RefundApplyLog.objects.get(id=pk)
         aimrefund.audit_man=request.user
         aimrefund.state='1'
         aimrefund.audit_date = datetime.date.today()
@@ -347,7 +347,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     def apply_rejected(self, request, pk=None,*args,**kwargs):
         """立项审核拒绝"""
         reason=request.data['reason']
-        aimrefend = FundApplyLog.objects.get(id=pk)
+        aimrefend = RefundApplyLog.objects.get(id=pk)
         aimrefend.audit_man=request.user
         aimrefend.state='2'
         aimrefend.audit_date =  datetime.date.today()
