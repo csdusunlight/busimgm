@@ -2,7 +2,7 @@ from django.db import models
 from account.models import User
 from django.utils import timezone
 import datetime
-
+from decimal import Decimal
 # Create your models here.
 
 ACCOUNT_TYPE = {
@@ -100,7 +100,7 @@ class Project(models.Model):
         if self.paccountype=="0":
             return self.settle-self.cost
         elif self.paccountype =="1":
-            return self.settle*0.94-self.cost
+            return self.settle*Decimal(0.94)-self.cost
     profit = property(paid_minus_cost)
 
     def save(self, force_insert=False, force_update=False, using=None,
