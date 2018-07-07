@@ -197,6 +197,7 @@ class InvoiceApplyLog(models.Model):
     project = models.ForeignKey(Project, verbose_name="项目", related_name='project_invoice_apply',on_delete=models.CASCADE)
     apply_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="申请人",related_name="invoiceapplyuser",blank=True,null=True)
     audit_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="审核人",related_name="invoiceaudituser",blank=True,null=True)
+    audituser = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="审核人", related_name="invoiceaudituser1",blank=True, null=True)
     invoice_num = models.DecimalField("开票金额", max_digits=10, decimal_places=2)
     invoice_date = models.DateField("开票日期", default=datetime.date.today)
     invoice_type= models.CharField("发票类型",choices=INVOICE_TYPE,max_length=2)
