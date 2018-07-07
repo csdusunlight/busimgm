@@ -15,6 +15,8 @@ class ProjectFilter(django_filters.rest_framework.FilterSet):
 class FundApplyLogFilter(django_filters.rest_framework.FilterSet):
     apply_date = django_filters.DateFromToRangeFilter(name="apply_date")
     audit_date = django_filters.DateFromToRangeFilter(name="audit_date")
+    send_date = django_filters.DateFromToRangeFilter(name="send_date")
+
     audit_state = django_filters.CharFilter(name="audit_state", lookup_expr='contains')
     projectname = django_filters.CharFilter(name="project", lookup_expr='name__contains')
 
