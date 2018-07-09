@@ -476,9 +476,15 @@ class ProjectInvestData(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def import_apply_approved(self,request,pk=None,*args,**kwargs):
         aiminvestrecord=ProjectInvestDataModel.objects.get(id=pk)
+        source = request.data.get('source')
+        return_amount = request.data.get('return_amount')
+        invest_mobile = request.data.get('invest_mobile')
         aiminvestrecord.audit_time= datetime.date.today()
+        aiminvestrecord.source = source
+        aiminvestrecord.return_amount = return_amount
+        aiminvestrecord.invest_mobile = invest_mobile
         aiminvestrecord.state='1'
-        aiminvestrecord.save(update_fields=['audit_time','state'])
+        aiminvestrecord.save(update_fields=['audit_time','state','source','invest_mobile','return_amount'])
 
     @action(methods=['post'], detail=True)
     def import_apply_rejected(self, request, pk=None, *args, **kwargs):
@@ -863,6 +869,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 state = row['state']
                 date = row['date']
                 term = row['term']
+                print(id)
                 event = ProjectInvestDataModel.objects.get(id=id)
                 #             if event.state != '1':
                 #                 continue
