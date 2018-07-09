@@ -23,6 +23,9 @@ venv/
 requirements.txt
 templates/
 pro.txt
+account/__pycache__/
+busimgm/__pycache__/
+project/__pycache__/
 __pycache__/
 .idea/
 

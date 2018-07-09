@@ -230,6 +230,9 @@ class InvoiceApplyLog(models.Model):
 class ProjectInvestDataModel(models.Model):
     project = models.ForeignKey(Project, verbose_name="项目", related_name='project_investdata',on_delete=models.CASCADE)
     is_futou = models.BooleanField("是否复投", default=False)
+    apply_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="导入人",related_name="importinvestapplyuser",blank=True,null=True)
+    audit_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="审核人",related_name="importinvestaudituser",blank=True,null=True)
+
     source = models.CharField("投资来源", choices=SOURCE, max_length=10)
     invest_mobile = models.CharField("投资手机号", max_length=11)
     invest_time = models.DateField("投资时间")

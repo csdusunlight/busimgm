@@ -24,7 +24,7 @@ from django.contrib import admin
 from django.views.generic.base import TemplateView
 from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,\
     InvoiceApplyLogDetail,ProjectInvestData
-
+from prostatis.views import ProStatis
 
 #from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,\
 #    InvoiceApplyLogDetail,import_audit_projectdata_excel,import_projectdata_excel
@@ -37,6 +37,7 @@ router.register(r'fundapplys', FundApplyLogDetail, base_name='fundapply')
 router.register(r'refundapplys', RefundApplyLogDetail, base_name='refundapply')
 router.register(r'invoiceapplys', InvoiceApplyLogDetail, base_name='invoiceapply')
 router.register(r'projectinvestdata',ProjectInvestData,base_name='projectinvestdata')
+router.register(r'prostatis',ProStatis,base_name='prostatis')
 
 
 
@@ -45,7 +46,6 @@ urlpatterns = [
     url(r'^login/$', csrf_exempt(AccountView.UserLoginAPIView.as_view())),
     path('admin/', admin.site.urls),
     url(r'Project/', include(router.urls)),
-
     url(r'^User/$', AccountView.UserList.as_view()),
     url(r'^check_user_login/$', AccountView.check_user_login),
     url(r'^get_upload_token/$', AccountView.QiniuTokenView.as_view()),
