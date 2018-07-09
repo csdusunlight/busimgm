@@ -24,7 +24,7 @@ from django.contrib import admin
 from django.views.generic.base import TemplateView
 from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,\
     InvoiceApplyLogDetail,ProjectInvestData
-from prostatis.views import ProStatis
+#from prostatis.views import ProStatis
 
 #from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,\
 #    InvoiceApplyLogDetail,import_audit_projectdata_excel,import_projectdata_excel
@@ -37,7 +37,7 @@ router.register(r'fundapplys', FundApplyLogDetail, base_name='fundapply')
 router.register(r'refundapplys', RefundApplyLogDetail, base_name='refundapply')
 router.register(r'invoiceapplys', InvoiceApplyLogDetail, base_name='invoiceapply')
 router.register(r'projectinvestdata',ProjectInvestData,base_name='projectinvestdata')
-router.register(r'prostatis',ProStatis,base_name='prostatis')
+#router.register(r'prostatis',ProStatis,base_name='prostatis')
 
 
 
