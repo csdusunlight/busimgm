@@ -486,7 +486,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         aiminvestrecord.state='1'
         aiminvestrecord.save(update_fields=['audit_time','state','source','invest_mobile','return_amount'])
         resultdict={}
-        resultdict['code']=0
+        resultdict['code']='0'
         return Response(resultdict)
 
     @action(methods=['post'], detail=True)
@@ -644,7 +644,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark',
                                           'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
                 suc_num += 1
-            ret['code'] = 0
+            ret['code'] = '0'
         except Exception as e:
             exstr = traceback.format_exc()
             logger.info(unicode(exstr))
@@ -766,7 +766,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark', 'invest_term',
                                           'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
                 suc_num += 1
-            ret['code'] = 0
+            ret['code'] = '0'
         except Exception as e:
             exstr = traceback.format_exc()
             logger.info(exstr)
@@ -889,7 +889,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark', 'invest_term',
                                           'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
                 suc_num += 1
-            ret['code'] = 0
+            ret['code'] = '0'
         except Exception as e:
             exstr = traceback.format_exc()
             logger.info(exstr)
