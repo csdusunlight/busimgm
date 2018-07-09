@@ -1,9 +1,9 @@
 <template>
   <div class="refundAdmin">
     <el-row>
-      <el-col :span="22">
+      <el-col :span="24">
         <div class="input_search">
-          <div class="search margin_clear search_box">
+          <div class="search marginvi search_box">
             <label class="labeltext">申请日期</label>
             <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate0" size="medium" type="date" placeholder="选择日期"></el-date-picker>
             <span class="line"> — </span>
@@ -17,7 +17,35 @@
             <label class="labeltext">签约公司</label>
             <el-input size="medium" v-model="contractcop"></el-input>
           </div>
-          <div class="select" style="margin-left: 15px;">
+          <div class="search marginvi">
+            <label class="labeltext">是否开票</label>
+            <el-select size="medium" v-model="invoicetype" placeholder="请选择">
+              <el-option
+                v-for="item in invoiceYesNo"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+    <el-row class="row_top">
+      <el-col :span="20">
+        <div class="flex_default">
+          <div class="select">
+            <label class="label">对公对私</label>
+            <el-select size="medium" v-model="fundtypevalue" placeholder="请选择">
+              <el-option
+                v-for="item in fundtypeOption"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+          <div class="select" style="margin-left: 20px;">
             <label class="label">审核状态</label>
             <el-select size="medium" v-model="examinestate" placeholder="请选择">
               <el-option
@@ -30,7 +58,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="2">
+      <el-col :span="4">
         <div class="flexright">
           <el-button size="medium" type="primary" @click="searchBtn">搜索</el-button>
         </div>
@@ -139,7 +167,7 @@
               <span>{{stateFilter[scope.row.state]}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" v-if="operationShow">
             <template slot-scope="scope">
               <div class="operation_button">
                 <div class="op_button_padding"><el-button size="mini" type="danger" @click="modifyRefundBtn(scope.row)">修改</el-button></div>
@@ -238,6 +266,8 @@ export default {
       inputdate1: '',
       projectname: '',
       contractcop: '',
+      invoicetype: '',
+      fundtypevalue: '',
       examinestate: '0',
       options: examineOption,
       paccountypeops: paccounOption,
@@ -246,10 +276,39 @@ export default {
       projectOption: [],
       dialogVisible: false,
       modifyRefundVisible: false,
+      operationShow: true,
       invoiceFilter: {0: '是', 1: '否'},
       loading: true,
       dataList: {},
       currentPage: 1,
+      invoiceYesNo: [
+        {
+          value: '',
+          label: '全部'
+        },
+        {
+          value: '0',
+          label: '是'
+        },
+        {
+          value: '1',
+          label: '否'
+        }
+      ],
+      fundtypeOption: [
+        {
+          value: '',
+          label: '全部'
+        },
+        {
+          value: '1',
+          label: '对私'
+        },
+        {
+          value: '0',
+          label: '对公'
+        }
+      ],
       addRefund: {
         project: '',
         company: '',
@@ -334,6 +393,11 @@ export default {
     /* 退款申请列表 */
     getRefundDatalist () {
       let data = this.conditionDate()
+      if (this.examinestate === '0') {
+        this.operationShow = true
+      } else {
+        this.operationShow = false
+      }
       getRefundList(this.currentPage, data).then((res) => {
         console.log(res)
         this.loading = false
@@ -351,7 +415,9 @@ export default {
           apply_date_1: this.inputdate1,
           projectname: this.projectname,
           contract_company: this.contractcop,
-          state: this.examinestate
+          state: this.examinestate,
+          is_invoice: this.invoicetype,
+          fundtype: this.fundtypevalue
         }
       }
       return Data
@@ -470,6 +536,20 @@ export default {
       this.loading = true
       this.currentPage = 1
       this.getRefundDatalist()
+    },
+    /* 是否开票搜索 */
+    invoicetype () {
+      this.dataList = []
+      this.loading = true
+      this.currentPage = 1
+      this.getRefundDatalist()
+    },
+    /* 对公对私搜索 */
+    fundtypevalue () {
+      this.dataList = []
+      this.loading = true
+      this.currentPage = 1
+      this.getRefundDatalist()
     }
   }
 }
@@ -483,27 +563,24 @@ export default {
     align-items: center;
   .search
     font-size: 14px;
+    margin-left: 10px;
     .labeltext
-      padding-right: 5px
+      margin-right: 10px
     .line
       padding: 0 5px;
       color: #333
     .el-date-editor.el-input, .el-date-editor.el-input__inner
-      width: 120px;
-      .el-input__prefix
-        display: none;
-    .el-input--prefix .el-input__inner
-      padding-left: 15px
-    .el-input--suffix .el-input__inner
-      padding-right: 15px
-    .el-input__suffix
-      right: 0;
+      width: 145px;
     .el-input
-      width: 140px;
+      width: 170px;
+  .select
+    .label
+      margin-right: 10px;
+    .el-select, .el-select--medium
+      width: 170px;
   .flexright
     display: flex;
     justify-content: flex-end;
-  .select
-    .label
-      margin-right: 12px;
+  .marginvi
+    margin-left: 0;
 </style>

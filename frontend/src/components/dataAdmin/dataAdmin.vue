@@ -44,7 +44,7 @@
               </el-option>
             </el-select>
           </div>
-          <div class="select margin_left">
+          <div class="select">
             <label class="label">投资方式</label>
             <el-select size="medium" v-model="inmodevalue" placeholder="请选择">
               <el-option
@@ -55,7 +55,7 @@
               </el-option>
             </el-select>
           </div>
-          <div class="select margin_left">
+          <div class="select">
             <label class="label">审核状态</label>
             <el-select size="medium" v-model="examinestate" placeholder="请选择">
               <el-option
@@ -88,8 +88,26 @@
             <el-button size="medium" type="info">导入</el-button>
           </el-upload>
           <el-button size="medium" type="info">导出</el-button>
-          <el-button size="medium" type="info">审核数据导入</el-button>
-          <el-button size="medium" type="info">异常数据导入</el-button>
+          <el-upload
+            class="avatar-uploader"
+            :action="uploadURL3"
+            :name="uploadName"
+            :with-credentials= "true"
+            :show-file-list="false"
+            :on-success="handleThreeSuccess"
+            :before-upload="beforeAvatarUpload">
+            <el-button size="medium" type="info">审核数据导入</el-button>
+          </el-upload>
+          <el-upload
+            class="avatar-uploader"
+            :action="uploadURL4"
+            :name="uploadName"
+            :with-credentials= "true"
+            :show-file-list="false"
+            :on-success="handleFourSuccess"
+            :before-upload="beforeAvatarUpload">
+            <el-button size="medium" type="info">异常数据导入</el-button>
+          </el-upload>
           <el-button size="medium" type="info">获取初始导入模板</el-button>
         </div>
       </el-col>
@@ -156,11 +174,25 @@
           <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
         </span>
       </el-dialog>
+      <el-dialog
+        title="正常数据导入结果"
+        :visible.sync="uploadVisible"
+        width="520px"
+        >
+        <div class="information">
+          <p>总上传数据条数：{{dataAdminDetails.anum}}</p>
+          <p>上传成功数据条数：{{dataAdminDetails.num}}</p>
+          <p>表格重复数据条数：{{dataAdminDetails.dup1}}</p>
+          <p>数据库重复数据条数：{{dataAdminDetails.dup2}}</p>
+          <div class="text">重复手机号：{{dataAdminDetails.dupstr}}</div>
+        </div>
+      </el-dialog>
     </el-row>
   </div>
 </template>
 
 <script>
+import {getDaAdList} from '@/api/api'
 export default {
   data () {
     return {
@@ -171,6 +203,8 @@ export default {
       projectnum: '',
       projectname: '',
       uploadURL1: 'http://mgm.fuliunion.com/Project/projectinvestdata/import_projectdata_excel/',
+      uploadURL3: '',
+      uploadURL4: 'http://mgm.fuliunion.com/Project/projectinvestdata/import_audit_projectdata_excel_except',
       uploadName: 'file',
       subphone: '',
       investvalue: '0',
@@ -180,10 +214,8 @@ export default {
       dataList: [],
       loading: true,
       dialogVisible: false,
+      uploadVisible: false,
       currentPage: 1,
-      param: {
-        page: 1
-      },
       examineReason: {
         resource: '',
         num: ''
@@ -245,20 +277,31 @@ export default {
   },
   methods: {
     getDatalist () {
+      getDaAdList(this.currentPage).then((res) => {
+        console.log(res)
+        this.loading = false
+      }).catch((err) => {
+        console.log(err)
+      })
     },
     handleCurrentChange (val) {
       this.datalist = []
       this.loading = true
       this.currentPage = val
-      this.param.page = val
       this.getDatalist()
     },
-    /* 上传文件成功回调 */
+    /* 正常数据导入回调 */
     handleAvatarSuccess (response, file) {
       console.log(response)
+      this.uploadVisible = true
       this.dataAdminDetails = response
       this.$message('上传成功...')
     },
+    /* 审核数据导入回调 */
+    handleThreeSuccess () {},
+    /* 异常数据导入回调 */
+    handleFourSuccess () {},
+    /* 数据导入前 */
     beforeAvatarUpload () {
       this.$message('正在上传...')
     },
@@ -300,12 +343,12 @@ export default {
     .el-input__suffix
       right: 0;
     .el-input
-      width: 140px;
+      width: 170px;
   .select
     .label
       margin-right: 10px;
     .el-select, .el-select--medium
-      width: 160px;
+      width: 170px;
   .marginvi
     margin-left: 0;
   .search_box
@@ -317,6 +360,17 @@ export default {
     display: flex;
     justify-content: flex-end;
     font-size: 14px;
+    .el-button
+      margin-left: 20px;
   .form_table
     padding-right: 60px;
+  .information
+    padding: 0 20px;
+    font-size: 14px
+    p
+      line-height: 28px;
+      width: 440px;
+    .text
+      line-height: 28px;
+      width: 440px;
 </style>

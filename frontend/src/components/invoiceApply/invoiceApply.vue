@@ -4,7 +4,7 @@
       <el-col :span="24">
         <div class="input_search">
           <div class="search marginvi search_box">
-            <label class="labeltext">日期</label>
+            <label class="labeltext">申请日期</label>
             <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate0" size="medium" type="date" placeholder="选择日期"></el-date-picker>
             <span class="line"> — </span>
             <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate1" size="medium" type="date" placeholder="选择日期"></el-date-picker>
@@ -20,6 +20,20 @@
             <el-input size="medium" v-model="projectname"></el-input>
           </div>
           <div class="search">
+            <label class="labeltext">甲方公司</label>
+            <el-input size="medium" v-model="nailCompany"></el-input>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+    <el-row class="row_top">
+      <el-col :span="20">
+        <div class="flex_default">
+          <div class="search marginvi">
+            <label class="labeltext">签约公司</label>
+            <el-input size="medium" v-model="contractCop"></el-input>
+          </div>
+          <div class="search">
             <label class="labeltext">发票类型</label>
             <el-select size="medium" v-model="invoicetype" placeholder="请选择">
               <el-option
@@ -30,21 +44,17 @@
               </el-option>
             </el-select>
           </div>
-        </div>
-      </el-col>
-    </el-row>
-    <el-row class="row_top">
-      <el-col :span="20">
-        <div class="select">
-          <label class="label">审核状态</label>
-          <el-select size="medium" v-model="examinestate" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+          <div class="select">
+            <label class="label">审核状态</label>
+            <el-select size="medium" v-model="examinestate" placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
         </div>
       </el-col>
       <el-col :span="4">
@@ -235,6 +245,8 @@ export default {
       inputdate3: '',
       projectname: '',
       invoicetype: '',
+      contractCop: '',
+      nailCompany: '',
       examinestate: '0',
       options: examineOption,
       dialogVisible: false,
@@ -349,6 +361,8 @@ export default {
           invoice_date_1: this.inputdate3,
           projectname: this.projectname,
           invoice_type: this.invoicetype,
+          contract_company: this.contractCop,
+          company: this.nailCompany,
           state: this.examinestate
         }
       }
@@ -462,7 +476,15 @@ export default {
     this.getProjectList()
   },
   watch: {
+    /* 审核状态搜索 */
     examinestate () {
+      this.dataList = []
+      this.loading = true
+      this.currentPage = 1
+      this.getDatalist()
+    },
+    /* 发票类型搜索 */
+    invoicetype () {
       this.dataList = []
       this.loading = true
       this.currentPage = 1
@@ -482,7 +504,7 @@ export default {
     font-size: 14px;
     margin-left: 10px;
     .labeltext
-      padding-right: 5px
+      margin-right: 10px
     .line
       padding: 0 5px;
       color: #333
@@ -497,7 +519,15 @@ export default {
     .el-input__suffix
       right: 0;
     .el-input
-      width: 140px;
+      width: 170px;
+  .select
+    margin-left: 20px;
+    .label
+      margin-right: 10px;
+    .el-select, .el-select--medium
+      width: 170px;
+  .marginvi
+    margin-left: 0;
   .flexright
     display: flex;
     justify-content: flex-end;
