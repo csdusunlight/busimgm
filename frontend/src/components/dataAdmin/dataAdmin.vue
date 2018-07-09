@@ -81,7 +81,6 @@
             class="avatar-uploader"
             :action="uploadURL1"
             :name="uploadName"
-            :with-credentials= "true"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload">
