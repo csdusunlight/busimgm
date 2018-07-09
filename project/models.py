@@ -2,7 +2,7 @@ from django.db import models
 from account.models import User
 from django.utils import timezone
 import datetime
-
+from decimal import Decimal
 # Create your models here.
 
 ACCOUNT_TYPE = {
@@ -97,7 +97,10 @@ class Project(models.Model):
 
 
     def paid_minus_cost(self):
-        return self.settle-self.cost
+        if self.paccountype=="0":
+            return self.settle-self.cost
+        elif self.paccountype =="1":
+            return self.settle*Decimal(0.94)-self.cost
     profit = property(paid_minus_cost)
 
     def save(self, force_insert=False, force_update=False, using=None,
@@ -169,6 +172,7 @@ class RefundApplyLog(models.Model):
     project = models.ForeignKey(Project, verbose_name="项目", related_name='project_refund_apply',on_delete=models.CASCADE)
     apply_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="申请人",related_name="refundapplyuser",blank=True,null=True)
     audit_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="审核人",related_name="refundaudituser",blank=True,null=True)
+    audituser = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="审核人1", related_name="refundaudituser1",blank=True, null=True)
     inprest = models.DecimalField("预付款金额", max_digits=10, decimal_places=2)
     refund_rec = models.DecimalField("退款金额", max_digits=10, decimal_places=2)
     platname= models.CharField("平台名字", max_length=20)
@@ -194,6 +198,7 @@ class InvoiceApplyLog(models.Model):
     project = models.ForeignKey(Project, verbose_name="项目", related_name='project_invoice_apply',on_delete=models.CASCADE)
     apply_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="申请人",related_name="invoiceapplyuser",blank=True,null=True)
     audit_man=models.ForeignKey(User,on_delete=models.PROTECT,verbose_name="审核人",related_name="invoiceaudituser",blank=True,null=True)
+    audituser = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="审核人", related_name="invoiceaudituser1",blank=True, null=True)
     invoice_num = models.DecimalField("开票金额", max_digits=10, decimal_places=2)
     invoice_date = models.DateField("开票日期", default=datetime.date.today)
     invoice_type= models.CharField("发票类型",choices=INVOICE_TYPE,max_length=2)
