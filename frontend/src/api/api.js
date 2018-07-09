@@ -146,6 +146,18 @@ export function deleteInvoice (id) {
   console.log(url)
   return axios.delete(url)
 }
+/* 发票审核同意 */
+export function agreeInvoice (id) {
+  let url = `${http}/Project/invoiceapplys/${id}/apply_approved/`
+  console.log(url)
+  return axios.post(url)
+}
+/* 发票审核拒绝 */
+export function refuseInvoice (id, data) {
+  let url = `${http}/Project/invoiceapplys/${id}/apply_rejected/`
+  console.log(url)
+  return axios.post(url, data)
+}
 /* ----------------退款申请审核API--------------- */
 /* 新建退款申请 */
 export function postRefund (data) {
@@ -169,6 +181,25 @@ export function deleteRefund (id) {
   let url = `${http}/Project/refundapplys/${id}/`
   console.log(url)
   return axios.delete(url)
+}
+/* 退款审核同意 */
+export function agreeRefund (id) {
+  let url = `${http}/Project/refundapplys/${id}/apply_approved/`
+  console.log(url)
+  return axios.post(url)
+}
+/* 退款审核拒绝 */
+export function refuseRefund (id, data) {
+  let url = `${http}/Project/refundapplys/${id}/apply_rejected/`
+  console.log(url)
+  return axios.post(url, data)
+}
+/* ----------------数据管理API--------------- */
+/* 获取数据管理列表 */
+export function getDaAdList (page, data) {
+  let url = `${http}/Project/projectinvestdata/?page=${page}&pageSize=${pageSize}`
+  console.log(url)
+  return axios.get(url, data)
 }
 /* ----------------其它API--------------- */
 /* 获取项目列表（其它接口获取项目名称用） */

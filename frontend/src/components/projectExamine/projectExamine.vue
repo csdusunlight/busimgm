@@ -13,10 +13,6 @@
                   <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate1" size="medium" type="date" placeholder="选择日期"></el-date-picker>
                 </div>
                 <div class="search">
-                  <label class="labeltext">项目编号</label>
-                  <el-input size="medium" v-model="projectnum"></el-input>
-                </div>
-                <div class="search">
                   <label class="labeltext">项目名称</label>
                   <el-input size="medium" v-model="projectname"></el-input>
                 </div>
@@ -24,15 +20,21 @@
                   <label class="labeltext">商务对接人</label>
                   <el-input size="medium" v-model="takeover"></el-input>
                 </div>
+                <div class="search marginvi">
+                  <label class="labeltext">签约公司</label>
+                  <el-input size="medium" v-model="signingCp"></el-input>
+                </div>
               </div>
             </el-col>
           </el-row>
           <el-row class="row_top">
             <el-col :span="20">
               <div class="flex_default">
-                <div class="search marginvi">
-                  <label class="labeltext">签约公司</label>
-                  <el-input size="medium" v-model="signingCp"></el-input>
+                <div class="search marginvi search_box">
+                  <label class="labeltext">审核日期</label>
+                  <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate2" size="medium" type="date" placeholder="选择日期"></el-date-picker>
+                  <span class="line"> — </span>
+                  <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate3" size="medium" type="date" placeholder="选择日期"></el-date-picker>
                 </div>
                 <div class="select margin_left">
                   <label class="label">结算方式</label>
@@ -115,10 +117,6 @@
                   <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate1_2" size="medium" type="date" placeholder="选择日期"></el-date-picker>
                 </div>
                 <div class="search">
-                  <label class="labeltext">项目编号</label>
-                  <el-input size="medium" v-model="projectnum_2"></el-input>
-                </div>
-                <div class="search">
                   <label class="labeltext">项目名称</label>
                   <el-input size="medium" v-model="projectname_2"></el-input>
                 </div>
@@ -126,15 +124,21 @@
                   <label class="labeltext">商务对接人</label>
                   <el-input size="medium" v-model="takeover_2"></el-input>
                 </div>
+                <div class="search marginvi">
+                  <label class="labeltext">签约公司</label>
+                  <el-input size="medium" v-model="signingCp_2"></el-input>
+                </div>
               </div>
             </el-col>
           </el-row>
           <el-row class="row_top">
             <el-col :span="20">
               <div class="flex_default">
-                <div class="search marginvi">
-                  <label class="labeltext">签约公司</label>
-                  <el-input size="medium" v-model="signingCp_2"></el-input>
+                <div class="search marginvi search_box">
+                  <label class="labeltext">审核日期</label>
+                  <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate2_2" size="medium" type="date" placeholder="选择日期"></el-date-picker>
+                  <span class="line"> — </span>
+                  <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate3_2" size="medium" type="date" placeholder="选择日期"></el-date-picker>
                 </div>
                 <div class="select margin_left">
                   <label class="label">结算方式</label>
@@ -214,7 +218,6 @@ export default {
     return {
       inputdate0: '',
       inputdate1: '',
-      projectnum: '',
       projectname: '',
       takeover: '',
       signingCp: '',
@@ -254,6 +257,10 @@ export default {
       ],
       inputdate0_2: '',
       inputdate1_2: '',
+      inputdate2_2: '',
+      inputdate3_2: '',
+      inputdate2: '',
+      inputdate3: '',
       projectnum_2: '',
       projectname_2: '',
       takeover_2: '',
@@ -490,7 +497,8 @@ export default {
         params: {
           lanched_apply_date_0: this.inputdate0,
           lanched_apply_date_1: this.inputdate1,
-          id: this.projectnum,
+          lanched_audit_date_0: this.inputdate2,
+          lanched_audit_date_1: this.inputdate3,
           name: this.projectname,
           contact: this.takeover,
           contract_company: this.signingCp,
@@ -505,6 +513,8 @@ export default {
         params: {
           concluded_apply_date_0: this.inputdate0_2,
           concluded_apply_date_1: this.inputdate1_2,
+          concluded_audit_date_0: this.inputdate2_2,
+          concluded_audit_date_1: this.inputdate3_2,
           id: this.projectnum_2,
           name: this.projectname_2,
           contact: this.takeover_2,
@@ -529,19 +539,19 @@ export default {
     font-size: 14px;
     margin-left: 10px;
     .labeltext
-      padding-right: 5px
+      margin-right: 10px
     .line
       padding: 0 5px;
       color: #333
     .el-date-editor.el-input, .el-date-editor.el-input__inner
       width: 145px;
     .el-input
-      width: 150px;
+      width: 170px;
   .select
     .label
       margin-right: 10px;
     .el-select, .el-select--medium
-      width: 160px;
+      width: 170px;
   .inputmaxwidth
     .el-input
       width: 200px;

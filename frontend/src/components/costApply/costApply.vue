@@ -4,7 +4,7 @@
       <el-col :span="24">
         <div class="input_search">
           <div class="search marginvi search_box">
-            <label class="labeltext">日期</label>
+            <label class="labeltext">申请日期</label>
             <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate0" size="medium" type="date" placeholder="选择日期"></el-date-picker>
             <span class="line"> — </span>
             <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate1" size="medium" type="date" placeholder="选择日期"></el-date-picker>
@@ -17,11 +17,11 @@
             <label class="labeltext">甲方公司</label>
             <el-input size="medium" v-model="onwcopte"></el-input>
           </div>
-          <div class="select search">
-            <label class="label">审核状态</label>
-            <el-select size="medium" v-model="selectvalue" placeholder="请选择">
+          <div class="select">
+            <label class="label">对公对私</label>
+            <el-select size="medium" v-model="fundtypevalue" placeholder="请选择">
               <el-option
-                v-for="item in options"
+                v-for="item in fundtypeOption"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -34,11 +34,17 @@
     <el-row class="row_top">
       <el-col :span="20">
         <div class="flex_default">
+          <div class="search marginvi search_box">
+            <label class="labeltext">打款日期</label>
+            <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate2" size="medium" type="date" placeholder="选择日期"></el-date-picker>
+            <span class="line"> — </span>
+            <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate3" size="medium" type="date" placeholder="选择日期"></el-date-picker>
+          </div>
           <div class="select">
-            <label class="label">对公对私</label>
-            <el-select size="medium" v-model="fundtypevalue" placeholder="请选择">
+            <label class="label">审核状态</label>
+            <el-select size="medium" v-model="selectvalue" placeholder="请选择">
               <el-option
-                v-for="item in fundtypeOption"
+                v-for="item in options"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -243,6 +249,8 @@ export default {
     return {
       inputdate0: '',
       inputdate1: '',
+      inputdate2: '',
+      inputdate3: '',
       projectnum: '',
       projectname: '',
       onwcopte: '',
@@ -353,6 +361,8 @@ export default {
         params: {
           apply_date_0: this.inputdate0,
           apply_date_1: this.inputdate1,
+          send_date_0: this.inputdate2,
+          send_date_1: this.inputdate3,
           projectname: this.projectname,
           company: this.onwcopte,
           state: this.selectvalue,
@@ -510,7 +520,15 @@ export default {
     this.getProjectList()
   },
   watch: {
+    /* 审核状态 */
     selectvalue () {
+      this.dataList = []
+      this.loading = true
+      this.currentPage = 1
+      this.getCostDatalist()
+    },
+    /* 对公对私 */
+    fundtypevalue () {
       this.dataList = []
       this.loading = true
       this.currentPage = 1
@@ -530,22 +548,25 @@ export default {
     font-size: 14px;
     margin-left: 10px;
     .labeltext
-      padding-right: 5px
+      margin-right: 10px
     .line
       padding: 0 5px;
       color: #333
     .el-date-editor.el-input, .el-date-editor.el-input__inner
       width: 145px;
     .el-input
-      width: 160px;
+      width: 170px;
   .marginvi
     margin-left: 0;
   .flexright
     display: flex;
     justify-content: flex-end;
   .select
+    margin-left: 20px;
     .label
-      margin-right: 12px;
+      margin-right: 10px;
+    .el-select, .el-select--medium
+      width: 170px;
   .img_long
     margin-top:10px;
     display:flex;

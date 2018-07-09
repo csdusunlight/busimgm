@@ -17,9 +17,9 @@
             <label class="labeltext">项目名称</label>
             <el-input size="medium" v-model="projectname"></el-input>
           </div>
-          <div class="search">
-            <label class="labeltext">商务对接人</label>
-            <el-input size="medium" v-model="takeover"></el-input>
+          <div class="search marginvi">
+            <label class="labeltext">签约公司</label>
+            <el-input size="medium" v-model="signingCp"></el-input>
           </div>
         </div>
       </el-col>
@@ -27,11 +27,7 @@
     <el-row class="row_top">
       <el-col :span="20">
         <div class="flex_default">
-          <div class="search marginvi inputmaxwidth">
-            <label class="labeltext">签约公司</label>
-            <el-input size="medium" v-model="signingCp"></el-input>
-          </div>
-          <div class="select margin_left">
+          <div class="select">
             <label class="label">结算方式</label>
             <el-select size="medium" v-model="settlement" placeholder="请选择">
               <el-option
@@ -138,7 +134,7 @@
           </el-table-column>
           <el-table-column label="结项日期" prop="concluded_audit_date" v-if="concludedState"></el-table-column>
           <el-table-column label="消耗费用" prop="consume"></el-table-column>
-          <el-table-column label="已结算费用" prop="settle" width="95"></el-table-column>
+          <el-table-column label="已结算费用" prop="settle"></el-table-column>
           <el-table-column label="待结算/消耗费用" prop="topay_amount"></el-table-column>
           <el-table-column label="已开票金额" prop="invoicenum"></el-table-column>
           <el-table-column label="备注" prop="remark"></el-table-column>
@@ -283,7 +279,6 @@ export default {
       inputdate1: '',
       projectnum: '',
       projectname: '',
-      takeover: '',
       signingCp: '',
       settlement: '',
       projectstate: '0',
@@ -453,7 +448,6 @@ export default {
           lanched_apply_date_1: this.inputdate1,
           id: this.projectnum,
           name: this.projectname,
-          contact: this.takeover,
           contract_company: this.signingCp,
           settleway: this.settlement,
           state: this.projectstate
@@ -641,19 +635,19 @@ export default {
     font-size: 14px;
     margin-left: 10px;
     .labeltext
-      padding-right: 5px
+      margin-right: 10px
     .line
       padding: 0 5px;
       color: #333
     .el-date-editor.el-input, .el-date-editor.el-input__inner
       width: 145px;
     .el-input
-      width: 150px;
+      width: 170px;
   .select
     .label
       margin-right: 10px;
     .el-select, .el-select--medium
-      width: 160px;
+      width: 170px;
   .inputmaxwidth
     .el-input
       width: 200px;
