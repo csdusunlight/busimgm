@@ -7,6 +7,7 @@ from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilte
     InvoiceApplyLogFilter,OperatorLogFilter,ProjectInvestDataFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 
 
@@ -455,6 +456,9 @@ class OperatorLogDetail(viewsets.ModelViewSet):
     filter_class = OperatorLogFilter
 
 
+from django.views.decorators.clickjacking import     xframe_options_exempt
+
+
 class ProjectInvestData(viewsets.ModelViewSet):
     queryset = ProjectInvestDataModel.objects.all()
     serializer_class = ProjectInvestDataSerializer
@@ -469,6 +473,21 @@ class ProjectInvestData(viewsets.ModelViewSet):
         else:
             serializer.save()
 
+    @action(methods=['post'], detail=True)
+    def import_apply_approved(self,request,pk=None,*args,**kwargs):
+        aiminvestrecord=ProjectInvestDataModel.objects.get(id=pk)
+        aiminvestrecord.audit_time= datetime.date.today()
+        aiminvestrecord.state='1'
+        aiminvestrecord.save(update_fields=['audit_time','state'])
+
+    @action(methods=['post'], detail=True)
+    def import_apply_rejected(self, request, pk=None, *args, **kwargs):
+        aiminvestrecord = ProjectInvestDataModel.objects.get(id=pk)
+        aiminvestrecord.audit_time = datetime.date.today()
+        aiminvestrecord.state = '2'
+        aiminvestrecord.save(update_fields=['audit_time', 'state'])
+
+    @xframe_options_exempt
     @action(methods=['post'],detail=False)
     def export_investdata_excel(self,request):
         item_list = self.filter_queryset(self.get_queryset())
@@ -967,6 +986,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
             with cache.lock('investdata_first', timeout=2):
                 # db_key = DBlock.objects.select_for_update().get(index='investdata')
                 for id, values in rtable.items():
+                    print(id)
                     temp = ProjectInvestDataModel.objects.filter(project_id=id).values('invest_mobile')
                     db_mobile_list = map(lambda x: x['invest_mobile'], temp)
                     for item in values:
