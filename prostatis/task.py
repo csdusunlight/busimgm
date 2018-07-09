@@ -3,7 +3,7 @@ from celery import app
 from celery import group
 import datetime
 import time
-from prostatis.models import ProjectStatis,DayStatis
+from prostatis.models import ProjectStatis,DayStatis,ProjectDayDetail
 from project.models import ProjectInvestData
 from project.models import Project
 from django.db.models import Count, Case, When, CharField, Sum, IntegerField, Q
@@ -43,9 +43,15 @@ def add(x, y):
                                 from project_admin_projectinvestdata a \
                                 left join project_project as b \
                                 on a.project_id = b.id \
-                                where audit_time = and state = '1'\
+                                where audit_time =today and state='1'\
                                 group by a.project_id, a.source")
     row = cursor.fetchall()
+
+    """已经拿出来所有的投资记录,然后根据项目名称，计算当前总待收　consume -settle　
+                        budgeted_income        预估利润  结算费用减去消耗　　settle -  cost
+                                
+    
+    """
     project_dic = {}
     for item in row:
         id = item[0]
@@ -54,7 +60,7 @@ def add(x, y):
         ret = item[3]
         accounttype = item[4]
         attr = {}
-        if project_dic.has_key(id):
+        if project_dic.get(id,False):
             attr = project_dic[id]
         else:
             project_dic[id] = attr
@@ -67,7 +73,13 @@ def add(x, y):
     #         print project_dic
     for id, kwarg in project_dic.items():
         obj, created = ProjectStatis.objects.update_or_create(project_id=id, defaults=kwarg)
-        Project.objects.filter(id=id).update(consume=obj.consume())
+        aimpro=Project.objects.filter(id=id).update(consume=obj.consume())
+
+        ProjectDayDetail.objects.create(project=aimpro,
+                                        date=datetime.datetime.today,
+                                        total_to_rec=,
+                                        budgeted_income=,
+                                        lastday_settle_num=,)
 
     update_fields = {}
     update_fields['date'] = datetime.date.today()

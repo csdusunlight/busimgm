@@ -28,36 +28,34 @@
             </el-col>
           </el-row>
           <el-row class="row_top">
-            <el-col :span="6">
-              <div class="search marginvi inputmaxwidth">
-                <label class="labeltext">签约公司</label>
-                <el-input size="medium" v-model="signingCp"></el-input>
-              </div>
-            </el-col>
-            <el-col :span="7">
-              <div class="select margin_clear">
-                <label class="label">结算方式</label>
-                <el-select size="medium" v-model="settlement" placeholder="请选择">
-                  <el-option
-                    v-for="item in settleOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </div>
-            </el-col>
-            <el-col :span="7">
-              <div class="select margin_left">
-                <label class="label">项目状态</label>
-                <el-select size="medium" v-model="projectstate" placeholder="请选择">
-                  <el-option
-                    v-for="item in proOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
+            <el-col :span="20">
+              <div class="flex_default">
+                <div class="search marginvi">
+                  <label class="labeltext">签约公司</label>
+                  <el-input size="medium" v-model="signingCp"></el-input>
+                </div>
+                <div class="select margin_left">
+                  <label class="label">结算方式</label>
+                  <el-select size="medium" v-model="settlement" placeholder="请选择">
+                    <el-option
+                      v-for="item in settleOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </div>
+                <div class="select margin_left">
+                  <label class="label">项目状态</label>
+                  <el-select size="medium" v-model="projectstate" placeholder="请选择">
+                    <el-option
+                      v-for="item in proOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </div>
               </div>
             </el-col>
             <el-col :span="4">
@@ -67,7 +65,7 @@
             </el-col>
           </el-row>
         </div>
-        <div style="margin-top: 20px">
+        <div class="table-list row_top row_bottom">
           <el-table v-loading="loading" :data="dataList.results" style="width: 100%">
             <el-table-column label="项目编号" prop="id"></el-table-column>
             <el-table-column label="日期" prop="lanched_apply_date"></el-table-column>
@@ -84,12 +82,11 @@
             <el-table-column
               v-if = "projectstate == '0'"
               :key="Math.random()"
-              width="160"
               label="操作">
               <template slot-scope="scope">
                 <div class="operation_button">
-                  <el-button size="mini" type="warning" @click="comfirmProjectAdd(scope.row.id)">审核</el-button>
-                  <el-button size="mini" type="success" @click="refuseProjectAdd(scope.row.id)">拒绝</el-button>
+                  <div class="op_button_padding"><el-button size="mini" type="warning" @click="comfirmProjectAdd(scope.row.id)">审核</el-button></div>
+                  <div class="op_button_padding"><el-button size="mini" type="success" @click="refuseProjectAdd(scope.row.id)">拒绝</el-button></div>
                 </div>
               </template>
             </el-table-column>
@@ -133,36 +130,34 @@
             </el-col>
           </el-row>
           <el-row class="row_top">
-            <el-col :span="6">
-              <div class="search marginvi inputmaxwidth">
-                <label class="labeltext">签约公司</label>
-                <el-input size="medium" v-model="signingCp_2"></el-input>
-              </div>
-            </el-col>
-            <el-col :span="7">
-              <div class="select margin_clear">
-                <label class="label">结算方式</label>
-                <el-select size="medium" v-model="settlement_2" placeholder="请选择">
-                  <el-option
-                    v-for="item in settleOptions_2"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </div>
-            </el-col>
-            <el-col :span="7">
-              <div class="select margin_left">
-                <label class="label">项目状态</label>
-                <el-select size="medium" v-model="projectstate_2" placeholder="请选择">
-                  <el-option
-                    v-for="item in proOptions_2"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
+            <el-col :span="20">
+              <div class="flex_default">
+                <div class="search marginvi">
+                  <label class="labeltext">签约公司</label>
+                  <el-input size="medium" v-model="signingCp_2"></el-input>
+                </div>
+                <div class="select margin_left">
+                  <label class="label">结算方式</label>
+                  <el-select size="medium" v-model="settlement_2" placeholder="请选择">
+                    <el-option
+                      v-for="item in settleOptions_2"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </div>
+                <div class="select margin_left">
+                  <label class="label">项目状态</label>
+                  <el-select size="medium" v-model="projectstate_2" placeholder="请选择">
+                    <el-option
+                      v-for="item in proOptions_2"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </div>
               </div>
             </el-col>
             <el-col :span="4">
@@ -172,7 +167,7 @@
             </el-col>
           </el-row>
         </div>
-        <div style="margin-top: 20px">
+        <div class="table-list row_top row_bottom">
           <el-table v-loading="loading" :data="dataList2.results" style="width: 100%">
             <el-table-column label="项目编号" prop="id"></el-table-column>
             <el-table-column label="日期" prop="lanched_apply_date"></el-table-column>
@@ -186,12 +181,11 @@
             <el-table-column
               v-if = "projectstate_2 == '4'"
               :key="Math.random()"
-              width="160"
               label="操作">
               <template slot-scope="scope">
                 <div class="operation_button">
-                  <el-button size="mini" type="warning" @click="comfirmProjectEnd(scope.row.id)">审核</el-button>
-                  <el-button size="mini" type="success" @click="refuseProjectEnd(scope.row.id)">拒绝</el-button>
+                  <div class="op_button_padding"><el-button size="mini" type="warning" @click="comfirmProjectEnd(scope.row.id)">审核</el-button></div>
+                  <div class="op_button_padding"><el-button size="mini" type="success" @click="refuseProjectEnd(scope.row.id)">拒绝</el-button></div>
                 </div>
               </template>
             </el-table-column>

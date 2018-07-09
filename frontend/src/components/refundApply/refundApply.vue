@@ -32,7 +32,7 @@
       </el-col>
       <el-col :span="2">
         <div class="flexright">
-          <el-button size="medium" type="primary">搜索</el-button>
+          <el-button size="medium" type="primary" @click="searchBtn">搜索</el-button>
         </div>
       </el-col>
     </el-row>
@@ -77,8 +77,8 @@
             </el-form-item>
             <el-form-item label="是否已开票" prop="is_invoice">
               <el-radio-group v-model="addRefund.is_invoice">
-                <el-radio :label="0">否</el-radio>
-                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">是</el-radio>
+                <el-radio :label="1">否</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="预付款金额" prop="inprest">
@@ -110,27 +110,146 @@
         </span>
       </el-dialog>
     </el-row>
+    <el-row class="row_top row_bottom">
+      <div class="table-list">
+        <el-table v-loading="loading" :data="dataList.results" style="width: 100%">
+          <el-table-column label="日期" prop="apply_date" width="100"></el-table-column>
+          <el-table-column label="项目名称" prop="projectname"></el-table-column>
+          <el-table-column label="甲方公司名称" prop="company"></el-table-column>
+          <el-table-column label="平台名称" prop="platname" width="100"></el-table-column>
+          <el-table-column label="对公对私">
+            <template slot-scope="scope">
+              <span>{{paccountFliter[scope.row.fundtype]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="是否已开票">
+            <template slot-scope="scope">
+              <span>{{invoiceFilter[scope.row.is_invoice]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="预付款金额" prop="inprest" width="100"></el-table-column>
+          <el-table-column label="已消耗金额" prop="consume_sum"></el-table-column>
+          <el-table-column label="退款金额" prop="refund_rec"></el-table-column>
+          <el-table-column label="签约公司" prop="contract_company"></el-table-column>
+          <el-table-column label="开户行" prop="bank"></el-table-column>、
+          <el-table-column label="银行账号" prop="bank_account"></el-table-column>
+          <el-table-column label="退款原因" prop="refund_reason"></el-table-column>
+          <el-table-column label="审核状态" prop="state">
+            <template slot-scope="scope">
+              <span>{{stateFilter[scope.row.state]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <div class="operation_button">
+                <div class="op_button_padding"><el-button size="mini" type="danger" @click="modifyRefundBtn(scope.row)">修改</el-button></div>
+                <div class="op_button_padding"><el-button size="mini" type="warning" @click="deleteRefundBtn(scope.row)">删除</el-button></div>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="pagination">
+        <el-pagination
+          background
+          @current-change="handleCurrentChange"
+          :page-size="10"
+          :current-page="this.currentPage"
+          layout="prev, pager, next, total, jumper"
+          :total="this.dataList.recordCount">
+        </el-pagination>
+      </div>
+      <el-dialog
+        title="退款申请修改"
+        :visible.sync="modifyRefundVisible"
+        width="50%"
+        >
+        <div class="form_table">
+          <el-form :model="modifyRefund" ref="addRefund" label-width="120px" class="demo-ruleForm">
+            <el-form-item label="项目名称" prop="project">
+              <el-select size="medium" filterable v-model="modifyRefund.project" placeholder="请选择">
+                <el-option
+                  v-for="item in projectOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="甲方公司名称" prop="company">
+              <el-input v-model="modifyRefund.company" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="平台名称" prop="platname">
+              <el-input v-model="modifyRefund.platname" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="对公对私" prop="fundtype">
+              <el-select size="medium" v-model="modifyRefund.fundtype" placeholder="请选择">
+                <el-option
+                  v-for="item in paccountypeops"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="是否已开票" prop="is_invoice">
+              <el-radio v-model="modifyRefund.is_invoice" label="0">是</el-radio>
+              <el-radio v-model="modifyRefund.is_invoice" label="1">否</el-radio>
+            </el-form-item>
+            <el-form-item label="预付款金额" prop="inprest">
+              <el-input v-model="modifyRefund.inprest" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="已消耗金额" prop="consume_sum">
+              <el-input v-model="modifyRefund.consume_sum" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="退款金额" prop="refund_rec">
+              <el-input v-model="modifyRefund.refund_rec" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="签约公司" prop="contract_company">
+              <el-input v-model="modifyRefund.contract_company" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="开户行" prop="bank">
+              <el-input v-model="modifyRefund.bank" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="银行账号" prop="bank_account">
+              <el-input v-model="modifyRefund.bank_account" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="退款原因" prop="refund_reason">
+              <el-input type="textarea" v-model="modifyRefund.refund_reason" size="medium"></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="subModifyRefund">确 定</el-button>
+        </span>
+      </el-dialog>
+    </el-row>
   </div>
 </template>
 
 <script>
-import {examineOption, paccounOption} from '@/common/js/options'
-import {postRefund, allGetProject, getRefundList} from '@/api/api'
+import {examineOption, paccounOption, paccountypeopsFilter, examineFilter} from '@/common/js/options'
+import {postRefund, allGetProject, getRefundList, putRefund, deleteRefund} from '@/api/api'
 export default {
   data () {
     return {
       inputdate0: '',
       inputdate1: '',
-      inputdate2: '',
-      inputdate3: '',
       projectname: '',
-      takeover: '',
       contractcop: '',
       examinestate: '0',
       options: examineOption,
       paccountypeops: paccounOption,
+      paccountFliter: paccountypeopsFilter,
+      stateFilter: examineFilter,
       projectOption: [],
       dialogVisible: false,
+      modifyRefundVisible: false,
+      invoiceFilter: {0: '是', 1: '否'},
+      loading: true,
+      dataList: {},
+      currentPage: 1,
       addRefund: {
         project: '',
         company: '',
@@ -196,8 +315,16 @@ export default {
         refund_reason: [
           { required: true, message: '请输入退款原因', trigger: 'blur' }
         ]
+      },
+      modifyRefund: {
+        fundtype: '',
+        project: '',
+        is_invoice: ''
       }
     }
+  },
+  created () {
+    this.getRefundDatalist()
   },
   methods: {
     /* 打开退款申请对话框 */
@@ -224,7 +351,7 @@ export default {
           apply_date_1: this.inputdate1,
           projectname: this.projectname,
           contract_company: this.contractcop,
-          state: this.selectvalue
+          state: this.examinestate
         }
       }
       return Data
@@ -239,10 +366,11 @@ export default {
               this.$refs[addRefund].resetFields()
               this.$message({
                 type: 'success',
-                message: '新建项目成功!'
+                message: '提交退款申请成功'
               })
               this.dialogVisible = false
-              this.getProjectdata()
+              this.loading = true
+              this.getRefundDatalist()
             } else {
               this.dialogVisible = false
               this.$message(res.data.detail)
@@ -270,10 +398,79 @@ export default {
       }).catch((err) => {
         console.log(err)
       })
+    },
+    /* 分页 */
+    handleCurrentChange (val) {
+      this.datalist = []
+      this.loading = true
+      this.currentPage = val
+      this.getRefundDatalist()
+    },
+    /* 打开修改退款申请对话框 */
+    modifyRefundBtn (row) {
+      this.modifyRefundVisible = true
+      Object.assign(this.modifyRefund, row)
+      console.log(this.modifyRefund)
+    },
+    /* 提交退款修改 */
+    subModifyRefund () {
+      putRefund(this.modifyRefund.id, this.modifyRefund).then((res) => {
+        console.log(res)
+        this.$message({
+          type: 'success',
+          message: '修改成功!'
+        })
+        this.modifyRefundVisible = false
+        this.loading = true
+        this.getRefundDatalist()
+      }).catch((err) => {
+        this.modifyRefundVisible = false
+        console.log(err)
+      })
+    },
+    /* 删除退款申请 */
+    deleteRefundBtn (row) {
+      this.$confirm('此操作将永久删除该申请, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteRefund(row.id).then((res) => {
+          if (res.data.code === '0') {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.loading = true
+            this.getRefundDatalist()
+          } else {
+            this.$message(res.data.detail)
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    /* 搜索 */
+    searchBtn () {
+      this.loading = true
+      this.currentPage = 1
+      this.getRefundDatalist()
     }
   },
   mounted () {
     this.getProjectList()
+  },
+  watch: {
+    examinestate () {
+      this.dataList = []
+      this.loading = true
+      this.currentPage = 1
+      this.getRefundDatalist()
+    }
   }
 }
 </script>

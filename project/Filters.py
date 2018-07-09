@@ -1,5 +1,5 @@
 import django_filters
-from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestData
+from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestDataModel
 class ProjectFilter(django_filters.rest_framework.FilterSet):
     lanched_apply_date = django_filters.DateFromToRangeFilter(name="lanched_apply_date")
     lanched_audit_date = django_filters.DateFromToRangeFilter(name="lanched_audit_date")
@@ -15,6 +15,8 @@ class ProjectFilter(django_filters.rest_framework.FilterSet):
 class FundApplyLogFilter(django_filters.rest_framework.FilterSet):
     apply_date = django_filters.DateFromToRangeFilter(name="apply_date")
     audit_date = django_filters.DateFromToRangeFilter(name="audit_date")
+    send_date = django_filters.DateFromToRangeFilter(name="send_date")
+
     audit_state = django_filters.CharFilter(name="audit_state", lookup_expr='contains')
     projectname = django_filters.CharFilter(name="project", lookup_expr='name__contains')
 
@@ -37,6 +39,8 @@ class RefundApplyLogFilter(django_filters.rest_framework.FilterSet):
 class InvoiceApplyLogFilter(django_filters.rest_framework.FilterSet):
     apply_date = django_filters.DateFromToRangeFilter(name="apply_date")
     audit_date = django_filters.DateFromToRangeFilter(name="audit_date")
+    invoice_date = django_filters.DateFromToRangeFilter(name="invoice_date")
+
     audit_state = django_filters.CharFilter(name="audit_state", lookup_expr='contains')
     projectname = django_filters.CharFilter(name="project", lookup_expr='name__contains')
 
@@ -61,5 +65,5 @@ class ProjectInvestDataFilter(django_filters.rest_framework.FilterSet):
     audittime = django_filters.DateTimeFromToRangeFilter(name="audit_time")
     projectname = django_filters.CharFilter(name="project", lookup_expr='name__contains')
     class Meta:
-        model = ProjectInvestData
+        model = ProjectInvestDataModel
         fields = ['is_futou', 'invest_time', 'project', 'projectname', 'investtime','state', 'invest_mobile', 'audittime', 'source']

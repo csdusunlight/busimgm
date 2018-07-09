@@ -1,5 +1,5 @@
 from rest_framework import generics, permissions
-from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestData
+from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestDataModel
 from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
     RefundApplyLogSerializer,InvoiceApplyLogSerializer,FundApplyLogListSerializer,\
     RefundApplyLogListSerializer,InvoiceApplyLogListSerializer,OperatorLogSerializer,ProjectInvestDataSerializer
@@ -328,7 +328,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     @action(methods=['post'],detail=True)
     def apply_approved(self, request, pk=None,*args,**kwargs):
         """审核通过"""
-        aimrefund = FundApplyLog.objects.get(id=pk)
+        aimrefund = RefundApplyLog.objects.get(id=pk)
         aimrefund.audit_man=request.user
         aimrefund.state='1'
         aimrefund.audit_date = datetime.date.today()
@@ -347,7 +347,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     def apply_rejected(self, request, pk=None,*args,**kwargs):
         """立项审核拒绝"""
         reason=request.data['reason']
-        aimrefend = FundApplyLog.objects.get(id=pk)
+        aimrefend = RefundApplyLog.objects.get(id=pk)
         aimrefend.audit_man=request.user
         aimrefend.state='2'
         aimrefend.audit_date =  datetime.date.today()
@@ -436,7 +436,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     def apply_rejected(self, request, pk=None,*args,**kwargs):
         """立项审核拒绝"""
         reason=request.data['reason']
-        aiminvoice = FundApplyLog.objects.get(id=pk)
+        aiminvoice =  InvoiceApplyLog.objects.get(id=pk)
         aiminvoice.audit_man=request.user
         aiminvoice.state='2'
         aiminvoice.audit_date =  datetime.date.today()
@@ -456,7 +456,7 @@ class OperatorLogDetail(viewsets.ModelViewSet):
 
 
 class ProjectInvestData(viewsets.ModelViewSet):
-    queryset = ProjectInvestData.objects.all()
+    queryset = ProjectInvestDataModel.objects.all()
     serializer_class = ProjectInvestDataSerializer
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
@@ -601,7 +601,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 project_id = row['project_id']
                 state = row['state']
                 date = row['date']
-                event = ProjectInvestData.objects.get(id=id)
+                event = ProjectInvestDataModel.objects.get(id=id)
                 #             if event.state != '1':
                 #                 continue
                 event.state = state
@@ -722,7 +722,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 state = row['state']
                 date = row['date']
                 term = row['term']
-                event = ProjectInvestData.objects.get(id=id)
+                event = ProjectInvestDataModel.objects.get(id=id)
                 #             if event.state != '1':
                 #                 continue
                 event.state = state
@@ -844,7 +844,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 state = row['state']
                 date = row['date']
                 term = row['term']
-                event = ProjectInvestData.objects.get(id=id)
+                event = ProjectInvestDataModel.objects.get(id=id)
                 #             if event.state != '1':
                 #                 continue
                 event.state = state
@@ -963,30 +963,30 @@ class ProjectInvestData(viewsets.ModelViewSet):
         investdata_list = []
         duplicate_mobile_list = []
         try:
-            with transaction.atomic():
-                with cache.lock('investdata_first', timeout=2):
-                    # db_key = DBlock.objects.select_for_update().get(index='investdata')
-                    for id, values in rtable.items():
-                        temp = ProjectInvestData.objects.filter(project_id=id).values('invest_mobile')
-                        db_mobile_list = map(lambda x: x['invest_mobile'], temp)
-                        for item in values:
-                            pid = item[0]
-                            time = item[3]
-                            mob = item[4]
-                            is_futou = item[2]
-                            amount = item[5]
-                            term = item[6]
-                            settle = item[7]
-                            source = ''
-                            remark = ''
-                            if not is_futou and mob in db_mobile_list:
-                                duplicate_mobile_list.append(mob)
-                            else:
-                                obj = ProjectInvestData(project_id=pid, invest_mobile=mob, settle_amount=settle,
-                                                        invest_amount=amount, invest_term=term, invest_time=time,
-                                                        state='1', remark=remark, source=source, is_futou=is_futou)
-                                investdata_list.append(obj)
-                    ProjectInvestData.objects.bulk_create(investdata_list)
+
+            with cache.lock('investdata_first', timeout=2):
+                # db_key = DBlock.objects.select_for_update().get(index='investdata')
+                for id, values in rtable.items():
+                    temp = ProjectInvestDataModel.objects.filter(project_id=id).values('invest_mobile')
+                    db_mobile_list = map(lambda x: x['invest_mobile'], temp)
+                    for item in values:
+                        pid = item[0]
+                        time = item[3]
+                        mob = item[4]
+                        is_futou = item[2]
+                        amount = item[5]
+                        term = item[6]
+                        settle = item[7]
+                        source = ''
+                        remark = ''
+                        if not is_futou and mob in db_mobile_list:
+                            duplicate_mobile_list.append(mob)
+                        else:
+                            obj = ProjectInvestDataModel(project_id=pid, invest_mobile=mob, settle_amount=settle,
+                                                    invest_amount=amount, invest_term=term, invest_time=time,
+                                                    state='1', remark=remark, source=source, is_futou=is_futou)
+                            investdata_list.append(obj)
+                ProjectInvestDataModel.objects.bulk_create(investdata_list)
         except Exception as e:
             logger.info(e)
             #             traceback.print_exc()

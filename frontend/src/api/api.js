@@ -21,7 +21,7 @@ export function login (data) {
   console.log(url)
   return axios.post(url, qs.stringify(data))
 }
-
+/* ----------------项目申请审核API--------------- */
 /* 获取项目审核列表 */
 export function getProjectList (page, data) {
   let url = `${http}/Project/projects/?page=${page}&pageSize=${pageSize}`
@@ -44,12 +44,6 @@ export function putProject (id, data) {
   let url = `${http}/Project/projects/${id}/is_altered/`
   console.log(url)
   return axios.put(url, data)
-}
-/* 获取图片token值 */
-export function getToken () {
-  let url = `${http}/get_upload_token/`
-  console.log(url)
-  return axios.get(url)
 }
 /* 删除项目 */
 export function deleteProject (id) {
@@ -93,6 +87,7 @@ export function searchProject (page, data) {
   console.log(url)
   return axios.delete(url, data)
 }
+/* ----------------费用申请审核API--------------- */
 /* 获取费用申请列表 */
 export function getCostList (page, data) {
   let url = `${http}/Project/fundapplys/?page=${page}&pageSize=${pageSize}`
@@ -116,6 +111,19 @@ export function deleteCost (id) {
   console.log(url)
   return axios.delete(url)
 }
+/* 费用审核同意 */
+export function agreeCost (id) {
+  let url = `${http}/Project/fundapplys/${id}/apply_approved/`
+  console.log(url)
+  return axios.post(url)
+}
+/* 费用审核拒绝 */
+export function refuseCost (id, data) {
+  let url = `${http}/Project/fundapplys/${id}/apply_rejected/`
+  console.log(url)
+  return axios.post(url, data)
+}
+/* ----------------发票申请审核API--------------- */
 /* 新建发票申请 */
 export function postInvoice (data) {
   let url = `${http}/Project/invoiceapplys/`
@@ -138,6 +146,7 @@ export function deleteInvoice (id) {
   console.log(url)
   return axios.delete(url)
 }
+/* ----------------退款申请审核API--------------- */
 /* 新建退款申请 */
 export function postRefund (data) {
   let url = `${http}/Project/refundapplys/`
@@ -149,7 +158,20 @@ export function getRefundList (page, data) {
   console.log(url)
   return axios.get(url, data)
 }
-/* 获取项目列表 */
+/* 退款申请修改修改 */
+export function putRefund (id, data) {
+  let url = `${http}/Project/refundapplys/${id}/is_altered/`
+  console.log(url)
+  return axios.put(url, data)
+}
+/* 删除退款 */
+export function deleteRefund (id) {
+  let url = `${http}/Project/refundapplys/${id}/`
+  console.log(url)
+  return axios.delete(url)
+}
+/* ----------------其它API--------------- */
+/* 获取项目列表（其它接口获取项目名称用） */
 export function allGetProject () {
   let data = {
     params: {
@@ -159,4 +181,10 @@ export function allGetProject () {
   let url = `${http}/Project/projects/?page=1&pageSize=999`
   console.log(url)
   return axios.get(url, data)
+}
+/* 获取图片token值 */
+export function getToken () {
+  let url = `${http}/get_upload_token/`
+  console.log(url)
+  return axios.get(url)
 }
