@@ -485,6 +485,9 @@ class ProjectInvestData(viewsets.ModelViewSet):
         aiminvestrecord.invest_mobile = invest_mobile
         aiminvestrecord.state='1'
         aiminvestrecord.save(update_fields=['audit_time','state','source','invest_mobile','return_amount'])
+        resultdict={}
+        resultdict['code']=0
+        return Response(resultdict)
 
     @action(methods=['post'], detail=True)
     def import_apply_rejected(self, request, pk=None, *args, **kwargs):
