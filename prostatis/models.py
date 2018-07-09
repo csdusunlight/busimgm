@@ -43,6 +43,8 @@ class ProjectDayDetail(models.Model):
     total_to_rec = models.DecimalField("总待收", max_digits=10, decimal_places=2, null=True)
     budgeted_income = models.DecimalField("预估利润", max_digits=10, decimal_places=2, null=True)
     lastday_settle_num = models.DecimalField("昨日结算金额", max_digits=10, decimal_places=2, null=True)
+    #lastday_settled_pro_num = models.IntegerField("昨日结算项目数",null=True)
+
 
 
 class ProjectStatis(models.Model):

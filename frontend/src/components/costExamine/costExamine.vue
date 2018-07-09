@@ -4,22 +4,22 @@
       <el-col :span="24">
         <div class="input_search">
           <div class="search marginvi">
-            <label class="labeltext">日期</label>
+            <label class="labeltext">申请日期</label>
             <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate0" size="medium" type="date" placeholder="选择日期"></el-date-picker>
             <span class="line"> — </span>
             <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate1" size="medium" type="date" placeholder="选择日期"></el-date-picker>
           </div>
           <div class="search">
-            <label class="labeltext">开票日期</label>
+            <label class="labeltext">审核日期</label>
             <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate2" size="medium" type="date" placeholder="选择日期"></el-date-picker>
             <span class="line"> — </span>
             <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate3" size="medium" type="date" placeholder="选择日期"></el-date-picker>
           </div>
           <div class="search">
-            <label class="labeltext">开票日期</label>
-            <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate2" size="medium" type="date" placeholder="选择日期"></el-date-picker>
+            <label class="labeltext">打款时间</label>
+            <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate4" size="medium" type="date" placeholder="选择日期"></el-date-picker>
             <span class="line"> — </span>
-            <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate3" size="medium" type="date" placeholder="选择日期"></el-date-picker>
+            <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate5" size="medium" type="date" placeholder="选择日期"></el-date-picker>
           </div>
         </div>
       </el-col>
@@ -27,23 +27,40 @@
     <el-row class="row_top">
       <el-col :span="24">
         <div class="input_search">
-          <div class="search marginvi search_box">
-            <label class="labeltext">日期</label>
-            <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate0" size="medium" type="date" placeholder="选择日期"></el-date-picker>
-            <span class="line"> — </span>
-            <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate1" size="medium" type="date" placeholder="选择日期"></el-date-picker>
-          </div>
-          <div class="search search_box">
-            <label class="labeltext">开票日期</label>
-            <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate2" size="medium" type="date" placeholder="选择日期"></el-date-picker>
-            <span class="line"> — </span>
-            <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate3" size="medium" type="date" placeholder="选择日期"></el-date-picker>
+          <div class="search marginvi">
+            <label class="labeltext">项目名称</label>
+            <el-input size="medium" v-model="projectname"></el-input>
           </div>
           <div class="search">
-            <label class="labeltext">甲方公司</label>
+            <label class="labeltext">甲方公司名称</label>
             <el-input size="medium" v-model="onwcopte"></el-input>
           </div>
-          <div class="select" style="margin-left: 10px;">
+          <div class="search">
+            <label class="labeltext">商务对接人</label>
+            <el-input size="medium" v-model="toTakeOver"></el-input>
+          </div>
+          <div class="search">
+            <label class="labeltext">审核人</label>
+            <el-input size="medium" v-model="auditor"></el-input>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+    <el-row class="row_top">
+      <el-col :span="20">
+        <div class="flex_default">
+          <div class="select">
+            <label class="label">对公对私</label>
+            <el-select size="medium" v-model="fundtypevalue" placeholder="请选择">
+              <el-option
+                v-for="item in fundtypeOption"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+          <div class="select" style="margin-left: 15px;">
             <label class="label">审核状态</label>
             <el-select size="medium" v-model="selectvalue" placeholder="请选择">
               <el-option
@@ -56,8 +73,6 @@
           </div>
         </div>
       </el-col>
-    </el-row>
-    <el-row class="row_top">
       <el-col :span="4">
         <div class="flexright">
           <el-button size="medium" type="primary" @click="searchBtn">搜索</el-button>
@@ -85,10 +100,10 @@
           </el-table-column>
           <el-table-column label="甲方公司名称" prop="company"></el-table-column>
           <el-table-column label="商务对接人" prop="apply_man"></el-table-column>
-          <el-table-column label="审核人" prop="apply_man" :key="Math.random()" v-if="examineData"></el-table-column>
+          <el-table-column label="审核人" prop="audit_man" :key="Math.random()" v-if="examineData"></el-table-column>
           <el-table-column label="审核时间" prop="audit_date" :key="Math.random()" v-if="examineData"></el-table-column>
-          <el-table-column label="拒绝原因" prop="record" :key="Math.random()" v-if="examineData"></el-table-column>
-          <el-table-column label="备注" prop="record" :key="Math.random()" v-if="operationShow"></el-table-column>
+          <el-table-column label="拒绝原因" prop="audit_refused_reason" :key="Math.random()" v-if="examineAdopt"></el-table-column>
+          <el-table-column label="备注" prop="record"></el-table-column>
           <el-table-column label="操作" :key="Math.random()" v-if="operationShow">
             <template slot-scope="scope">
               <div class="operation_button">
@@ -141,15 +156,34 @@ export default {
       inputdate1: '',
       inputdate2: '',
       inputdate3: '',
-      projectnum: '',
+      inputdate4: '',
+      inputdate5: '',
+      fundtypevalue: '',
       projectname: '',
       onwcopte: '',
+      toTakeOver: '',
+      auditor: '',
       selectvalue: '0',
+      fundtypeOption: [
+        {
+          value: '',
+          label: '全部'
+        },
+        {
+          value: '1',
+          label: '对私'
+        },
+        {
+          value: '0',
+          label: '对公'
+        }
+      ],
       options: examineOption,
       dataList: [],
       dialogVisible: false,
       operationShow: true,
       examineData: true,
+      examineAdopt: true,
       uploadIcon: false,
       loading: true,
       paccountFliter: paccountypeopsFilter,
@@ -183,6 +217,11 @@ export default {
         this.operationShow = false
         this.examineData = true
       }
+      if (this.selectvalue === '2') {
+        this.examineAdopt = true
+      } else {
+        this.examineAdopt = false
+      }
       getCostList(this.currentPage, data).then((res) => {
         this.dataList = res.data
         this.loading = false
@@ -192,7 +231,6 @@ export default {
     },
     /* 搜索 */
     searchBtn () {
-      this.searchState = 2
       this.currentPage = 1
       this.getCostDatalist()
     },
@@ -204,21 +242,20 @@ export default {
     },
     /* 搜索条件拼接 */
     conditionDate () {
-      let Data = {}
-      if (this.searchState === 0) {
-        Data = {
-          params: {
-            state: this.selectvalue
-          }
-        }
-      } else {
-        Data = {
-          params: {
-            id: this.projectnum,
-            project: this.projectname,
-            company: this.onwcopte,
-            audit_state: this.selectvalue
-          }
+      let Data = {
+        params: {
+          apply_date_0: this.inputdate0,
+          apply_date_1: this.inputdate1,
+          audit_date_0: this.inputdate2,
+          audit_date_1: this.inputdate3,
+          send_date_0: this.inputdate4,
+          send_date_1: this.inputdate5,
+          projectname: this.projectname,
+          company: this.onwcopte,
+          apply_man: this.toTakeOver,
+          audit_man: this.auditor,
+          fundtype: this.fundtypevalue,
+          state: this.selectvalue
         }
       }
       return Data
@@ -283,8 +320,16 @@ export default {
     }
   },
   watch: {
+    /* 审核状态 */
     selectvalue () {
-      this.searchState = 0
+      this.datalist = []
+      this.currentPage = 1
+      this.getCostDatalist()
+    },
+    /* 对公对私 */
+    fundtypevalue () {
+      this.dataList = []
+      this.loading = true
       this.currentPage = 1
       this.getCostDatalist()
     }
@@ -302,21 +347,25 @@ export default {
     font-size: 14px;
     margin-left: 10px;
     .labeltext
-      padding-right: 5px
+      margin-right: 10px
     .line
       padding: 0 5px;
       color: #333
     .el-date-editor.el-input, .el-date-editor.el-input__inner
-      width: 140px;
+      width: 145px;
     .el-input
-      width: 140px;
+      width: 200px;
+  .marginvi
+    margin-left: 0;
   .flexright
     display: flex;
     justify-content: flex-end;
     padding-right: 18px;
   .select
     .label
-      margin-right: 12px;
+      margin-right: 10px;
+    .el-select, .el-select--medium
+      width: 200px;
   .search_box
     width: 350px;
   .img_long
