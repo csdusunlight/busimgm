@@ -86,7 +86,7 @@
             :before-upload="beforeAvatarUpload">
             <el-button size="medium" type="info">导入</el-button>
           </el-upload>
-          <el-button size="medium" type="info">导出</el-button>
+          <el-button @click="exportExel" size="medium" type="info">导出</el-button>
           <el-upload
             class="avatar-uploader"
             :action="uploadURL3"
@@ -107,7 +107,7 @@
             :before-upload="beforeAvatarUpload">
             <el-button size="medium" type="info">异常数据导入</el-button>
           </el-upload>
-          <el-button size="medium" type="info">获取初始导入模板</el-button>
+          <a href="http://mgm.fuliunion.com/frontent/template.xls"><el-button size="medium" type="info">获取初始导入模板</el-button></a>
         </div>
       </el-col>
     </el-row>
@@ -187,6 +187,7 @@
         </div>
       </el-dialog>
     </el-row>
+    <iframe id="myIFrame" scrolling="yes" style="display:none" frameborder=1></iframe>
   </div>
 </template>
 
@@ -288,6 +289,28 @@ export default {
       this.loading = true
       this.currentPage = val
       this.getDatalist()
+    },
+    /* 导出数据 */
+    exportExel () {
+      console.log('数据导出')
+      var exportUrl = 'http://mgm.fuliunion.com/Project/projectinvestdata/export_investdata_excel/'
+      var html = '<form action="' + exportUrl + '" method="post" target="_self" id="postData_form">'
+      html += '<input name="investtime_0" type="hidden" value="' + this.inputdate0 + '"/>'
+      html += '<input name="investtime_1" type="hidden" value="' + this.inputdate1 + '"/>'
+      html += '<input name="audittime_0" type="hidden" value="' + this.inputdate2 + '"/>'
+      html += '<input name="audittime_1" type="hidden" value="' + this.inputdate3 + '"/>'
+      html += '<input name="project" type="hidden" value="' + this.projectnum + '"/>'
+      html += '<input name="projectname" type="hidden" value="' + this.projectname + '"/>'
+      html += '<input name="invest_mobile" type="hidden" value="' + this.subphone + '"/>'
+      html += '<input name="source" type="hidden" value="' + this.investvalue + '"/>'
+      html += '<input name="is_futou" type="hidden" value="' + this.inmodevalue + '"/>'
+      html += '<input name="state" type="hidden" value="' + this.examinestate + '"/>'
+      html += '</form>'
+      var iframe = document.getElementById('myIFrame')
+      iframe.contentWindow.document.open()
+      iframe.contentWindow.document.write(html)
+      iframe.contentWindow.document.close()
+      document.getElementById('myIFrame').contentWindow.document.getElementById('postData_form').submit()
     },
     /* 正常数据导入回调 */
     handleAvatarSuccess (response, file) {
