@@ -79,7 +79,7 @@
         </div>
       </el-col>
     </el-row>
-    <el-row class="row_top row_buttom">
+    <el-row class="row_top row_bottom">
       <div class="table-list">
         <el-table v-loading="loading" :data="dataList.results" style="width: 100%">
           <el-table-column label="日期" prop="apply_date"></el-table-column>

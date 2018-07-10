@@ -73,9 +73,7 @@
       <el-col :span="21" :offset="3" style="overflow-y: auto; position: absolute; top: 0; bottom: 0;">
          <v-header></v-header>
         <div class="bg-color">
-          <keep-alive>
-            <router-view></router-view>
-          </keep-alive>
+          <router-view></router-view>
         </div>
       </el-col>
     </el-row>
