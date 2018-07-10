@@ -231,3 +231,9 @@ export function getToken () {
   console.log(url)
   return axios.get(url)
 }
+/* ----------------数据总览--------------- */
+export function getDataOverview (page) {
+  let url = `${http}/Project/prostatis/get_date1/?page=${page}&pageSize=${pageSize}`
+  console.log(url)
+  return axios.get(url)
+}
