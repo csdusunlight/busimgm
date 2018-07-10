@@ -4,7 +4,7 @@
       <el-col :span="24">
         <div class="input_search">
           <div class="search marginvi search_box">
-            <label class="labeltext">立项日期</label>
+            <label class="labeltext">投资日期</label>
             <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate0" size="medium" type="date" placeholder="选择日期"></el-date-picker>
             <span class="line"> — </span>
             <el-date-picker format="yyyy-MM-dd" value-format="yyyy-MM-dd" v-model="inputdate1" size="medium" type="date" placeholder="选择日期"></el-date-picker>
@@ -21,7 +21,7 @@
           </div>
           <div class="search">
             <label class="labeltext">项目名称</label>
-            <el-input size="medium" v-model="projectname"></el-input>
+            <el-input size="medium" v-model="projectnameVal"></el-input>
           </div>
         </div>
       </el-col>
@@ -70,7 +70,7 @@
       </el-col>
       <el-col :span="4">
         <div class="flexright">
-          <el-button size="medium" type="primary">搜索</el-button>
+          <el-button size="medium" type="primary" @click="searchBtn">搜索</el-button>
         </div>
       </el-col>
     </el-row>
@@ -114,25 +114,34 @@
     </el-row>
     <el-row class="row_top row_bottom">
       <div class="table-list">
-        <el-table v-loading="loading" :data="dataList.data" style="width: 100%" @sort-change="sortChange">
-          <el-table-column label="项目编号" prop="date" sortable="custom" width="100"></el-table-column>
-          <el-table-column label="项目名称" prop="string"></el-table-column>
-          <el-table-column label="投资日期" prop="integer"></el-table-column>
-          <el-table-column label="是否复投" prop="integer"></el-table-column>
-          <el-table-column label="提交手机号" prop="qq_number" width="100"></el-table-column>
-          <el-table-column label="投资金额" prop="float"></el-table-column>
-          <el-table-column label="投资标期" prop="integer"></el-table-column>
-          <el-table-column label="预估消耗" prop="integer"></el-table-column>
-          <el-table-column label="投资来源" prop="integer"></el-table-column>
-          <el-table-column label="返现金额" prop="integer"></el-table-column>
-          <el-table-column label="审核状态" prop="integer"></el-table-column>
-          <el-table-column label="审核时间" prop="integer"></el-table-column>
-          <el-table-column label="备注" prop="integer"></el-table-column>
+        <el-table v-loading="loading" :data="dataList.results" style="width: 100%" @sort-change="sortChange">
+          <el-table-column label="项目编号" prop="project" sortable="custom" width="100"></el-table-column>
+          <el-table-column label="项目名称" prop="projectname"></el-table-column>
+          <el-table-column label="投资日期" prop="invest_time"></el-table-column>
+          <el-table-column label="是否复投" prop="is_futou">
+            <template slot-scope="scope">
+              <span v-if="scope.row.is_futou">复投</span>
+              <span v-else>首投</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="提交手机号" prop="invest_mobile" width="100"></el-table-column>
+          <el-table-column label="投资金额" prop="invest_amount"></el-table-column>
+          <el-table-column label="投资标期" prop="invest_term"></el-table-column>
+          <el-table-column label="预估消耗" prop="settle_amount"></el-table-column>
+          <el-table-column label="投资来源" prop="source"></el-table-column>
+          <el-table-column label="返现金额" prop="return_amount"></el-table-column>
+          <el-table-column label="审核状态">
+            <template slot-scope="scope">
+              <span>{{stateFilter[scope.row.state]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="审核时间" prop="audit_time"></el-table-column>
+          <el-table-column label="备注" prop="remark"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
               <div class="operation_button">
-                <div class="op_button_padding"><el-button size="mini" type="danger" @click="toExamine(scope.row)">审核</el-button></div>
-                <div class="op_button_padding"><el-button size="mini" type="warning" @click="toExamine(scope.$index, scope.row)">删除</el-button></div>
+                <div class="op_button_padding"><el-button size="mini" type="danger" @click="AgreeDataAdminBtn(scope.row)">审核</el-button></div>
+                <div class="op_button_padding"><el-button size="mini" type="warning" @click="deleteDataAdminBtn(scope.row)">删除</el-button></div>
               </div>
             </template>
           </el-table-column>
@@ -145,7 +154,7 @@
           :page-size="10"
           :current-page="this.currentPage"
           layout="prev, pager, next, total, jumper"
-          :total="this.dataList.total">
+          :total="this.dataList.recordCount">
         </el-pagination>
       </div>
       <el-dialog
@@ -155,27 +164,27 @@
         >
         <div class="form_table">
           <el-form :model="examineReason" :rules="rules" ref="examineReason" label-width="120px" class="demo-ruleForm">
-            <el-form-item label="项目来源" prop="resource">
-              <el-radio-group v-model="examineReason.resource">
-                <el-radio label="网站"></el-radio>
-                <el-radio label="渠道"></el-radio>
+            <el-form-item label="项目来源" prop="source">
+              <el-radio-group v-model="examineReason.source">
+                <el-radio :label="'site'">网站</el-radio>
+                <el-radio :label="'channel'">渠道</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="返现金额" prop="num">
-              <el-input v-model="examineReason.num"></el-input>
+            <el-form-item label="返现金额" prop="return_amount">
+              <el-input v-model="examineReason.return_amount"></el-input>
             </el-form-item>
             <el-form-item label="电话号码">
-              <el-input v-model="examineReason.sname"></el-input>
+              <el-input v-model="examineReason.invest_mobile"></el-input>
             </el-form-item>
           </el-form>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+          <el-button type="primary" @click="subDataAdminBtn('examineReason')">确 定</el-button>
         </span>
       </el-dialog>
       <el-dialog
-        title="正常数据导入结果"
+        title="一次数据导入结果"
         :visible.sync="uploadVisible"
         width="520px"
         >
@@ -187,12 +196,22 @@
           <div class="text">重复手机号：{{dataAdminDetails.dupstr}}</div>
         </div>
       </el-dialog>
+      <el-dialog
+        title="审核数据导入结果"
+        :visible.sync="uploadThreeVisible"
+        width="520px"
+        >
+        <div class="information">
+          <p>上传成功数据条数：{{dataAdminDetails.num}}</p>
+        </div>
+      </el-dialog>
     </el-row>
   </div>
 </template>
 
 <script>
-import {getDaAdList} from '@/api/api'
+import {getDaAdList, agreeDataAdmin, deleteDataAdmin} from '@/api/api'
+import {examineFilter} from '@/common/js/options'
 export default {
   data () {
     return {
@@ -201,64 +220,72 @@ export default {
       inputdate2: '',
       inputdate3: '',
       projectnum: '',
-      projectname: '',
+      projectnameVal: '',
       uploadURL1: 'http://mgm.fuliunion.com/Project/projectinvestdata/import_projectdata_excel/',
-      uploadURL3: '',
-      uploadURL4: 'http://mgm.fuliunion.com/Project/projectinvestdata/import_audit_projectdata_excel_except',
+      uploadURL3: 'http://mgm.fuliunion.com/Project/projectinvestdata/import_audit_projectdata_excel/',
+      uploadURL4: 'http://mgm.fuliunion.com/Project/projectinvestdata/import_audit_projectdata_excel_except/',
       uploadName: 'file',
       subphone: '',
-      investvalue: '0',
-      inmodevalue: '0',
-      examinestate: '0',
+      investvalue: '',
+      stateFilter: examineFilter,
+      inmodevalue: '',
+      examinestate: '',
+      adoptId: '',
       dataAdminDetails: {},
+      investFilter: {true: '是', false: '否'},
       dataList: [],
       loading: true,
       dialogVisible: false,
       uploadVisible: false,
+      uploadThreeVisible: false,
       currentPage: 1,
       examineReason: {
-        resource: '',
-        num: ''
+        source: '',
+        return_amount: ''
+      },
+      initExamineReason: {
+        source: '',
+        return_amount: ''
       },
       rules: {
-        resource: [
+        source: [
           { required: true, message: '请选择项目来源', trigger: 'blur' }
         ],
-        num: [
+        return_amount: [
           { required: true, message: '请输入返现金额', trigger: 'blur' }
         ]
       },
       investment: [
         {
-          value: '0',
+          value: '',
           label: '全部'
         },
         {
-          value: '1',
+          value: 'site',
           label: '网站'
         },
         {
-          value: '2',
+          value: 'channel',
           label: '渠道'
         }
       ],
       inmodeop: [
         {
-          value: '0',
+          value: '',
           label: '全部'
         },
         {
-          value: '1',
+          value: true,
           label: '首投'
         },
         {
-          value: '2',
+          value: false,
           label: '复投'
         }
       ],
       examine: [
         {
-          value: '0',
+          value: '',
           label: '全部'
         },
         {
@@ -266,7 +293,7 @@ export default {
           label: '已审核'
         },
         {
-          value: '2',
+          value: '0',
           label: '待审核'
         }
       ]
@@ -277,42 +304,174 @@ export default {
   },
   methods: {
     getDatalist () {
-      getDaAdList(this.currentPage).then((res) => {
-        console.log(res)
+      let data = this.conditionDate()
+      getDaAdList(this.currentPage, data).then((res) => {
+        this.dataList = res.data
+        console.log(this.dataList)
         this.loading = false
       }).catch((err) => {
         console.log(err)
       })
     },
+    /* 搜索条件拼接 */
+    conditionDate () {
+      let Data = {
+        params: {
+          invest_time_0: this.inputdate0,
+          invest_time_1: this.inputdate1,
+          audit_time_0: this.inputdate2,
+          audit_time_1: this.inputdate3,
+          project: this.projectnum,
+          invest_mobile: this.subphone,
+          projectname: this.projectnameVal,
+          source: this.investvalue,
+          is_futou: this.inmodevalue,
+          state: this.examinestate
+        }
+      }
+      return Data
+    },
+    /* 分页 */
     handleCurrentChange (val) {
-      this.datalist = []
       this.loading = true
+      this.datalist = []
       this.currentPage = val
       this.getDatalist()
     },
     /* 正常数据导入回调 */
     handleAvatarSuccess (response, file) {
       console.log(response)
-      this.uploadVisible = true
-      this.dataAdminDetails = response
-      this.$message('上传成功...')
+      if (response.code === '0') {
+        this.uploadVisible = true
+        this.dataAdminDetails = response
+        this.getDatalist()
+      } else {
+        this.$message.error('上传失败')
+      }
     },
     /* 审核数据导入回调 */
-    handleThreeSuccess () {},
+    handleThreeSuccess (response, file) {
+      console.log(response)
+      if (response.code === '0') {
+        this.uploadThreeVisible = true
+        this.dataAdminDetails = response
+        this.getDatalist()
+      } else {
+        this.$message.error(response.msg)
+      }
+    },
     /* 异常数据导入回调 */
-    handleFourSuccess () {},
+    handleFourSuccess (response, file) {
+      console.log(response)
+      if (response.code === '0') {
+        this.uploadVisible = true
+        this.dataAdminDetails = response
+        this.$message({
+          type: 'success',
+          message: '上传成功!'
+        })
+        this.getDatalist()
+      } else {
+        this.$message.error('上传失败')
+      }
+    },
     /* 数据导入前 */
     beforeAvatarUpload () {
       this.$message('正在上传...')
     },
-    toExamine (row) {
+    /* 删除数据 */
+    deleteDataAdminBtn (row) {
+      this.$confirm('请确认是否删除该条数据？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteDataAdmin(row.id).then((res) => {
+          console.log(res)
+          if (res.data.code === '0') {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getDatalist()
+          } else {
+            this.$message({
+              type: 'error',
+              message: res.detail
+            })
+          }
+        })
+      }).catch(() => {
+        console.log('cancel')
+      })
+    },
+    /* 搜索 */
+    searchBtn () {
+      this.currentPage = 1
+      this.getDatalist()
+    },
+    /* 同意操作 */
+    AgreeDataAdminBtn (row) {
       this.dialogVisible = true
+      this.adoptId = row.id
+    },
+    /* 提交同意条件 */
+    subDataAdminBtn (examine) {
+      this.$refs[examine].validate((valid) => {
+        if (valid) {
+          agreeDataAdmin(this.adoptId, this.examineReason).then((res) => {
+            console.log(res)
+            if (res.data.code === '0') {
+              this.examineReason = this.initExamineReason
+              this.$refs[examine].resetFields()
+              this.$message({
+                type: 'success',
+                message: '审核数据成功'
+              })
+              this.loading = true
+              this.dialogVisible = false
+              this.getDatalist()
+            } else {
+              this.dialogVisible = false
+              this.$message(res.data.detail)
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
+        } else {
+          this.$message.error('提交有误，请检查提交项！')
+          return false
+        }
+      })
     },
     sortChange (val) {
       console.log(val)
     },
     tableSelectionChange (val) {
       console.log(val)
+    }
+  },
+  watch: {
+    /* 投资方式 */
+    inmodevalue () {
+      this.loading = true
+      this.dataList = []
+      this.currentPage = 1
+      this.getDatalist()
+    },
+    /* 投资方式 */
+    investvalue () {
+      this.loading = true
+      this.dataList = []
+      this.currentPage = 1
+      this.getDatalist()
+    },
+    /* 审核状态 */
+    examinestate () {
+      this.loading = true
+      this.dataList = []
+      this.currentPage = 1
+      this.getDatalist()
     }
   }
 }
@@ -333,11 +492,11 @@ export default {
       padding: 0 5px;
       color: #333
     .el-date-editor.el-input, .el-date-editor.el-input__inner
-      width: 120px;
+      width: 125px;
       .el-input__prefix
         display: none;
     .el-input--prefix .el-input__inner
-      padding-left: 10px
+      padding-left: 15px
     .el-input--suffix .el-input__inner
       padding-right: 15px
     .el-input__suffix
@@ -373,4 +532,5 @@ export default {
     .text
       line-height: 28px;
       width: 440px;
+      min-height: 150px;
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="projectLive">
     <el-row >
-      <el-col :span="22">
+      <el-col :span="24">
         <div class="input_search">
           <div class="search">
             <label class="labeltext">立项日期</label>
@@ -17,32 +17,24 @@
             <label class="labeltext">项目名称</label>
             <el-input size="medium" v-model="projectname"></el-input>
           </div>
-        </div>
-      </el-col>
-      <el-col :span="2">
-        <div class="flexright">
-          <el-button size="medium" type="primary">搜索</el-button>
-        </div>
-      </el-col>
-    </el-row>
-    <el-row class="row_top">
-      <el-col :span="8">
-        <div class="select">
-          <label class="label">项目状态</label>
-          <el-select size="medium" v-model="selectvalue" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+          <div class="select">
+            <label class="label">项目状态</label>
+            <el-select size="medium" v-model="selectvalue" placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
         </div>
       </el-col>
     </el-row>
     <el-row class="row_top">
       <el-col :span="4" :offset="20">
         <div class="flexright">
+          <el-button size="medium" type="primary">搜索</el-button>
           <el-button size="medium" type="info">导出</el-button>
         </div>
       </el-col>
@@ -85,22 +77,29 @@ export default {
     justify-content: flex-end;
   .select
     .label
-      margin-right: 12px;
+      margin-right: 10px;
   .row_top
     margin-top: 35px;
   .input_search
     display: flex;
+    justify-content: space-between;
     align-items: center;
   .search
-    margin-right: 20px;
     font-size: 14px;
+    margin-left: 10px;
     .labeltext
-      padding-right: 12px
+      margin-right: 10px
     .line
       padding: 0 5px;
       color: #333
     .el-date-editor.el-input, .el-date-editor.el-input__inner
-      width: 140px;
+      width: 145px;
     .el-input
+      width: 170px;
+  .select
+    margin-left: 20px;
+    .label
+      margin-right: 10px;
+    .el-select, .el-select--medium
       width: 170px;
 </style>
