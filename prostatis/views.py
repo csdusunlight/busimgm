@@ -9,21 +9,49 @@ from django.db import connection, transaction
 from rest_framework.response import Response
 from project.models import  ProjectInvestDataModel
 from project.serializers import ProjectInvestDataSerializer
+from prostatis.serializers import DayStatisSerializer,ProjectStatisSerializer,UserStatisSerializer,UserDayStatisSerializer,ProjectDayStatisSerializer
 import django_filters
+from prostatis.Filters import ProjectDayStatisFilter,UserDayStatisFilter,DayStatisFilter,ProjectStatisFilter,UserStatisFilter
 import datetime
+from rest_framework.filters import SearchFilter, OrderingFilter
+from prostatis.models import ProjectDayStatis,DayStatis,ProjectStatis,UserStatis,UserDayStatis
 
 
 #Create your views here.
-class DayStatisList(generics.ListCreateAPIView):
+class ProjectDayStatisList(generics.ListCreateAPIView):
+    queryset = ProjectDayStatis.objects.all()
+    serializer_class = ProjectDayStatisSerializer
+    pagination_class = MyPageNumberPagination
+    filter_backends = (SearchFilter, OrderingFilter, django_filters.rest_framework.DjangoFilterBackend)
+    filter_class = ProjectDayStatisFilter
+
+class DayStatisStatisList(generics.ListCreateAPIView):
     queryset = DayStatis.objects.all()
     serializer_class = DayStatisSerializer
     pagination_class = MyPageNumberPagination
+    filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
+    filter_class = DayStatisFilter
 
-class ProjectDetailList(generics.ListCreateAPIView):
-    queryset = DayStatis.objects.all()
-    serializer_class = DayStatisSerializer
+class UserDayStatisList(generics.ListCreateAPIView):
+    queryset = UserDayStatis.objects.all()
+    serializer_class = UserDayStatisSerializer
     pagination_class = MyPageNumberPagination
+    filter_backends = (SearchFilter, OrderingFilter, django_filters.rest_framework.DjangoFilterBackend)
+    filter_class = UserDayStatisFilter
 
+class ProjectStatisList(generics.ListCreateAPIView):
+    queryset = ProjectStatis.objects.all()
+    serializer_class = ProjectStatisSerializer
+    pagination_class = MyPageNumberPagination
+    filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
+    filter_class = ProjectStatisFilter
+
+class UserStatisList(generics.ListCreateAPIView):
+    queryset = UserStatis.objects.all()
+    serializer_class = UserStatisSerializer
+    pagination_class = MyPageNumberPagination
+    filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
+    filter_class = UserStatisFilter
 
 class ProStatis(viewsets.ModelViewSet):
     queryset = ProjectInvestDataModel.objects.all()
@@ -133,6 +161,9 @@ class ProStatis(viewsets.ModelViewSet):
     #     returndict['result'] = row
     #
     #     return Response(returndict)
+
+
+
 
 
 
