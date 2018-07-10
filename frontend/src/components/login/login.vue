@@ -6,7 +6,7 @@
         <div class="title">登录</div>
         <el-form :model="loginForm" :rules="rules" ref="loginForm">
           <el-form-item prop="username">
-            <el-input v-model="loginForm.username" placeholder="用户名"><span>dsfsf</span></el-input>
+            <el-input v-model="loginForm.username" placeholder="用户名"  @keyup.enter.native="submitForm('loginForm')"></el-input>
           </el-form-item>
           <el-form-item prop="password" class="bottom">
             <el-input type="password" placeholder="密码" v-model="loginForm.password" @keyup.enter.native="submitForm('loginForm')"></el-input>
@@ -17,7 +17,7 @@
             </div>
           </div>
           <div class="botton">
-            <el-button type="primary" size="mini" @click="submitForm('loginForm')" class="submit_btn">登录</el-button>
+            <el-button type="primary" size="mini" @keyup.enter.native="submitForm('loginForm')" @click="submitForm('loginForm')" class="submit_btn">登录</el-button>
           </div>
         </el-form>
       </div>
