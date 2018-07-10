@@ -329,6 +329,7 @@ export default {
       this.currentPage2 = val
       this.getProjectData()
     },
+    /* 搜索 */
     searchData () {
       console.log(this.searchKey)
       if (this.activeName === 'first') {
