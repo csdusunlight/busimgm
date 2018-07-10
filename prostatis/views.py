@@ -77,59 +77,60 @@ class ProStatis(viewsets.ModelViewSet):
         row = cursor.fetchall()
         print(row)
         returndict={}
+        data={}
         for item in row:
             print(item)
-            returndict['onlineprojectnum'] = item[0]
-            returndict['currenttosettlenum'] = item[1]
-            returndict['currenttosettlepronum'] = item[2]
-            returndict['currenttoconsumenum'] = item[3]
-            returndict['currenttoconsumepronum'] = item[4]
-
+            data['onlineprojectnum'] = item[0]
+            data['currenttosettlenum'] = item[1]
+            data['currenttosettlepronum'] = item[2]
+            data['currenttoconsumenum'] = item[3]
+            data['currenttoconsumepronum'] = item[4]
+        returndict['data']=data
         return Response(returndict)
 
 
-    @action(methods=['get'], detail=False)
-    def get_date2(self, request, pk=None, *args, **kwargs):
-        '''　日期 新增项目数 结项项目数 有效项目数（有交单的） 投资人数 投资金额 消耗费用 返现投资人数 返现投资金额 返现费用'''
-        cursor = connection.cursor()
-        cursor.execute("select * from\
-    (select lanched_apply_date as A1, count(*) as B1 from project_project group by lanched_apply_date) t1\
-    left join\
-    (select count(*) as B2, concluded_audit_date as A2 from project_project group by concluded_audit_date) t2 \
-    on t1.A1 = t2.A2\
-    left join\
-    (select lanched_apply_date as A3, count(distinct project_id) as B3\
-        from project_projectinvestdatamodel\
-        left join project_project\
-        on project_projectinvestdatamodel.project_id = project_project.id\
-        group by lanched_apply_date\
-    ) t3  on t2.A2=t3.A3\
-    left join\
-    (\
-	    select invest_time as A4,count(distinct invest_mobile) as B4, sum(invest_amount) as B5\
-        from project_projectinvestdatamodel\
-        group by invest_time\
-    ) t4  on t3.A3=t4.A4\
-    left join\
-    (\
-        select audit_time as A5,count(distinct invest_mobile) as B6,\
-                sum(invest_amount) as B7,\
-                sum(return_amount) as B8\
-        from project_projectinvestdatamodel\
-        where return_amount is not null and return_amount >= 0\
-        group by audit_time\
-    ) t5  on t4.A4=t5.A5 ")
-
-        # cursor.execute("select B1,B2 from (select lanched_apply_date, count( *) as B1 from project_project group by lanched_apply_date) t1\
-        # left join (select count(*) as B2, concluded_audit_date from project_project group by concluded_audit_date) t2 \
-        # on t1.lanched_apply_date = t2.concluded_audit_date")
-        row = cursor.fetchall()
-        print(row)
-        returndict={}
-        returndict['code']=0
-        returndict['result'] = row
-
-        return Response(returndict)
+    # @action(methods=['get'], detail=False)
+    # def get_date2(self, request, pk=None, *args, **kwargs):
+    #     '''　日期 新增项目数 结项项目数 有效项目数（有交单的） 投资人数 投资金额 消耗费用 返现投资人数 返现投资金额 返现费用'''
+    #     cursor = connection.cursor()
+    #     cursor.execute("select * from\
+    # (select lanched_apply_date as A1, count(*) as B1 from project_project group by lanched_apply_date) t1\
+    # left join\
+    # (select count(*) as B2, concluded_audit_date as A2 from project_project group by concluded_audit_date) t2 \
+    # on t1.A1 = t2.A2\
+    # left join\
+    # (select lanched_apply_date as A3, count(distinct project_id) as B3\
+    #     from project_projectinvestdatamodel\
+    #     left join project_project\
+    #     on project_projectinvestdatamodel.project_id = project_project.id\
+    #     group by lanched_apply_date\
+    # ) t3  on t2.A2=t3.A3\
+    # left join\
+    # (\
+	 #    select invest_time as A4,count(distinct invest_mobile) as B4, sum(invest_amount) as B5\
+    #     from project_projectinvestdatamodel\
+    #     group by invest_time\
+    # ) t4  on t3.A3=t4.A4\
+    # left join\
+    # (\
+    #     select audit_time as A5,count(distinct invest_mobile) as B6,\
+    #             sum(invest_amount) as B7,\
+    #             sum(return_amount) as B8\
+    #     from project_projectinvestdatamodel\
+    #     where return_amount is not null and return_amount >= 0\
+    #     group by audit_time\
+    # ) t5  on t4.A4=t5.A5 ")
+    #
+    #     # cursor.execute("select B1,B2 from (select lanched_apply_date, count( *) as B1 from project_project group by lanched_apply_date) t1\
+    #     # left join (select count(*) as B2, concluded_audit_date from project_project group by concluded_audit_date) t2 \
+    #     # on t1.lanched_apply_date = t2.concluded_audit_date")
+    #     row = cursor.fetchall()
+    #     print(row)
+    #     returndict={}
+    #     returndict['code']=0
+    #     returndict['result'] = row
+    #
+    #     return Response(returndict)
 
 
 
