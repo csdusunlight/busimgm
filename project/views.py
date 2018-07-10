@@ -1,4 +1,6 @@
-from io import StringIO
+from io import BytesIO
+
+from django.utils.decorators import method_decorator
 from rest_framework import generics, permissions
 from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestDataModel
 from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
@@ -456,9 +458,9 @@ class OperatorLogDetail(viewsets.ModelViewSet):
     filter_class = OperatorLogFilter
 
 
-from django.views.decorators.clickjacking import     xframe_options_exempt
+from django.views.decorators.clickjacking import xframe_options_exempt
 
-
+# @method_decorator(xframe_options_exempt, name='export_investdata_excel')
 class ProjectInvestData(viewsets.ModelViewSet):
     queryset = ProjectInvestDataModel.objects.all()
     serializer_class = ProjectInvestDataSerializer
@@ -496,8 +498,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         aiminvestrecord.state = '2'
         aiminvestrecord.save(update_fields=['audit_time', 'state'])
 
-    @xframe_options_exempt
-    @action(methods=['post'],detail=False)
+
+    @action(methods=['get'],detail=False)
     def export_investdata_excel(self,request):
         item_list = self.filter_queryset(self.get_queryset())
         data = []
@@ -543,7 +545,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                     ws.write(i + 1, j, lis[j], style1)
                 else:
                     ws.write(i + 1, j, lis[j])
-        sio = StringIO()
+        sio = BytesIO()
         w.save(sio)
         sio.seek(0)
         response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
