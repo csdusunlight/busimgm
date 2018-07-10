@@ -1,3 +1,6 @@
+from io import BytesIO
+
+from django.utils.decorators import method_decorator
 from rest_framework import generics, permissions
 from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestDataModel
 from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
@@ -23,7 +26,6 @@ from xlwt.Workbook import Workbook
 from xlwt.Style import easyxf
 import traceback
 import datetime
-from tools.StringIO import StringIO
 from project.models import DBlock
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, GenericAPIView
 from rest_framework.response import Response
@@ -456,9 +458,9 @@ class OperatorLogDetail(viewsets.ModelViewSet):
     filter_class = OperatorLogFilter
 
 
-from django.views.decorators.clickjacking import     xframe_options_exempt
+from django.views.decorators.clickjacking import xframe_options_exempt
 
-
+# @method_decorator(xframe_options_exempt, name='export_investdata_excel')
 class ProjectInvestData(viewsets.ModelViewSet):
     queryset = ProjectInvestDataModel.objects.all()
     serializer_class = ProjectInvestDataSerializer
@@ -476,9 +478,18 @@ class ProjectInvestData(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def import_apply_approved(self,request,pk=None,*args,**kwargs):
         aiminvestrecord=ProjectInvestDataModel.objects.get(id=pk)
+        source = request.data.get('source')
+        return_amount = request.data.get('return_amount')
+        invest_mobile = request.data.get('invest_mobile')
         aiminvestrecord.audit_time= datetime.date.today()
+        aiminvestrecord.source = source
+        aiminvestrecord.return_amount = return_amount
+        aiminvestrecord.invest_mobile = invest_mobile
         aiminvestrecord.state='1'
-        aiminvestrecord.save(update_fields=['audit_time','state'])
+        aiminvestrecord.save(update_fields=['audit_time','state','source','invest_mobile','return_amount'])
+        resultdict={}
+        resultdict['code']='0'
+        return Response(resultdict)
 
     @action(methods=['post'], detail=True)
     def import_apply_rejected(self, request, pk=None, *args, **kwargs):
@@ -487,8 +498,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         aiminvestrecord.state = '2'
         aiminvestrecord.save(update_fields=['audit_time', 'state'])
 
-    @xframe_options_exempt
-    @action(methods=['post'],detail=False)
+
+    @action(methods=['get'],detail=False)
     def export_investdata_excel(self,request):
         item_list = self.filter_queryset(self.get_queryset())
         data = []
@@ -534,7 +545,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                     ws.write(i + 1, j, lis[j], style1)
                 else:
                     ws.write(i + 1, j, lis[j])
-        sio = StringIO()
+        sio = BytesIO()
         w.save(sio)
         sio.seek(0)
         response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
@@ -545,8 +556,6 @@ class ProjectInvestData(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     def import_audit_projectdata_excel_except(self,request):
         admin_user = request.user
-        if not (admin_user.is_authenticated() and admin_user.is_staff):
-            raise Http404
         ret = {'code': -1}
         file = request.FILES.get('file')
         #     print file.name
@@ -635,7 +644,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark',
                                           'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
                 suc_num += 1
-            ret['code'] = 0
+            ret['code'] = '0'
         except Exception as e:
             exstr = traceback.format_exc()
             logger.info(unicode(exstr))
@@ -645,13 +654,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
         return JsonResponse(ret)
 
 
+
     @action(methods=['post'], detail=False)
     def import_audit_projectdata_excel(self,request):
         admin_user = request.user
-        # print(admin_user)
-        # print("aaaaa")
-        if not (admin_user.is_authenticated and admin_user.is_staff):
-            raise Http404
         ret = {'code': -1}
         # print(dir(request))
         file = request.FILES.get('file')
@@ -688,10 +694,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
                     raise Exception(u"手机号必须是11位，请修改后重新提交。")
                 if row[9] == "是":
                     result = True
-                    temp['state'] = '0'
+                    temp['state'] = '1'
                 elif row[9] == "否":
                     result = False
-                    temp['state'] = '1'
+                    temp['state'] = '0'
                 else:
                     raise Exception(u"审核结果必须为是或否。")
 
@@ -741,6 +747,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 state = row['state']
                 date = row['date']
                 term = row['term']
+                print(id)
                 event = ProjectInvestDataModel.objects.get(id=id)
                 #             if event.state != '1':
                 #                 continue
@@ -757,129 +764,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark', 'invest_term',
                                           'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
                 suc_num += 1
-            ret['code'] = 0
-        except Exception as e:
-            exstr = traceback.format_exc()
-            logger.info(exstr)
-            ret['code'] = 1
-            ret['msg'] = e.__str__()
-        ret['num'] = suc_num
-        return JsonResponse(ret)
-
-
-    @action(methods=['post'], detail=False)
-    def import_audit_projectdata_excel(self,request):
-        admin_user = request.user
-        # print(admin_user)
-        # print("aaaaa")
-        if not (admin_user.is_authenticated and admin_user.is_staff):
-            raise Http404
-        ret = {'code': -1}
-        # print(dir(request))
-        file = request.FILES.get('file')
-        with open('./out2.xls', 'wb+') as destination:
-            for chunk in file.chunks():
-                destination.write(chunk)
-        data = xlrd.open_workbook('./out2.xls')
-        table = data.sheets()[0]
-        print(table)
-        nrows = table.nrows
-        ncols = table.ncols
-        if ncols != 13:
-            ret['msg'] = u"文件格式与模板不符，请下载最新模板填写！"
-            return JsonResponse(ret)
-        rtable = []
-        try:
-            for i in range(1, nrows):
-                row = table.row_values(i)
-                temp = {}
-                id = int(row[0])
-                project_id = int(row[1])
-                term = int(row[7])
-                mobile = row[5]
-                consume = Decimal(row[8])
-                remark = row[12]
-                date = row[4]
-                date = xlrd.xldate.xldate_as_datetime(date, 0)
-
-                try:
-                    mobile = str(int(mobile)).strip()
-                except Exception as e:
-                    mobile = str(mobile).strip()
-                if len(mobile) != 11:
-                    raise Exception(u"手机号必须是11位，请修改后重新提交。")
-                if row[9] == "是":
-                    result = True
-                    temp['state'] = '0'
-                elif row[9] == "否":
-                    result = False
-                    temp['state'] = '1'
-                else:
-                    raise Exception(u"审核结果必须为是或否。")
-
-                if row[10]:
-                    return_amount = Decimal(row[10])
-                    if return_amount > consume:
-                        raise Exception(u"返现金额不能大于结算金额，请检查表格")
-                elif result:
-                    raise Exception(u"审核结果为是时，返现金额不能为空或零。")
-                else:
-                    return_amount = 0
-
-                if row[11] == "网站":
-                    source = 'site'
-                elif row[11] == "渠道":
-                    source = 'channel'
-                else:
-                    raise Exception(u"必须为网站或渠道。")
-                temp['id'] = id
-                temp['project_id'] = project_id
-                temp['source'] = source
-                temp['return_amount'] = return_amount
-                temp['consume'] = consume
-                temp['remark'] = remark
-                temp['mobile'] = mobile
-                temp['date'] = date
-                temp['term'] = term
-                rtable.append(temp)
-        except Exception as  e:
-            logger.info(e)
-            print(e)
-            #             traceback.print_exc()
-            ret['msg'] = e.__str__()
-            return JsonResponse(ret)
-            ####开始去重
-            admin_user = request.user
-        suc_num = 0
-        try:
-            for row in rtable:
-                id = row['id']
-                return_amount = row['return_amount']
-                source = row['source']
-                remark = row['remark']
-                mobile = row['mobile']
-                consume = row['consume']
-                project_id = row['project_id']
-                state = row['state']
-                date = row['date']
-                term = row['term']
-                event = ProjectInvestDataModel.objects.get(id=id)
-                #             if event.state != '1':
-                #                 continue
-                event.state = state
-                event.return_amount = return_amount
-                event.audit_time = datetime.datetime.now()
-                event.source = source
-                event.remark = remark
-                event.settle_amount = consume
-                event.project_id = project_id
-                event.invest_mobile = mobile
-                event.invest_time = date
-                event.invest_term = term
-                event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark', 'invest_term',
-                                          'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
-                suc_num += 1
-            ret['code'] = 0
+            ret['code'] = '0'
         except Exception as e:
             exstr = traceback.format_exc()
             logger.info(exstr)
@@ -892,8 +777,6 @@ class ProjectInvestData(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     def import_projectdata_excel(self,request):
         admin_user = request.user
-        if not (admin_user.is_authenticated and admin_user.is_staff):
-            raise Http404
         ret = {'code': -1}
         file = request.FILES.get('file')
         print(file.name)
@@ -1004,7 +887,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                         else:
                             obj = ProjectInvestDataModel(project_id=pid, invest_mobile=mob, settle_amount=settle,
                                                     invest_amount=amount, invest_term=term, invest_time=time,
-                                                    state='1', remark=remark, source=source, is_futou=is_futou)
+                                                    state='0', remark=remark, source=source, is_futou=is_futou)
                             investdata_list.append(obj)
                 ProjectInvestDataModel.objects.bulk_create(investdata_list)
         except Exception as e:

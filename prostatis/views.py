@@ -13,7 +13,7 @@ import django_filters
 import datetime
 
 
-# Create your views here.
+#Create your views here.
 class DayStatisList(generics.ListCreateAPIView):
     queryset = DayStatis.objects.all()
     serializer_class = DayStatisSerializer
