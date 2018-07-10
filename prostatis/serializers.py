@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from prostatis.models import DayStatis,ProjectDayDetail
+from prostatis.models import DayStatis
 
 
 

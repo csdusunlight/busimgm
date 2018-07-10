@@ -201,6 +201,18 @@ export function getDaAdList (page, data) {
   console.log(url)
   return axios.get(url, data)
 }
+/* 数据管理审核同意 */
+export function agreeDataAdmin (id, data) {
+  let url = `${http}/Project/projectinvestdata/${id}/import_apply_approved/`
+  console.log(url)
+  return axios.post(url, data)
+}
+/* 数据管理审核删除 */
+export function deleteDataAdmin (id) {
+  let url = `${http}/Project/projectinvestdata/${id}/`
+  console.log(url)
+  return axios.delete(url)
+}
 /* ----------------其它API--------------- */
 /* 获取项目列表（其它接口获取项目名称用） */
 export function allGetProject () {
