@@ -460,7 +460,7 @@ class OperatorLogDetail(viewsets.ModelViewSet):
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
-@method_decorator(xframe_options_exempt, name='export_investdata_excel')
+# @method_decorator(xframe_options_exempt, name='export_investdata_excel')
 class ProjectInvestData(viewsets.ModelViewSet):
     queryset = ProjectInvestDataModel.objects.all()
     serializer_class = ProjectInvestDataSerializer
@@ -499,7 +499,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         aiminvestrecord.save(update_fields=['audit_time', 'state'])
 
 
-    @action(methods=['post'],detail=False)
+    @action(methods=['get'],detail=False)
     def export_investdata_excel(self,request):
         item_list = self.filter_queryset(self.get_queryset())
         data = []
