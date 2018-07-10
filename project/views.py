@@ -1,4 +1,6 @@
 from io import StringIO
+
+from django.utils.decorators import method_decorator
 from rest_framework import generics, permissions
 from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestDataModel
 from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
@@ -496,7 +498,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         aiminvestrecord.state = '2'
         aiminvestrecord.save(update_fields=['audit_time', 'state'])
 
-    @xframe_options_exempt
+    @method_decorator(xframe_options_exempt)
     @action(methods=['post'],detail=False)
     def export_investdata_excel(self,request):
         item_list = self.filter_queryset(self.get_queryset())
