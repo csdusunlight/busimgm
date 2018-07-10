@@ -107,7 +107,7 @@
             :before-upload="beforeAvatarUpload">
             <el-button size="medium" type="info">异常数据导入</el-button>
           </el-upload>
-          <a href="http://mgm.fuliunion.com/frontent/template.xls"><el-button size="medium" type="info">获取初始导入模板</el-button></a>
+          <a href="http://mgm.fuliunion.com/static/projectdata_init_template.xls"><el-button size="medium" type="info">获取初始导入模板</el-button></a>
         </div>
       </el-col>
     </el-row>
@@ -294,7 +294,8 @@ export default {
     exportExel () {
       console.log('数据导出')
       var exportUrl = 'http://mgm.fuliunion.com/Project/projectinvestdata/export_investdata_excel/'
-      var html = '<form action="' + exportUrl + '" method="post" target="_self" id="postData_form">'
+      console.log(exportUrl)
+      var html = '<form action="' + exportUrl + '" method="get" target="_self" id="postData_form">'
       html += '<input name="investtime_0" type="hidden" value="' + this.inputdate0 + '"/>'
       html += '<input name="investtime_1" type="hidden" value="' + this.inputdate1 + '"/>'
       html += '<input name="audittime_0" type="hidden" value="' + this.inputdate2 + '"/>'
