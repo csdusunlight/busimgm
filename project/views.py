@@ -1,4 +1,4 @@
-from io import StringIO
+from io import BytesIO
 
 from django.utils.decorators import method_decorator
 from rest_framework import generics, permissions
@@ -545,7 +545,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                     ws.write(i + 1, j, lis[j], style1)
                 else:
                     ws.write(i + 1, j, lis[j])
-        sio = StringIO()
+        sio = BytesIO()
         w.save(sio)
         sio.seek(0)
         response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
