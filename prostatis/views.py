@@ -128,18 +128,9 @@ class ProStatis(viewsets.ModelViewSet):
     # )t5  on t4.invest_time=t5.audit_time ")
 
         cursor.execute("select B1,B2\
-        from\
-        (\
-            select lanched_apply_date, count( *),B1\
-            from project_project\
-            group by lanched_apply_date\
-        )t1\
+        from (select lanched_apply_date, count( *),B1 from project_project group by lanched_apply_date)t1\
         full join\
-        (\
-            select count(*) B2, concluded_audit_date\
-            from project_project\
-            group by concluded_audit_date\
-        )t2 \
+        (select count(*) B2, concluded_audit_date from project_project group by concluded_audit_date)t2 \
         on t1.lanched_apply_date = t2.concluded_audit_date")
         row = cursor.fetchall()
         print(row)
