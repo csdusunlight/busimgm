@@ -654,126 +654,126 @@ class ProjectInvestData(viewsets.ModelViewSet):
         return JsonResponse(ret)
 
 
-    @action(methods=['post'], detail=False)
-    def import_audit_projectdata_excel(self,request):
-        admin_user = request.user
-        # print(admin_user)
-        # print("aaaaa")
-        if not (admin_user.is_authenticated and admin_user.is_staff):
-            raise Http404
-        ret = {'code': -1}
-        # print(dir(request))
-        file = request.FILES.get('file')
-        with open('./out2.xls', 'wb+') as destination:
-            for chunk in file.chunks():
-                destination.write(chunk)
-        data = xlrd.open_workbook('./out2.xls')
-        table = data.sheets()[0]
-        print(table)
-        nrows = table.nrows
-        ncols = table.ncols
-        if ncols != 13:
-            ret['msg'] = u"文件格式与模板不符，请下载最新模板填写！"
-            return JsonResponse(ret)
-        rtable = []
-        try:
-            for i in range(1, nrows):
-                row = table.row_values(i)
-                temp = {}
-                id = int(row[0])
-                project_id = int(row[1])
-                term = int(row[7])
-                mobile = row[5]
-                consume = Decimal(row[8])
-                remark = row[12]
-                date = row[4]
-                date = xlrd.xldate.xldate_as_datetime(date, 0)
-
-                try:
-                    mobile = str(int(mobile)).strip()
-                except Exception as e:
-                    mobile = str(mobile).strip()
-                if len(mobile) != 11:
-                    raise Exception(u"手机号必须是11位，请修改后重新提交。")
-                if row[9] == "是":
-                    result = True
-                    temp['state'] = '0'
-                elif row[9] == "否":
-                    result = False
-                    temp['state'] = '1'
-                else:
-                    raise Exception(u"审核结果必须为是或否。")
-
-                if row[10]:
-                    return_amount = Decimal(row[10])
-                    if return_amount > consume:
-                        raise Exception(u"返现金额不能大于结算金额，请检查表格")
-                elif result:
-                    raise Exception(u"审核结果为是时，返现金额不能为空或零。")
-                else:
-                    return_amount = 0
-
-                if row[11] == "网站":
-                    source = 'site'
-                elif row[11] == "渠道":
-                    source = 'channel'
-                else:
-                    raise Exception(u"必须为网站或渠道。")
-                temp['id'] = id
-                temp['project_id'] = project_id
-                temp['source'] = source
-                temp['return_amount'] = return_amount
-                temp['consume'] = consume
-                temp['remark'] = remark
-                temp['mobile'] = mobile
-                temp['date'] = date
-                temp['term'] = term
-                rtable.append(temp)
-        except Exception as  e:
-            logger.info(e)
-            print(e)
-            #             traceback.print_exc()
-            ret['msg'] = e.__str__()
-            return JsonResponse(ret)
-            ####开始去重
-            admin_user = request.user
-        suc_num = 0
-        try:
-            for row in rtable:
-                id = row['id']
-                return_amount = row['return_amount']
-                source = row['source']
-                remark = row['remark']
-                mobile = row['mobile']
-                consume = row['consume']
-                project_id = row['project_id']
-                state = row['state']
-                date = row['date']
-                term = row['term']
-                event = ProjectInvestDataModel.objects.get(id=id)
-                #             if event.state != '1':
-                #                 continue
-                event.state = state
-                event.return_amount = return_amount
-                event.audit_time = datetime.datetime.now()
-                event.source = source
-                event.remark = remark
-                event.settle_amount = consume
-                event.project_id = project_id
-                event.invest_mobile = mobile
-                event.invest_time = date
-                event.invest_term = term
-                event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark', 'invest_term',
-                                          'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
-                suc_num += 1
-            ret['code'] = '0'
-        except Exception as e:
-            exstr = traceback.format_exc()
-            logger.info(exstr)
-            ret['code'] = 1
-            ret['msg'] = e.__str__()
-        ret['num'] = suc_num
-        return JsonResponse(ret)
+    # @action(methods=['post'], detail=False)
+    # def import_audit_projectdata_excel(self,request):
+    #     admin_user = request.user
+    #     # print(admin_user)
+    #     # print("aaaaa")
+    #     if not (admin_user.is_authenticated and admin_user.is_staff):
+    #         raise Http404
+    #     ret = {'code': -1}
+    #     # print(dir(request))
+    #     file = request.FILES.get('file')
+    #     with open('./out2.xls', 'wb+') as destination:
+    #         for chunk in file.chunks():
+    #             destination.write(chunk)
+    #     data = xlrd.open_workbook('./out2.xls')
+    #     table = data.sheets()[0]
+    #     print(table)
+    #     nrows = table.nrows
+    #     ncols = table.ncols
+    #     if ncols != 13:
+    #         ret['msg'] = u"文件格式与模板不符，请下载最新模板填写！"
+    #         return JsonResponse(ret)
+    #     rtable = []
+    #     try:
+    #         for i in range(1, nrows):
+    #             row = table.row_values(i)
+    #             temp = {}
+    #             id = int(row[0])
+    #             project_id = int(row[1])
+    #             term = int(row[7])
+    #             mobile = row[5]
+    #             consume = Decimal(row[8])
+    #             remark = row[12]
+    #             date = row[4]
+    #             date = xlrd.xldate.xldate_as_datetime(date, 0)
+    #
+    #             try:
+    #                 mobile = str(int(mobile)).strip()
+    #             except Exception as e:
+    #                 mobile = str(mobile).strip()
+    #             if len(mobile) != 11:
+    #                 raise Exception(u"手机号必须是11位，请修改后重新提交。")
+    #             if row[9] == "是":
+    #                 result = True
+    #                 temp['state'] = '0'
+    #             elif row[9] == "否":
+    #                 result = False
+    #                 temp['state'] = '1'
+    #             else:
+    #                 raise Exception(u"审核结果必须为是或否。")
+    #
+    #             if row[10]:
+    #                 return_amount = Decimal(row[10])
+    #                 if return_amount > consume:
+    #                     raise Exception(u"返现金额不能大于结算金额，请检查表格")
+    #             elif result:
+    #                 raise Exception(u"审核结果为是时，返现金额不能为空或零。")
+    #             else:
+    #                 return_amount = 0
+    #
+    #             if row[11] == "网站":
+    #                 source = 'site'
+    #             elif row[11] == "渠道":
+    #                 source = 'channel'
+    #             else:
+    #                 raise Exception(u"必须为网站或渠道。")
+    #             temp['id'] = id
+    #             temp['project_id'] = project_id
+    #             temp['source'] = source
+    #             temp['return_amount'] = return_amount
+    #             temp['consume'] = consume
+    #             temp['remark'] = remark
+    #             temp['mobile'] = mobile
+    #             temp['date'] = date
+    #             temp['term'] = term
+    #             rtable.append(temp)
+    #     except Exception as  e:
+    #         logger.info(e)
+    #         print(e)
+    #         #             traceback.print_exc()
+    #         ret['msg'] = e.__str__()
+    #         return JsonResponse(ret)
+    #         ####开始去重
+    #         admin_user = request.user
+    #     suc_num = 0
+    #     try:
+    #         for row in rtable:
+    #             id = row['id']
+    #             return_amount = row['return_amount']
+    #             source = row['source']
+    #             remark = row['remark']
+    #             mobile = row['mobile']
+    #             consume = row['consume']
+    #             project_id = row['project_id']
+    #             state = row['state']
+    #             date = row['date']
+    #             term = row['term']
+    #             event = ProjectInvestDataModel.objects.get(id=id)
+    #             #             if event.state != '1':
+    #             #                 continue
+    #             event.state = state
+    #             event.return_amount = return_amount
+    #             event.audit_time = datetime.datetime.now()
+    #             event.source = source
+    #             event.remark = remark
+    #             event.settle_amount = consume
+    #             event.project_id = project_id
+    #             event.invest_mobile = mobile
+    #             event.invest_time = date
+    #             event.invest_term = term
+    #             event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark', 'invest_term',
+    #                                       'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
+    #             suc_num += 1
+    #         ret['code'] = '0'
+    #     except Exception as e:
+    #         exstr = traceback.format_exc()
+    #         logger.info(exstr)
+    #         ret['code'] = 1
+    #         ret['msg'] = e.__str__()
+    #     ret['num'] = suc_num
+    #     return JsonResponse(ret)
 
 
     @action(methods=['post'], detail=False)
