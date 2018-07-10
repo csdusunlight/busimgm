@@ -1,3 +1,4 @@
+from io import StringIO
 from rest_framework import generics, permissions
 from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestDataModel
 from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
@@ -23,7 +24,6 @@ from xlwt.Workbook import Workbook
 from xlwt.Style import easyxf
 import traceback
 import datetime
-from tools.StringIO import StringIO
 from project.models import DBlock
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, GenericAPIView
 from rest_framework.response import Response
@@ -554,8 +554,6 @@ class ProjectInvestData(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     def import_audit_projectdata_excel_except(self,request):
         admin_user = request.user
-        if not (admin_user.is_authenticated() and admin_user.is_staff):
-            raise Http404
         ret = {'code': -1}
         file = request.FILES.get('file')
         #     print file.name
@@ -657,10 +655,6 @@ class ProjectInvestData(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     def import_audit_projectdata_excel(self,request):
         admin_user = request.user
-        # print(admin_user)
-        # print("aaaaa")
-        if not (admin_user.is_authenticated and admin_user.is_staff):
-            raise Http404
         ret = {'code': -1}
         # print(dir(request))
         file = request.FILES.get('file')
@@ -779,10 +773,6 @@ class ProjectInvestData(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     def import_audit_projectdata_excel(self,request):
         admin_user = request.user
-        # print(admin_user)
-        # print("aaaaa")
-        if not (admin_user.is_authenticated and admin_user.is_staff):
-            raise Http404
         ret = {'code': -1}
         # print(dir(request))
         file = request.FILES.get('file')
@@ -902,8 +892,6 @@ class ProjectInvestData(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     def import_projectdata_excel(self,request):
         admin_user = request.user
-        if not (admin_user.is_authenticated and admin_user.is_staff):
-            raise Http404
         ret = {'code': -1}
         file = request.FILES.get('file')
         print(file.name)
