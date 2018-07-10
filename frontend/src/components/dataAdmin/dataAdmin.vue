@@ -349,7 +349,7 @@ export default {
       html += '<input name="audittime_0" type="hidden" value="' + this.inputdate2 + '"/>'
       html += '<input name="audittime_1" type="hidden" value="' + this.inputdate3 + '"/>'
       html += '<input name="project" type="hidden" value="' + this.projectnum + '"/>'
-      html += '<input name="projectname" type="hidden" value="' + this.projectname + '"/>'
+      html += '<input name="projectname" type="hidden" value="' + this.projectnameVal + '"/>'
       html += '<input name="invest_mobile" type="hidden" value="' + this.subphone + '"/>'
       html += '<input name="source" type="hidden" value="' + this.investvalue + '"/>'
       html += '<input name="is_futou" type="hidden" value="' + this.inmodevalue + '"/>'
