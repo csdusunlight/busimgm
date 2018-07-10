@@ -77,14 +77,16 @@ class ProStatis(viewsets.ModelViewSet):
         row = cursor.fetchall()
         print(row)
         returndict={}
-        data={}
+
+        data=[]
         for item in row:
             print(item)
-            data['onlineprojectnum'] = item[0]
-            data['currenttosettlenum'] = item[1]
-            data['currenttosettlepronum'] = item[2]
-            data['currenttoconsumenum'] = item[3]
-            data['currenttoconsumepronum'] = item[4]
+            data.append(item[0])
+            data.append(item[1])
+            data.append(item[2])
+            data.append(item[3])
+            data.append(item[4])
+
         returndict['data']=data
         return Response(returndict)
 
