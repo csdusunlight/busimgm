@@ -93,8 +93,7 @@ class ProStatis(viewsets.ModelViewSet):
         '''　日期 新增项目数 结项项目数 有效项目数（有交单的） 投资人数 投资金额 消耗费用 返现投资人数 返现投资金额 返现费用'''
         cursor = connection.cursor()
         cursor.execute(\
-    "select coalesce(t1.[A1],t2.[A2],t3.[A3],t4.[A4],t5.[A5]) as [mydate],\
-    t1.[B1],t2.[B2],t3.[B3],t4.[B4],t4.[B5],t5.[B6],t6.[B7],t6.[B8]\
+    "select *\
     from\
     (\
         select lanched_apply_date as 'A1', count(*) as 'B1' from project_project group by lanched_apply_date\
@@ -127,8 +126,7 @@ class ProStatis(viewsets.ModelViewSet):
         from project_projectinvestdatamodel\
         where return_amount is not null and return_amount >= 0\
         group by audit_time\
-    )t5  on t4.invest_time=t5.audit_time \
-    order by [mydate]")
+    )t5  on t4.invest_time=t5.audit_time ")
 
         #新增项目数
         # select lanched_apply_date, count(*)
