@@ -46,7 +46,7 @@
           </div>
           <div class="select">
             <label class="label">审核状态</label>
-            <el-select size="medium" v-model="examinestate" placeholder="请选择">
+            <el-select size="medium" v-model="selectvalue" placeholder="请选择">
               <el-option
                 v-for="item in options"
                 :key="item.value"
@@ -149,6 +149,7 @@
               <span>{{stateFilter[scope.row.state]}}</span>
             </template>
           </el-table-column>
+          <el-table-column label="拒绝原因" prop="audit_refused_reason" :key="Math.random()" v-if="examineAdopt"></el-table-column>
           <el-table-column label="备注" prop="record"></el-table-column>
           <el-table-column label="操作" v-if="operationShow">
             <template slot-scope="scope">
@@ -247,7 +248,7 @@ export default {
       invoicetype: '',
       contractCop: '',
       nailCompany: '',
-      examinestate: '0',
+      selectvalue: '0',
       options: examineOption,
       dialogVisible: false,
       invoiceVisible: false,
@@ -338,10 +339,15 @@ export default {
     /* 获取列表 */
     getDatalist () {
       let data = this.conditionDate()
-      if (this.examinestate === '0') {
+      if (this.selectvalue === '0') {
         this.operationShow = true
       } else {
         this.operationShow = false
+      }
+      if (this.selectvalue === '2') {
+        this.examineAdopt = true
+      } else {
+        this.examineAdopt = false
       }
       getInvoice(this.currentPage, data).then((res) => {
         console.log(res)
@@ -363,7 +369,7 @@ export default {
           invoice_type: this.invoicetype,
           contract_company: this.contractCop,
           company: this.nailCompany,
-          state: this.examinestate
+          state: this.selectvalue
         }
       }
       return Data
@@ -477,7 +483,7 @@ export default {
   },
   watch: {
     /* 审核状态搜索 */
-    examinestate () {
+    selectvalue () {
       this.dataList = []
       this.loading = true
       this.currentPage = 1

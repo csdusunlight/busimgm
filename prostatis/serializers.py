@@ -9,6 +9,7 @@ class DayStatisSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProjectDayStatisSerializer(serializers.ModelSerializer):
+    project_name = serializers.CharField(source='project.name')
     class Meta:
         model = ProjectDayStatis
         fields = '__all__'

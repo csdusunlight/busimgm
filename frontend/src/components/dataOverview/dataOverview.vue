@@ -5,11 +5,11 @@
         <h1 class="title">项目总览</h1>
         <div class="table-list">
           <el-table v-loading="loading" :data="projectOverview.data" style="width: 100%">
-            <el-table-column label="在线项目数" prop="currenttoconsumenum"></el-table-column>
-            <el-table-column label="待结算金额" prop="currenttoconsumepronum"></el-table-column>
-            <el-table-column label="待结算项目数" prop="currenttosettlenum"></el-table-column>
-            <el-table-column label="待消耗金额" prop="currenttosettlepronum"></el-table-column>
-            <el-table-column label="待消耗项目数" prop="onlineprojectnum"></el-table-column>
+            <el-table-column label="在线项目数" prop="onlineprojectnum"></el-table-column>
+            <el-table-column label="待结算金额" prop="currenttosettlenum"></el-table-column>
+            <el-table-column label="待结算项目数" prop="currenttosettlepronum"></el-table-column>
+            <el-table-column label="待消耗金额" prop="currenttoconsumenum"></el-table-column>
+            <el-table-column label="待消耗项目数" prop="currenttoconsumepronum"></el-table-column>
           </el-table>
         </div>
       </el-row>
@@ -73,7 +73,7 @@ export default {
   methods: {
     /* 获取项目总览 */
     getDatalist () {
-      getDataOverview(this.currentPage).then((res) => {
+      getDataOverview().then((res) => {
         console.log(res)
         console.log(res.data.data['currenttoconsumenum'])
         this.projectOverview.data[0].currenttoconsumenum = res.data.data['currenttoconsumenum']
