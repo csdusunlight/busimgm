@@ -79,7 +79,7 @@
         </div>
       </el-col>
     </el-row>
-    <el-row class="row_top row_buttom">
+    <el-row class="row_top row_bottom">
       <div class="table-list">
         <el-table v-loading="loading" :data="dataList.results" style="width: 100%">
           <el-table-column label="日期" prop="apply_date"></el-table-column>
@@ -268,7 +268,7 @@ export default {
         type: 'warning'
       }).then(() => {
         agreeCost(row.id).then((res) => {
-          if (res.data.code === '0') {
+          if (res.data.code === 0) {
             this.$message({
               type: 'success',
               message: '操作成功!'
@@ -295,7 +295,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           refuseCost(this.refuseId, this.modifyCost).then((res) => {
-            if (res.data.code === '0') {
+            if (res.data.code === 0) {
               this.modifyCost = this.initModifyCost
               this.$refs[formName].resetFields()
               this.$message({

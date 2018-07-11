@@ -39,6 +39,8 @@ module.exports = {
     }
   },
   externals: {
+    'vue': 'Vue',
+    'element-ui': 'element-ui',
     'highcharts': 'Highcharts'
   },
   module: {

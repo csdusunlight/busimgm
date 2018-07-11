@@ -22,6 +22,18 @@ export function login (data) {
   console.log(url)
   return axios.post(url, qs.stringify(data))
 }
+/* 退出 */
+export function logout () {
+  let url = `${http}/logout/`
+  console.log(url)
+  return axios.post(url)
+}
+/* 判断是否登入 */
+export function checkLogin () {
+  let url = `${http}/check_user_login/`
+  console.log(url)
+  return axios.post(url)
+}
 /* ----------------项目申请审核API--------------- */
 /* 获取项目审核列表 */
 export function getProjectList (page, data) {
@@ -229,6 +241,12 @@ export function allGetProject () {
 /* 获取图片token值 */
 export function getToken () {
   let url = `${http}/get_upload_token/`
+  console.log(url)
+  return axios.get(url)
+}
+/* ----------------数据总览--------------- */
+export function getDataOverview (page) {
+  let url = `${http}/Project/prostatis/get_date1/?page=${page}&pageSize=${pageSize}`
   console.log(url)
   return axios.get(url)
 }

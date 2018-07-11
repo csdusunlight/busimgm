@@ -17,6 +17,8 @@ from django.conf import settings
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.views.decorators.csrf import csrf_exempt,csrf_protect
+
 
 
 access_key = settings.QINIU_AK
@@ -96,7 +98,7 @@ class UserLogoutAPIView(APIView):
                 "detail":"退出成功"}
         return Response(returndata)
 
-
+@csrf_exempt
 def check_user_login(request):
     user = request.user
     islogin = 1 if user.is_authenticated else 0

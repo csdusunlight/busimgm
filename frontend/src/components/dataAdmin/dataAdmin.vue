@@ -364,7 +364,7 @@ export default {
     /* 正常数据导入回调 */
     handleAvatarSuccess (response, file) {
       console.log(response)
-      if (response.code === '0') {
+      if (response.code === 0) {
         this.uploadVisible = true
         this.dataAdminDetails = response
         this.getDatalist()
@@ -375,9 +375,16 @@ export default {
     /* 审核数据导入回调 */
     handleThreeSuccess (response, file) {
       console.log(response)
-      if (response.code === '0') {
-        this.uploadThreeVisible = true
-        this.dataAdminDetails = response
+      if (response.code === 0) {
+        this.$message({
+          type: 'success',
+          message: '上传成功!'
+        })
+        this.$notify({
+          title: '成功',
+          message: '上传成功条数: ' + response.num,
+          type: 'success'
+        })
         this.getDatalist()
       } else {
         this.$message.error(response.msg)
@@ -386,16 +393,19 @@ export default {
     /* 异常数据导入回调 */
     handleFourSuccess (response, file) {
       console.log(response)
-      if (response.code === '0') {
-        this.uploadVisible = true
-        this.dataAdminDetails = response
+      if (response.code === 0) {
         this.$message({
           type: 'success',
           message: '上传成功!'
         })
+        this.$notify({
+          title: '成功',
+          message: '上传成功条数: ' + response.num,
+          type: 'success'
+        })
         this.getDatalist()
       } else {
-        this.$message.error('上传失败')
+        this.$message.error(response.msg)
       }
     },
     /* 数据导入前 */
@@ -411,7 +421,7 @@ export default {
       }).then(() => {
         deleteDataAdmin(row.id).then((res) => {
           console.log(res)
-          if (res.data.code === '0') {
+          if (res.data.code === 0) {
             this.$message({
               type: 'success',
               message: '操作成功!'
@@ -444,7 +454,7 @@ export default {
         if (valid) {
           agreeDataAdmin(this.adoptId, this.examineReason).then((res) => {
             console.log(res)
-            if (res.data.code === '0') {
+            if (res.data.code === 0) {
               this.examineReason = this.initExamineReason
               this.$refs[examine].resetFields()
               this.$message({
