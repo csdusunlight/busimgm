@@ -469,6 +469,12 @@ class ProjectInvestData(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectInvestDataFilter
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        ret={}
+        ret['code']=0
+        return Response(ret)
 
     def perform_update(self, serializer):
         if self.request.data.get('state'):
