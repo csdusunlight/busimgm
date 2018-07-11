@@ -47,7 +47,7 @@ class ProjectDetail(viewsets.ModelViewSet):
     ordering_fields = ('name')
     search_fields = ('name')
     ordering=('lanched_apply_date','concluded_audit_date')
-    permission_classes =(IsAllowedToUse,)
+    #permission_classes =(IsAllowedToUse,)
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
