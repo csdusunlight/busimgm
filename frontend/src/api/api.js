@@ -94,12 +94,6 @@ export function endProjectRefuse (id, data) {
   console.log(url)
   return axios.post(url, data)
 }
-/* 搜索项目 */
-export function searchProject (page, data) {
-  let url = `${http}/Project/projects/?page=${page}&pageSize=${pageSize}`
-  console.log(url)
-  return axios.delete(url, data)
-}
 /* ----------------费用申请审核API--------------- */
 /* 获取费用申请列表 */
 export function getCostList (page, data) {

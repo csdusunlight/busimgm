@@ -9,7 +9,7 @@ from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
 from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,\
     InvoiceApplyLogFilter,OperatorLogFilter,ProjectInvestDataFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
-#from account.permissions import IsAllowedToUse,IsOwnerOrStaff
+from account.permissions import IsAllowedToUse,IsOwnerOrStaff
 
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
@@ -47,7 +47,7 @@ class ProjectDetail(viewsets.ModelViewSet):
     ordering_fields = ('name')
     search_fields = ('name')
     ordering=('lanched_apply_date','concluded_audit_date')
-    #permission_classes =(IsAllowedToUse,)
+    permission_classes =(IsAllowedToUse,)
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -339,8 +339,11 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         aimrefund.audit_date = datetime.date.today()
         aimrefund.save(update_fields=['audituser','state','audit_date'])
         aimpro = aimrefund.project
-        aimpro.settle -= aimrefund.refund_rec
-        aimpro.invoicenum -= aimrefund.refund_rec
+        if aimrefund.is_invoice=="1":
+            aimpro.settle -= aimrefund.refund_rec
+        elif aimrefund.is_invoice=="0":
+            aimpro.settle -= aimrefund.refund_rec
+            aimpro.invoicenum -= aimrefund.refund_rec
         aimpro.save(update_fields=['settle','invoicenum'])
 
         res = {}
@@ -570,7 +573,6 @@ class ProjectInvestData(viewsets.ModelViewSet):
         #     print file.name
         aftername=time.time()
         filename = "./files/"+str(int(aftername*1000))
-
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
@@ -789,10 +791,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     def import_projectdata_excel(self,request):
         admin_user = request.user
-        ret = {'code': -1}
+        ret = {}
         file = request.FILES.get('file')
-        #time.time()
-        filename = "./files/"+'1'
+        # aftername＝time.time()
+        filename = "./files/" +"1"
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
@@ -831,8 +833,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
                         if (cell.ctype != 3):
                             raise Exception("投资日期列格式错误，请修改后重新提交。")
                         else:
-                            time = xlrd.xldate.xldate_as_datetime(value, 0)
-                            temp.append(time)
+                            time2 = xlrd.xldate.xldate_as_datetime(value, 0)
+                            temp.append(time2)
                     elif j == 4:
                         try:
                             mobile = str(int(value)).strip()
@@ -915,6 +917,9 @@ class ProjectInvestData(viewsets.ModelViewSet):
         duplic_mobile_list_str = u'，'.join(duplicate_mobile_list)
         ret.update(num=succ_num, dup1=duplic_num1, dup2=duplic_num2, anum=nrows - 1,
                    dupstr=duplic_mobile_list_str)
+        returndict ={}
+        returndict['data']=ret
+        returndict['code']=0
         return JsonResponse(ret)
 
 

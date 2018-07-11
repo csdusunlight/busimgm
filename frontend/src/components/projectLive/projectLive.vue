@@ -41,19 +41,15 @@
     </el-row>
     <el-row class="row_top row_bottom">
       <div class="table-list">
-        <el-table v-loading="loading" :data="dataList.results" style="width: 100%">
+        <el-table v-loading="loading" :data="dataList.results" style="width: 100%" @row-click="handleRowHandle">
           <el-table-column label="项目编号" prop="id"></el-table-column>
           <el-table-column label="项目名称" prop="name"></el-table-column>
-          <el-table-column label="立项日期" prop="name"></el-table-column>
-          <el-table-column label="结项日期" prop="name"></el-table-column>
-          <el-table-column label="预计待收/待消耗" prop="name"></el-table-column>
-          <el-table-column label="预计总消耗" prop="name"></el-table-column>
-          <el-table-column label="总返现金额" prop="name"></el-table-column>
-          <el-table-column label="预估渠道消耗" prop="name"></el-table-column>
-          <el-table-column label="渠道返现金额" prop="name"></el-table-column>
-          <el-table-column label="预估网站消耗" prop="name"></el-table-column>
-          <el-table-column label="网站返现金额" prop="name"></el-table-column>
-          <el-table-column label="项目状态" prop="name"></el-table-column>
+          <el-table-column label="立项日期" prop="lanched_audit_date"></el-table-column>
+          <el-table-column label="结项日期" prop="concluded_audit_date"></el-table-column>
+          <el-table-column label="预计待收/待消耗" prop="topay_amount"></el-table-column>
+          <el-table-column label="预计总消耗" prop="consume"></el-table-column>
+          <el-table-column label="总返现金额" prop="cost"></el-table-column>
+          <el-table-column label="项目状态" prop="state"></el-table-column>
         </el-table>
       </div>
       <div class="pagination">
@@ -66,12 +62,36 @@
           :total="this.dataList.recordCount">
         </el-pagination>
       </div>
+      <el-dialog title="项目数据" :visible.sync="lookProjectTable" width="70%">
+        <div class="table-list">
+          <el-table :data="detailsList.results" style="width: 100%" @row-click='handleRowHandle'>
+            <el-table-column label="日期" prop="date"></el-table-column>
+            <el-table-column label="项目名称" prop="1"></el-table-column>
+            <el-table-column label="投资人数" prop="1"></el-table-column>
+            <el-table-column label="投资金额" prop="invest_amount"></el-table-column>
+            <el-table-column label="消耗费用" prop="consume_amount"></el-table-column>
+            <el-table-column label="返现投资人数" prop="1" width="95"></el-table-column>
+            <el-table-column label="返现投资金额" prop="1"></el-table-column>
+            <el-table-column label="返现费用" prop="return_amount"></el-table-column>
+          </el-table>
+        </div>
+        <div class="pagination">
+          <el-pagination
+            background
+            @current-change="detailsCurrentChange"
+            :page-size="10"
+            :current-page="this.detailsCurrentPage"
+            layout="prev, pager, next, total, jumper"
+            :total="this.detailsList.recordCount">
+          </el-pagination>
+        </div>
+      </el-dialog>
     </el-row>
   </div>
 </template>
 
 <script>
-import {getProjectLive} from '@/api/api'
+import {getProjectLive, getprojectDetails} from '@/api/api'
 export default {
   data () {
     return {
@@ -81,6 +101,10 @@ export default {
       projectname: '',
       selectvalue: '0',
       loading: true,
+      currentPage: 1,
+      searchDetailsName: '',
+      lookProjectTable: false,
+      detailsList: {},
       dataList: {},
       options: [
         {
@@ -106,6 +130,9 @@ export default {
       ]
     }
   },
+  created () {
+    this.getProjectList()
+  },
   methods: {
     getProjectList () {
       let data = this.conditionDate()
@@ -125,6 +152,31 @@ export default {
         }
       }
       return Data
+    },
+    /* 分页 */
+    handleCurrentChange (val) {
+      this.loading = true
+      this.currentPage = val
+      this.getProjectList()
+    },
+    /* 点击 行 查看详情 */
+    handleRowHandle (val) {
+      console.log(val)
+      this.searchDetailsName = val.id
+      this.lookProjectTable = true
+      this.getDetailsList()
+    },
+    /* 单击行详情搜索 */
+    getDetailsList () {
+      let data = {
+        params: {
+          project: this.searchDetailsName
+        }
+      }
+      getprojectDetails(this.detailsCurrentPage, data).then((res) => {
+        console.log(res)
+        this.detailsList = res.data
+      })
     }
   }
 }

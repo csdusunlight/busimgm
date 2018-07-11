@@ -127,7 +127,11 @@
           <el-table-column label="投资金额" prop="invest_amount"></el-table-column>
           <el-table-column label="投资标期" prop="invest_term"></el-table-column>
           <el-table-column label="预估消耗" prop="settle_amount"></el-table-column>
-          <el-table-column label="投资来源" prop="source"></el-table-column>
+          <el-table-column label="投资来源">
+            <template slot-scope="scope">
+              <span>{{sourceFilter[scope.row.source]}}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="返现金额" prop="return_amount"></el-table-column>
           <el-table-column label="审核状态">
             <template slot-scope="scope">
@@ -163,7 +167,7 @@
         >
         <div class="form_table">
           <el-form :model="examineReason" :rules="rules" ref="examineReason" label-width="120px" class="demo-ruleForm">
-            <el-form-item label="项目来源" prop="source">
+            <el-form-item label="投资来源" prop="source">
               <el-radio-group v-model="examineReason.source">
                 <el-radio :label="'site'">网站</el-radio>
                 <el-radio :label="'channel'">渠道</el-radio>
@@ -233,6 +237,7 @@ export default {
       adoptId: '',
       dataAdminDetails: {},
       investFilter: {true: '是', false: '否'},
+      sourceFilter: {'site': '网站', 'channel': '渠道'},
       dataList: [],
       loading: true,
       dialogVisible: false,
@@ -447,6 +452,7 @@ export default {
     AgreeDataAdminBtn (row) {
       this.dialogVisible = true
       this.adoptId = row.id
+      this.examineReason.source = row.source
     },
     /* 提交同意条件 */
     subDataAdminBtn (examine) {
