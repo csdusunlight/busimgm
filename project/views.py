@@ -793,7 +793,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         admin_user = request.user
         ret = {'code': -1}
         file = request.FILES.get('file')
-        time.time()
+        #time.time()
         filename = "./files/"+'1'
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
