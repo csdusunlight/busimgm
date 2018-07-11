@@ -34,7 +34,7 @@
             <el-input size="medium" v-model="subphone"></el-input>
           </div>
           <div class="select margin_clear">
-            <label class="label">项目状态</label>
+            <label class="label">投资来源</label>
             <el-select size="medium" v-model="investvalue" placeholder="请选择">
               <el-option
                 v-for="item in investment"
@@ -276,11 +276,11 @@ export default {
         },
         {
           value: true,
-          label: '首投'
+          label: '复投'
         },
         {
           value: false,
-          label: '复投'
+          label: '首投'
         }
       ],
       examine: [
