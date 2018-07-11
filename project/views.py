@@ -673,7 +673,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         # print(dir(request))
         file = request.FILES.get('file')
         aftername=time.time()
-        filename = "./files/"+aftername
+        filename = "./files/"+str(int(aftername*1000))
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
