@@ -9,6 +9,7 @@ from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
 from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,\
     InvoiceApplyLogFilter,OperatorLogFilter,ProjectInvestDataFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
+#from account.permissions import IsAllowedToUse,IsOwnerOrStaff
 
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
@@ -46,7 +47,7 @@ class ProjectDetail(viewsets.ModelViewSet):
     ordering_fields = ('name')
     search_fields = ('name')
     ordering=('lanched_apply_date','concluded_audit_date')
-    #permission_classes =
+    #permission_classes =(IsAllowedToUse,)
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -57,7 +58,7 @@ class ProjectDetail(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-        serializer.save(contact=user)
+        serializer.save(contact=user,lanched_audit_date=datetime.date.today())
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -429,7 +430,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         aiminvoice.audit_date = datetime.date.today()
         aiminvoice.save(update_fields=['audituser','state','audit_date'])
         aimpro = aiminvoice.project
-        aimpro.invoicenum -= aiminvoice.invoice_num
+        aimpro.invoicenum = aiminvoice.invoice_num
         aimpro.save(update_fields=['invoicenum'])
         res = {}
         res['code'] = 0
@@ -468,6 +469,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectInvestDataFilter
+    permission_classes = ()
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
