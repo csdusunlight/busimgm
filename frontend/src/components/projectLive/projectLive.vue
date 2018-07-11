@@ -89,11 +89,19 @@ export default {
         },
         {
           value: '1',
-          label: '正在进行'
+          label: '进行中'
         },
         {
-          value: '2',
+          value: '4',
+          label: '结项中'
+        },
+        {
+          value: '5',
           label: '已结项'
+        },
+        {
+          value: '6',
+          label: '结项失败'
         }
       ]
     }
