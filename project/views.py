@@ -9,7 +9,7 @@ from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
 from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,\
     InvoiceApplyLogFilter,OperatorLogFilter,ProjectInvestDataFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
-from account.permissions import IsAllowedToUse,IsOwnerOrStaff
+#from account.permissions import IsAllowedToUse,IsOwnerOrStaff
 
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
