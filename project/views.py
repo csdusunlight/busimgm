@@ -9,6 +9,7 @@ from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
 from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,\
     InvoiceApplyLogFilter,OperatorLogFilter,ProjectInvestDataFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
+#from account.permissions import IsAllowedToUse,IsOwnerOrStaff
 
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
@@ -36,7 +37,7 @@ from utils.Mypagination import MyPageNumberPagination
 #import django.core.cache
 import time
 logger = logging.getLogger('busimgm')
-
+ts = lambda :time.time
 class ProjectDetail(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
@@ -46,7 +47,7 @@ class ProjectDetail(viewsets.ModelViewSet):
     ordering_fields = ('name')
     search_fields = ('name')
     ordering=('lanched_apply_date','concluded_audit_date')
-    #permission_classes =
+    #permission_classes =(IsAllowedToUse,)
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -57,7 +58,7 @@ class ProjectDetail(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-        serializer.save(contact=user)
+        serializer.save(contact=user,lanched_audit_date=datetime.date.today())
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -124,7 +125,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.lanched_apply_date=  datetime.date.today()
 
         aimpro.lanched_refused_reason = lanched_refused_reason
-        aimpro.save(update_fields=['audituser','state','lanched_refused_reason','lanched_apply_date'])
+        aimpro.save()
         res = {}
         res['code'] = 0
         return Response(res)
@@ -140,7 +141,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.settle = settle
         aimpro.psettlereason = psettlereason
         aimpro.concluded_apply_date = datetime.date.today()
-        aimpro.save(update_fields=['audituser', 'state', 'settle','psettlereason','concluded_apply_time'])
+        aimpro.save()
         res = {}
         res['code'] = 0
         return Response(res)
@@ -153,7 +154,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.audituser=request.user
         aimpro.state='5'
         aimpro.concluded_audit_date = datetime.date.today()
-        aimpro.save(update_fields=['audituser','state','concluded_audit_time'])
+        aimpro.save()
         res = {}
         res['code'] = 0
         return Response(res)
@@ -167,7 +168,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.state='6'
         aimpro.concluded_audit_date = datetime.date.today()
         aimpro.conclued_refused_reason = conclued_refused_reason
-        aimpro.save(update_fields=['audituser','state','conclued_refused_reason','concluded_audit_date'])
+        aimpro.save()
         res = {}
         res['code'] = 0
         return Response(res)
@@ -357,7 +358,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         aimrefend.audit_date =  datetime.date.today()
 
         aimrefend.audit_refused_reason = reason
-        aimrefend.save(update_fields=['audituser','state','audit_refused_reason','audit_date'])
+        aimrefend.save()
         res = {}
         res['code'] = 0
         return Response(res)
@@ -429,7 +430,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         aiminvoice.audit_date = datetime.date.today()
         aiminvoice.save(update_fields=['audituser','state','audit_date'])
         aimpro = aiminvoice.project
-        aimpro.invoicenum -= aiminvoice.invoice_num
+        aimpro.invoicenum = aiminvoice.invoice_num
         aimpro.save(update_fields=['invoicenum'])
         res = {}
         res['code'] = 0
@@ -468,6 +469,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectInvestDataFilter
+    permission_classes = ()
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -566,7 +568,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret = {'code': -1}
         file = request.FILES.get('file')
         #     print file.name
-        filename = "./"+str(time.time())
+        aftername=time.time()
+        filename = "./files/"+str(int(aftername*1000))
 
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
@@ -650,8 +653,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 event.project_id = project_id
                 event.invest_mobile = mobile
                 event.invest_time = date
-                event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark',
-                                          'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
+                event.save()
                 suc_num += 1
             ret['code'] = 0
         except Exception as e:
@@ -670,7 +672,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret = {'code': -1}
         # print(dir(request))
         file = request.FILES.get('file')
-        filename = "./" + str(time.time())
+        aftername=time.time()
+        filename = "./files/"+str(int(aftername*1000))
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
@@ -771,8 +774,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 event.invest_mobile = mobile
                 event.invest_time = date
                 event.invest_term = term
-                event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark', 'invest_term',
-                                          'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
+                event.save()
                 suc_num += 1
             ret['code'] = 0
         except Exception as e:
@@ -789,8 +791,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         admin_user = request.user
         ret = {'code': -1}
         file = request.FILES.get('file')
-        print(file.name)
-        filename = "./" + str(time.time())
+        #time.time()
+        filename = "./files/"+'1'
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
@@ -814,6 +816,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
 
                     if j == 0:
                         id = int(value)
+                        print(id)
                         project = Project.objects.get(id=id)
                         temp.append(id)
                     elif j == 2:
@@ -912,8 +915,6 @@ class ProjectInvestData(viewsets.ModelViewSet):
         duplic_mobile_list_str = u'，'.join(duplicate_mobile_list)
         ret.update(num=succ_num, dup1=duplic_num1, dup2=duplic_num2, anum=nrows - 1,
                    dupstr=duplic_mobile_list_str)
-        result={}
-        result
         return JsonResponse(ret)
 
 
