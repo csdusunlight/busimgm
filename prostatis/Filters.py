@@ -1,6 +1,6 @@
 import django_filters
 from project.models import ProjectInvestDataModel
-from prostatis.models import  ProjectDayStatis,UserDayStatis,DayStatis,ProjectStatis,UserStatis
+from prostatis.models import  ProjectDayStatis,UserDayStatis,DayStatis,UserStatis
 
 
 class ProjectInvestDataFilter(django_filters.rest_framework.FilterSet):
@@ -28,11 +28,7 @@ class DayStatisFilter(django_filters.rest_framework.FilterSet):
     class Meta:
         model = DayStatis
         fields = '__all__'
-class ProjectStatisFilter(django_filters.rest_framework.FilterSet):
 
-    class Meta:
-        model = ProjectStatis
-        fields = '__all__'
 class UserStatisFilter(django_filters.rest_framework.FilterSet):
 
     class Meta:

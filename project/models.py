@@ -76,8 +76,6 @@ class Project(models.Model):
     psettlereason= models.CharField("结项原因", max_length=20,null=True)
     concluded_apply_date = models.DateField("结项申请日期", blank=True, null=True)
     concluded_audit_date = models.DateField("结项审核日期", blank=True, null=True)
-    concluded_audit_time = models.DateField("结项审日期", blank=True, null=True)
-    concluded_apply_time = models.DateField("结项le日期", blank=True, null=True)
 
 
     #auditstate= models.CharField("立项审核状态",choices=AUDIT_STATE, max_length=2)

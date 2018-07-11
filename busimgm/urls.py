@@ -24,10 +24,6 @@ from django.contrib import admin
 from django.views.generic.base import TemplateView
 from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,\
     InvoiceApplyLogDetail,ProjectInvestData
-from prostatis.views import ProStatis,ProjectDayStatisList,DayStatisStatisList,UserDayStatisList,ProjectStatisList,UserStatisList
-
-#from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,\
-#    InvoiceApplyLogDetail,import_audit_projectdata_excel,import_projectdata_excel
 
 from rest_framework.routers import DefaultRouter
 
@@ -37,7 +33,6 @@ router.register(r'fundapplys', FundApplyLogDetail, base_name='fundapply')
 router.register(r'refundapplys', RefundApplyLogDetail, base_name='refundapply')
 router.register(r'invoiceapplys', InvoiceApplyLogDetail, base_name='invoiceapply')
 router.register(r'projectinvestdata',ProjectInvestData,base_name='projectinvestdata')
-router.register(r'prostatis',ProStatis,base_name='prostatis')
 
 
 
@@ -48,11 +43,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'Project/', include(router.urls)),
     url(r'^User/$', AccountView.UserList.as_view()),
-    url(r'^ProjectDayStatis/$', ProjectDayStatisList.as_view()),
-    url(r'^DayStatisStatis/$', DayStatisStatisList.as_view()),
-    url(r'^UserDayStatis/$', UserDayStatisList.as_view()),
-    url(r'^ProjectStatis/$', ProjectStatisList.as_view()),
-    url(r'^UserStatis/$', UserStatisList.as_view()),
+    path('statis/', include('prostatis.urls')),
 
     url(r'^check_user_login/$', AccountView.check_user_login),
     url(r'^get_upload_token/$', AccountView.QiniuTokenView.as_view()),
