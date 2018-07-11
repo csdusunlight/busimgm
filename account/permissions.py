@@ -36,57 +36,57 @@ class IsAllowedToUse(BasePermission):
 
     }
 
-    def has_permission(self, request,view):
-        """该类权限的意义在于对执行方法的权限的控制，而非权限的具体内容
-        在 permission_class 中 ，首先 self.get_view_name() 获取当前 view 的名称，然后 self.get_method()获取当前方法，然后
-        获取对应用户的 permission_record ，如果 record 的集合 中有对应的 view 和方法,就判定通过
-        但是权限管理人员添加权限的话，是添加的组合权限， 后台先将组合模板（就是对应 view 和方法）列出来，管理人员添加的是模板
-        模板就是权限的组合"""
-        current_user, current_method, current_resource = request.user, request.method,request.path
-        print(view.action)
-        print(dir(view.action))
-        print(request.path)
-        x = request.path.split('/')
-        x= [ i if i.isdigit for i in x]
-        filter(func1,x)
-        del_x = filter(str.isdigit, x)
-        for i in del_x:
-            x.remove(i)
-        y = "/Project/projects/is_altered".split('/')
-        pmatch = lambda x,y: all(True if i in x  else False for i in y)
-        #request.path,action,detailed
-        #request.path  view.action
-        print(current_resource, current_method, current_user)
-        if current_user.is_anonymous == True or current_user.is_authenticated == False:
-            return False
-        # if current_user.is_superuser == True:
-        #     return True
-        # if current_user.is_staff ==True :
-        #pmatch=lambda x:request.path+request.action match j
-        # j="projects|is_altered"
-        # x=j.split('|')
-        # pmatch = lambda x,y,z : all(True if i in current_resource or view.action else False for i in x)
-        # result=pmatch(x,current_resource,view.action)
-        # print(result)
-        # if x[0] in current_resource
-        # if x[1] in view.action return
-
-        aimuser = User.objects.filter(uid=current_user.uid)
-        print(aimuser)
-        if aimuser.exists():
-            umodulespems = aimuser[0].upermission.all()
-            if umodulespems.exists():
-                moduletemplatepermission = self.modulepermissiontemplate
-                result = any(True \
-                                 if  pmatch(j.split('|'),current_resource,view.action) \
-                                    and current_method in moduletemplatepermission[i.desc][j] \
-                                 else False \
-                             for i in umodulespems for j in moduletemplatepermission[i.desc])
-            else:
-                return False
-            return result
-
-        return False
+    # def has_permission(self, request,view):
+    #     """该类权限的意义在于对执行方法的权限的控制，而非权限的具体内容
+    #     在 permission_class 中 ，首先 self.get_view_name() 获取当前 view 的名称，然后 self.get_method()获取当前方法，然后
+    #     获取对应用户的 permission_record ，如果 record 的集合 中有对应的 view 和方法,就判定通过
+    #     但是权限管理人员添加权限的话，是添加的组合权限， 后台先将组合模板（就是对应 view 和方法）列出来，管理人员添加的是模板
+    #     模板就是权限的组合"""
+    #     current_user, current_method, current_resource = request.user, request.method,request.path
+    #     print(view.action)
+    #     print(dir(view.action))
+    #     print(request.path)
+    #     x = request.path.split('/')
+    #     x= [ i for i in x if i.isdigit]
+    #     filter(func1,x)
+    #     del_x = filter(str.isdigit, x)
+    #     for i in del_x:
+    #         x.remove(i)
+    #     y = "/Project/projects/is_altered".split('/')
+    #     pmatch = lambda x,y: all(True if i in x  else False for i in y)
+    #     #request.path,action,detailed
+    #     #request.path  view.action
+    #     print(current_resource, current_method, current_user)
+    #     if current_user.is_anonymous == True or current_user.is_authenticated == False:
+    #         return False
+    #     # if current_user.is_superuser == True:
+    #     #     return True
+    #     # if current_user.is_staff ==True :
+    #     #pmatch=lambda x:request.path+request.action match j
+    #     # j="projects|is_altered"
+    #     # x=j.split('|')
+    #     # pmatch = lambda x,y,z : all(True if i in current_resource or view.action else False for i in x)
+    #     # result=pmatch(x,current_resource,view.action)
+    #     # print(result)
+    #     # if x[0] in current_resource
+    #     # if x[1] in view.action return
+    #
+    #     aimuser = User.objects.filter(uid=current_user.uid)
+    #     print(aimuser)
+    #     if aimuser.exists():
+    #         umodulespems = aimuser[0].upermission.all()
+    #         if umodulespems.exists():
+    #             moduletemplatepermission = self.modulepermissiontemplate
+    #             result = any(True \
+    #                              if  pmatch(j.split('|'),current_resource,view.action) \
+    #                                 and current_method in moduletemplatepermission[i.desc][j] \
+    #                              else False \
+    #                          for i in umodulespems for j in moduletemplatepermission[i.desc])
+    #         else:
+    #             return False
+    #         return result
+    #
+    #     return False
 
 
 class MyBasicAuthentication(BaseAuthentication):
