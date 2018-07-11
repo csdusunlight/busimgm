@@ -377,7 +377,7 @@ export default {
       }).then(() => {
         addProjectConfirm(id).then((res) => {
           console.log(res)
-          if (res.data.code === '0') {
+          if (res.data.code === 0) {
             this.getProjectData()
             this.$message({
               type: 'success',
@@ -406,7 +406,7 @@ export default {
           reason: value
         }
         addProjectRefuse(id, data).then((res) => {
-          if (res.data.code === '0') {
+          if (res.data.code === 0) {
             this.getProjectData()
             this.$message({
               type: 'success',
@@ -432,7 +432,7 @@ export default {
       }).then(() => {
         endProjectConfirm(id).then((res) => {
           this.getProjectData()
-          if (res.data.code === '0') {
+          if (res.data.code === 0) {
             this.$message({
               type: 'success',
               message: '操作成功!'
@@ -460,7 +460,7 @@ export default {
           reason: value
         }
         endProjectRefuse(id, data).then((res) => {
-          if (res.data.code === '0') {
+          if (res.data.code === 0) {
             this.getProjectData()
             this.$message({
               type: 'success',

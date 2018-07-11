@@ -7,7 +7,7 @@
           <i class="iconfont">&#xe60d;</i>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item><span>退出</span></el-dropdown-item>
+          <el-dropdown-item><span @click="loginOut">退出</span></el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
       <p class="user_id" >{{this.username}}</p>
@@ -17,10 +17,31 @@
 
 <script>
 import {mapGetters} from 'vuex'
+import {logout} from '@/api/api'
 export default {
   data () {
     return {
       userip: '16574146663'
+    }
+  },
+  methods: {
+    loginOut () {
+      logout().then((res) => {
+        if (res.data.code === 0) {
+          this.$message({
+            type: 'success',
+            message: '退出成功!'
+          })
+          this.$router.push('/login')
+        } else {
+          this.$message({
+            type: 'warning',
+            message: '退出失败!'
+          })
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
     }
   },
   computed: {

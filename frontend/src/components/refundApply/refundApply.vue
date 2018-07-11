@@ -502,7 +502,7 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteRefund(row.id).then((res) => {
-          if (res.data.code === '0') {
+          if (res.data.code === 0) {
             this.$message({
               type: 'success',
               message: '删除成功!'

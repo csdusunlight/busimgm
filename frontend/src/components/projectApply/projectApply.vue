@@ -552,7 +552,7 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteProject(row.id).then((res) => {
-          if (res.data.code === '0') {
+          if (res.data.code === 0) {
             console.log(res)
             this.$message({
               type: 'success',
@@ -583,7 +583,7 @@ export default {
           console.log(this.addJunctions)
           endProjectApply(this.projectId, this.addJunctions).then((res) => {
             console.log(res)
-            if (res.data.code === '0') {
+            if (res.data.code === 0) {
               this.$message({
                 type: 'success',
                 message: '操作成功!'
