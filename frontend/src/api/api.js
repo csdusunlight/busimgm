@@ -21,6 +21,18 @@ export function login (data) {
   console.log(url)
   return axios.post(url, qs.stringify(data))
 }
+/* 退出 */
+export function logout () {
+  let url = `${http}/logout/`
+  console.log(url)
+  return axios.post(url)
+}
+/* 判断是否登入 */
+export function checkLogin () {
+  let url = `${http}/check_user_login/`
+  console.log(url)
+  return axios.post(url)
+}
 /* ----------------项目申请审核API--------------- */
 /* 获取项目审核列表 */
 export function getProjectList (page, data) {

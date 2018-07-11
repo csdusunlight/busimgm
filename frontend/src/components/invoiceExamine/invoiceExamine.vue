@@ -271,7 +271,7 @@ export default {
         type: 'warning'
       }).then(() => {
         agreeInvoice(row.id).then((res) => {
-          if (res.data.code === '0') {
+          if (res.data.code === 0) {
             this.$message({
               type: 'success',
               message: '操作成功!'
@@ -298,7 +298,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           refuseInvoice(this.refuseId, this.modifyinvoice).then((res) => {
-            if (res.data.code === '0') {
+            if (res.data.code === 0) {
               this.modifyinvoice = this.initModifyinvoice
               this.$refs[formName].resetFields()
               this.$message({
