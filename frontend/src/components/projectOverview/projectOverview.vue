@@ -37,49 +37,36 @@
 
 <script>
 import Highcharts from 'highcharts'
-import {getProjectOver} from '@/api/api'
+import {getProjectOver, getAllProject, getAllProject2} from '@/api/api'
 
 export default {
   data () {
     return {
       dataarr: [
         ['Firefox', 12345],
-        ['IE', 456456],
-        ['Chrome', 7897946],
-        ['Safari', 12313],
-        ['Opera', 45646],
-        ['其他', 45646],
-        ['Firefox', 12345],
-        ['IE', 456456],
-        ['Chrome', 7897946],
-        ['Safari', 12313],
-        ['Opera', 45646],
-        ['其他', 45646],
-        ['Firefox', 12345],
-        ['IE', 456456],
-        ['Chrome', 7897946],
-        ['Safari', 12313],
-        ['Opera', 45646],
-        ['其他', 45646],
-        ['Firefox', 12345],
-        ['IE', 456456],
-        ['Chrome', 7897946],
-        ['Safari', 12313],
-        ['Opera', 45646],
-        ['其他', 45646]
+        ['IE', 0],
+        ['Chrome', 0]
       ],
       dataList: [],
       currentPage: 1,
-      loading: true
+      loading: true,
+      pie_data_1: [],
+      pie_data_2: [],
+      pie_data_3: [],
+      num_detail_1: [],
+      num_detail_2: [],
+      num_detail_3: []
     }
   },
   created () {
     this.getDatalist()
   },
   mounted () {
-    this.charts('collection', this.dataarr, '项目预估待收布图')
-    this.charts('consume', this.dataarr, '项目预估待消耗分布')
-    this.charts('monthlyknot', this.dataarr, '当月结项项目分布')
+    console.log('pie test')
+    console.log(this.dataarr)
+    /* this.charts('monthlyknot', this.dataarr, '当月结项项目分布') */
+    this.getProjectdata()
+    this.getProjectdata2()
   },
   methods: {
     getDatalist () {
@@ -123,6 +110,60 @@ export default {
           name: '浏览器访问占比',
           data: datas
         }]
+      })
+    },
+    getProjectdata () {
+      getAllProject().then((res) => {
+        if (res.data.code === 0) {
+          console.log('图表数据')
+          let data = res.data.results
+          console.log(data)
+          for (var i = 0; i < data.length; i++) {
+            if (data[i].consume >= 0) {
+              this.pie_data_1.push([data[i].name, parseFloat(data[i].consume)])
+              this.num_detail_1 += parseFloat(data[i].consume)
+            } else {
+              this.pie_data_2.push([data[i].name, parseFloat(data[i].consume)])
+              this.num_detail_2 += parseFloat(data[i].consume)
+            }
+          }
+          console.log('pie1、2')
+          console.log(this.pie_data_1)
+          console.log(this.pie_data_2)
+
+          this.charts('collection', this.pie_data_1, '项目预估待收布图')
+          this.charts('consume', this.pie_data_2, '项目预估待消耗分布')
+        } else {
+          /* this.$message(res.data.detail) */
+        }
+      }).catch((err) => {
+        console.log('error')
+        console.log(err)
+      })
+    },
+    getProjectdata2 () {
+      let dateNow = new Date()
+      let dateStr = dateNow.getFullYear() + '-' + (dateNow.getMonth() + 1) + '-' + 1
+      let key = '&state=5&concluded_audit_date_0=' + dateStr
+      getAllProject2(key).then((res) => {
+        if (res.data.code === 0) {
+          console.log('图表数据')
+          let data = res.data.results
+          console.log(data)
+          for (var i = 0; i < data.length; i++) {
+            this.pie_data_3.push([data[i].name, parseFloat(data[i].consume)])
+            this.num_detail_3 += parseFloat(data[i].consume)
+          }
+          console.log('pie3')
+          console.log(this.pie_data_3)
+
+          this.charts('monthlyknot', this.pie_data_3, '当月结项项目分布')
+        } else {
+          /* this.$message(res.data.detail) */
+        }
+      }).catch((err) => {
+        console.log('error')
+        console.log(err)
       })
     }
   }
