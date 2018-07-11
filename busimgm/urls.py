@@ -24,7 +24,7 @@ from django.contrib import admin
 from django.views.generic.base import TemplateView
 from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,\
     InvoiceApplyLogDetail,ProjectInvestData
-from prostatis.views import ProStatis
+from prostatis.views import ProStatis,ProjectDayStatisList,DayStatisStatisList,UserDayStatisList,ProjectStatisList,UserStatisList
 
 #from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,\
 #    InvoiceApplyLogDetail,import_audit_projectdata_excel,import_projectdata_excel
@@ -44,9 +44,16 @@ router.register(r'prostatis',ProStatis,base_name='prostatis')
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name="index.html")),
     url(r'^login/$', csrf_exempt(AccountView.UserLoginAPIView.as_view())),
+    url(r'^logout/$', csrf_exempt(AccountView.UserLogoutAPIView.as_view())),
     path('admin/', admin.site.urls),
     url(r'Project/', include(router.urls)),
     url(r'^User/$', AccountView.UserList.as_view()),
+    url(r'^ProjectDayStatis/$', ProjectDayStatisList.as_view()),
+    url(r'^DayStatisStatis/$', DayStatisStatisList.as_view()),
+    url(r'^UserDayStatis/$', UserDayStatisList.as_view()),
+    url(r'^ProjectStatis/$', ProjectStatisList.as_view()),
+    url(r'^UserStatis/$', UserStatisList.as_view()),
+
     url(r'^check_user_login/$', AccountView.check_user_login),
     url(r'^get_upload_token/$', AccountView.QiniuTokenView.as_view()),
     url(r'^User/(?P<pk>[0-9]+)/$', AccountView.UserDetail.as_view(), kwargs={'partial':True}),

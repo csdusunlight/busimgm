@@ -34,6 +34,7 @@ from rest_framework import viewsets
 from django.core.cache import cache
 from utils.Mypagination import MyPageNumberPagination
 #import django.core.cache
+import time
 logger = logging.getLogger('busimgm')
 
 class ProjectDetail(viewsets.ModelViewSet):
@@ -51,7 +52,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         ret={}
-        ret['code']='0'
+        ret['code']=0
         return Response(ret)
 
     def perform_create(self, serializer):
@@ -62,18 +63,18 @@ class ProjectDetail(viewsets.ModelViewSet):
         serializer._data['code'] = 0
         serializer._data['data'] = data
 
-    @action(methods=['patch'],detail=True)
-    def is_deleted(self, request, pk=None,*args,**kwargs):
-        '''删除
-        字段仅仅限于is_delete'''
-        judgeres = [True if i == "is_delete" else False for i in request.data ]
-        if all(judgeres)==True:
-            self.partial_update(request,*args,**kwargs)
-        else:
-            raise Exception("do not pass no need para!")
-        res = {}
-        res['code']='0'
-        return Response(res)
+    # @action(methods=['patch'],detail=True)
+    # def is_deleted(self, request, pk=None,*args,**kwargs):
+    #     '''删除
+    #     字段仅仅限于is_delete'''
+    #     judgeres = [True if i == "is_delete" else False for i in request.data ]
+    #     if all(judgeres)==True:
+    #         self.partial_update(request,*args,**kwargs)
+    #     else:
+    #         raise Exception("do not pass no need para!")
+    #     res = {}
+    #     res['code']=0
+    #     return Response(res)
 
     @action(methods=['put'],detail=True)
     def is_altered(self, request, pk=None,*args,**kwargs):
@@ -84,7 +85,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         #    写操作日志，对应visit字段为False表示未读.而每个管理员登录后，都会更新当前的未读的操作日志有多少条，但这些操作日志是共享的
         self.partial_update(request,*args,**kwargs)
         res = {}
-        res['code']='0'
+        res['code']=0
         return Response(res)
 
     @action(methods=['patch'],detail=True)
@@ -97,7 +98,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         else:
             raise Exception("do not pass no need para!")
         res = {}
-        res['code'] = '0'
+        res['code'] =0
         return Response(res)
 
     @action(methods=['post'],detail=True)
@@ -109,7 +110,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.lanched_apply_date=  datetime.date.today()
         aimpro.save(update_fields=['audituser','state','lanched_apply_date'])
         res = {}
-        res['code'] = '0'
+        res['code'] = 0
         return Response(res)
 
 
@@ -125,7 +126,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.lanched_refused_reason = lanched_refused_reason
         aimpro.save(update_fields=['audituser','state','lanched_refused_reason','lanched_apply_date'])
         res = {}
-        res['code'] = '0'
+        res['code'] = 0
         return Response(res)
 
     @action(methods=['post'], detail=True)
@@ -141,7 +142,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.concluded_apply_date = datetime.date.today()
         aimpro.save(update_fields=['audituser', 'state', 'settle','psettlereason','concluded_apply_time'])
         res = {}
-        res['code'] = '0'
+        res['code'] = 0
         return Response(res)
 
 
@@ -154,7 +155,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.concluded_audit_date = datetime.date.today()
         aimpro.save(update_fields=['audituser','state','concluded_audit_time'])
         res = {}
-        res['code'] = '0'
+        res['code'] = 0
         return Response(res)
 
     @action(methods=['post'],detail=True)
@@ -168,7 +169,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.conclued_refused_reason = conclued_refused_reason
         aimpro.save(update_fields=['audituser','state','conclued_refused_reason','concluded_audit_date'])
         res = {}
-        res['code'] = '0'
+        res['code'] = 0
         return Response(res)
 
 class FundApplyLogDetail(viewsets.ModelViewSet):
@@ -183,7 +184,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         ret={}
-        ret['code']='0'
+        ret['code']=0
         return Response(ret)
 
     def get_serializer(self, *args, **kwargs):
@@ -221,7 +222,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         else:
             raise Exception("do not pass no need para!")
         res = {}
-        res['code']='0'
+        res['code']=0
         return Response(res)
 
     @action(methods=['put'],detail=True)
@@ -230,7 +231,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         字段仅仅限于is_delete'''
         self.partial_update(request,*args,**kwargs)
         res = {}
-        res['code']='0'
+        res['code']=0
         return Response(res)
 
 
@@ -249,7 +250,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         aimpro.save(update_fields=['settle'])
 
         res = {}
-        res['code'] = '0'
+        res['code'] = 0
         return Response(res)
 
 
@@ -265,7 +266,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         aimfund.audit_refused_reason = reason
         aimfund.save(update_fields=['audituser','state','audit_refused_reason','audit_date'])
         res = {}
-        res['code'] = '0'
+        res['code'] = 0
         return Response(res)
 
 
@@ -282,7 +283,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         ret={}
-        ret['code']='0'
+        ret['code']=0
         return Response(ret)
 
     def get_serializer(self, *args, **kwargs):
@@ -315,7 +316,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         else:
             raise Exception("do not pass no need para!")
         res = {}
-        res['code']='0'
+        res['code']=0
         return Response(res)
 
     @action(methods=['put'],detail=True)
@@ -324,7 +325,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         字段仅仅限于is_delete'''
         self.partial_update(request,*args,**kwargs)
         res = {}
-        res['code']='0'
+        res['code']=0
         return Response(res)
 
 
@@ -342,7 +343,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         aimpro.save(update_fields=['settle','invoicenum'])
 
         res = {}
-        res['code'] = '0'
+        res['code'] = 0
         return Response(res)
 
 
@@ -358,7 +359,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         aimrefend.audit_refused_reason = reason
         aimrefend.save(update_fields=['audituser','state','audit_refused_reason','audit_date'])
         res = {}
-        res['code'] = '0'
+        res['code'] = 0
         return Response(res)
 
 class InvoiceApplyLogDetail(viewsets.ModelViewSet):
@@ -373,7 +374,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         ret={}
-        ret['code']='0'
+        ret['code']=0
         return Response(ret)
 
     def get_serializer(self, *args, **kwargs):
@@ -406,7 +407,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         else:
             raise Exception("do not pass no need para!")
         res = {}
-        res['code']='0'
+        res['code']=0
         return Response(res)
 
     @action(methods=['put'],detail=True)
@@ -415,7 +416,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         字段仅仅限于is_delete'''
         self.partial_update(request,*args,**kwargs)
         res = {}
-        res['code']='0'
+        res['code']=0
         return Response(res)
 
 
@@ -431,7 +432,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         aimpro.invoicenum -= aiminvoice.invoice_num
         aimpro.save(update_fields=['invoicenum'])
         res = {}
-        res['code'] = '0'
+        res['code'] = 0
         return Response(res)
 
 
@@ -447,7 +448,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         aiminvoice.audit_refused_reason = reason
         aiminvoice.save(update_fields=['audituser','state','audit_refused_reason','audit_date'])
         res = {}
-        res['code'] = '0'
+        res['code'] = 0
         return Response(res)
 
 class OperatorLogDetail(viewsets.ModelViewSet):
@@ -468,6 +469,12 @@ class ProjectInvestData(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectInvestDataFilter
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        ret={}
+        ret['code']=0
+        return Response(ret)
 
     def perform_update(self, serializer):
         if self.request.data.get('state'):
@@ -488,7 +495,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         aiminvestrecord.state='1'
         aiminvestrecord.save(update_fields=['audit_time','state','source','invest_mobile','return_amount'])
         resultdict={}
-        resultdict['code']='0'
+        resultdict['code']=0
         return Response(resultdict)
 
     @action(methods=['post'], detail=True)
@@ -559,10 +566,12 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret = {'code': -1}
         file = request.FILES.get('file')
         #     print file.name
-        with open('./out2.xls', 'wb+') as destination:
+        filename = "./"+str(time.time())
+
+        with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
-        data = xlrd.open_workbook('./out2.xls')
+        data = xlrd.open_workbook(filename)
         table = data.sheets()[0]
         nrows = table.nrows
         ncols = table.ncols
@@ -613,7 +622,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 rtable.append(temp)
         except Exception as e:
             logger.info(e)
-            ret['msg'] = e
+            ret['msg'] = e.__str__()
             return JsonResponse(ret)
             ####开始去重
             admin_user = request.user
@@ -644,12 +653,12 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark',
                                           'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
                 suc_num += 1
-            ret['code'] = '0'
+            ret['code'] = 0
         except Exception as e:
             exstr = traceback.format_exc()
-            logger.info(unicode(exstr))
+            logger.info(exstr)
             ret['code'] = 1
-            ret['msg'] = unicode(e)
+            ret['msg'] = e.__str__()
         ret['num'] = suc_num
         return JsonResponse(ret)
 
@@ -661,16 +670,17 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret = {'code': -1}
         # print(dir(request))
         file = request.FILES.get('file')
-        with open('./out2.xls', 'wb+') as destination:
+        filename = "./" + str(time.time())
+        with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
-        data = xlrd.open_workbook('./out2.xls')
+        data = xlrd.open_workbook(filename)
         table = data.sheets()[0]
         print(table)
         nrows = table.nrows
         ncols = table.ncols
         if ncols != 13:
-            ret['msg'] = u"文件格式与模板不符，请下载最新模板填写！"
+            ret['msg'] = "文件格式与模板不符，请下载最新模板填写！"
             return JsonResponse(ret)
         rtable = []
         try:
@@ -691,7 +701,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 except Exception as e:
                     mobile = str(mobile).strip()
                 if len(mobile) != 11:
-                    raise Exception(u"手机号必须是11位，请修改后重新提交。")
+                    raise Exception("手机号必须是11位，请修改后重新提交。")
                 if row[9] == "是":
                     result = True
                     temp['state'] = '1'
@@ -699,14 +709,14 @@ class ProjectInvestData(viewsets.ModelViewSet):
                     result = False
                     temp['state'] = '0'
                 else:
-                    raise Exception(u"审核结果必须为是或否。")
+                    raise Exception("审核结果必须为是或否。")
 
                 if row[10]:
                     return_amount = Decimal(row[10])
                     if return_amount > consume:
-                        raise Exception(u"返现金额不能大于结算金额，请检查表格")
+                        raise Exception("返现金额不能大于结算金额，请检查表格")
                 elif result:
-                    raise Exception(u"审核结果为是时，返现金额不能为空或零。")
+                    raise Exception("审核结果为是时，返现金额不能为空或零。")
                 else:
                     return_amount = 0
 
@@ -715,7 +725,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 elif row[11] == "渠道":
                     source = 'channel'
                 else:
-                    raise Exception(u"必须为网站或渠道。")
+                    raise Exception("必须为网站或渠道。")
                 temp['id'] = id
                 temp['project_id'] = project_id
                 temp['source'] = source
@@ -764,7 +774,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark', 'invest_term',
                                           'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
                 suc_num += 1
-            ret['code'] = '0'
+            ret['code'] = 0
         except Exception as e:
             exstr = traceback.format_exc()
             logger.info(exstr)
@@ -780,10 +790,11 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret = {'code': -1}
         file = request.FILES.get('file')
         print(file.name)
-        with open('./out.xls', 'wb+') as destination:
+        filename = "./" + str(time.time())
+        with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
-        data = xlrd.open_workbook('./out.xls')
+        data = xlrd.open_workbook(filename)
         table = data.sheets()[0]
         nrows = table.nrows
         ncols = table.ncols
@@ -899,8 +910,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
         duplic_num2 = len(duplicate_mobile_list)
         duplic_num1 = nrows - 1 - succ_num - duplic_num2
         duplic_mobile_list_str = u'，'.join(duplicate_mobile_list)
-        ret.update(code=0, num=succ_num, dup1=duplic_num1, dup2=duplic_num2, anum=nrows - 1,
+        ret.update(num=succ_num, dup1=duplic_num1, dup2=duplic_num2, anum=nrows - 1,
                    dupstr=duplic_mobile_list_str)
+        result={}
+        result
         return JsonResponse(ret)
 
 
