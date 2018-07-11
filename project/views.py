@@ -58,7 +58,7 @@ class ProjectDetail(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-        serializer.save(contact=user)
+        serializer.save(contact=user,lanched_audit_date=datetime.date.today())
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
