@@ -75,11 +75,18 @@
             <el-table-column label="甲方公司名称" prop="company"></el-table-column>
             <el-table-column label="平台名称" prop="platname"></el-table-column>
             <el-table-column label="商务对接人" prop="contact"></el-table-column>
-            <el-table-column label="对公对私" prop="paccountype"></el-table-column>
+            <el-table-column label="对公对私">
+              <template slot-scope="scope">
+                <span>{{paccountFliter[scope.row.paccountype]}}</span>
+              </template>
+            </el-table-column>
             <el-table-column label="结算方式" prop="settleway_des"></el-table-column>
             <el-table-column label="签约公司" prop="contract_company"></el-table-column>
             <el-table-column label="结算详情" prop="settle_detail"></el-table-column>
             <el-table-column label="合作详情" prop="pcoperatedetail"></el-table-column>
+            <el-table-column label="审核人" prop="audituser" :key="Math.random()" v-if="examineData"></el-table-column>
+            <el-table-column label="审核时间" prop="lanched_audit_date" :key="Math.random()" v-if="examineData"></el-table-column>
+            <el-table-column label="拒绝原因" prop="lanched_refused_reason" :key="Math.random()" v-if="examineAdopt"></el-table-column>
             <el-table-column label="备注" prop="remark"></el-table-column>
             <el-table-column
               v-if = "projectstate == '0'"
@@ -212,7 +219,7 @@
 
 <script>
 import {getProjectList, addProjectConfirm, addProjectRefuse, endProjectConfirm, endProjectRefuse} from '@/api/api'
-
+import {paccountypeopsFilter} from '@/common/js/options'
 export default {
   data () {
     return {
@@ -222,7 +229,10 @@ export default {
       takeover: '',
       signingCp: '',
       settlement: '',
+      examineData: '',
+      examineAdopt: '',
       projectstate: '0',
+      paccountFliter: paccountypeopsFilter,
       settleOptions: [
         {
           value: '',
@@ -235,10 +245,6 @@ export default {
         {
           value: '1',
           label: '后付款'
-        },
-        {
-          value: '2',
-          label: '日结'
         }
       ],
       proOptions: [
@@ -279,10 +285,6 @@ export default {
         {
           value: '1',
           label: '后付款'
-        },
-        {
-          value: '2',
-          label: '日结'
         }
       ],
       proOptions_2: [
@@ -344,6 +346,16 @@ export default {
     getProjectData () {
       let page = 1
       let data = ''
+      if (this.projectstate === '0') {
+        this.examineData = false
+      } else {
+        this.examineData = true
+      }
+      if (this.projectstate === '2') {
+        this.examineAdopt = true
+      } else {
+        this.examineAdopt = false
+      }
       if (this.activeName === 'first') {
         page = this.currentPage
         data = this.searchKey

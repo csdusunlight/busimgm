@@ -141,10 +141,10 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <div class="operation_button">
-                <div class="op_button_padding"><el-button size="mini" type="primary" @click="lookProject(scope.row)">查看</el-button></div>
+                <div class="op_button_padding" v-if="scope.row.state !== '6'"><el-button size="mini" type="primary" @click="lookProject(scope.row)">查看</el-button></div>
                 <div class="op_button_padding" v-if="scope.row.state === '0' || scope.row.state === '1'"><el-button size="mini" type="danger" @click="modifyproject(scope.row)">修改</el-button></div>
                 <div class="op_button_padding" v-if="scope.row.state === '0'"><el-button size="mini" type="warning" @click="deleteProjectBtn(scope.row)">删除</el-button></div>
-                <div class="op_button_padding" v-if="scope.row.state === '1'"><el-button size="mini" type="success" @click="junctions(scope.row)">结项</el-button></div>
+                <div class="op_button_padding" v-if="scope.row.state === '1' || scope.row.state === '6'"><el-button size="mini" type="success" @click="junctions(scope.row)">结项</el-button></div>
               </div>
             </template>
           </el-table-column>
@@ -163,14 +163,14 @@
       <el-dialog title="项目数据" :visible.sync="lookProjectTable" width="70%">
         <div class="table-list">
           <el-table :data="detailsList.results" style="width: 100%" @row-click='handleRowHandle'>
-            <el-table-column label="日期" prop="lanched_apply_date"></el-table-column>
-            <el-table-column label="项目名称" prop="name"></el-table-column>
-            <el-table-column label="投资人数" prop="state"></el-table-column>
-            <el-table-column label="投资金额" prop="concluded_date"></el-table-column>
-            <el-table-column label="消耗费用" prop="consume"></el-table-column>
-            <el-table-column label="返现投资人数" prop="settle" width="95"></el-table-column>
-            <el-table-column label="返现投资金额" prop="topay_amount"></el-table-column>
-            <el-table-column label="返现费用" prop="invoicenum"></el-table-column>
+            <el-table-column label="日期" prop="date"></el-table-column>
+            <el-table-column label="项目名称" prop="1"></el-table-column>
+            <el-table-column label="投资人数" prop="1"></el-table-column>
+            <el-table-column label="投资金额" prop="invest_amount"></el-table-column>
+            <el-table-column label="消耗费用" prop="consume_amount"></el-table-column>
+            <el-table-column label="返现投资人数" prop="1" width="95"></el-table-column>
+            <el-table-column label="返现投资金额" prop="1"></el-table-column>
+            <el-table-column label="返现费用" prop="return_amount"></el-table-column>
           </el-table>
         </div>
         <div class="pagination">
@@ -188,7 +188,7 @@
         <div class="form_table">
           <el-form :model="modifyProject"  ref="modifyProject" label-width="120px" class="demo-ruleForm">
             <el-form-item label="项目名称">
-              <el-input v-model="modifyProject.name" size="medium" :disabled="true"></el-input>
+              <el-input v-model="modifyProject.name" size="medium" :disabled="modifyCzState"></el-input>
             </el-form-item>
             <el-form-item label="甲方公司名称" prop="company">
               <el-input v-model="modifyProject.company" size="medium"></el-input>
@@ -235,18 +235,17 @@
           <el-button type="primary" @click="subModiftProject('modifyProject')">确 定</el-button>
         </span>
       </el-dialog>
-      <el-dialog title="结项失败" :visible.sync="stateOver" width="30%">
+      <el-dialog title="已结项详情" :visible.sync="stateOver" width="30%">
         <ul class="stateover">
           <li><label>项目成本：</label><i>{{junctionsDetails.cost}}</i></li>
           <li><label>成本备注：</label><i>{{junctionsDetails.settle_detail}}</i></li>
           <li><label>项目毛利：</label><i>{{junctionsDetails.profit}}</i></li>
         </ul>
       </el-dialog>
-      <el-dialog title="已结项详情" :visible.sync="stateOverFail" width="30%">
-        <ul class="stateover">
-          <li><label>结算金额：</label><i>{{junOverFail.settle_detail}}</i></li>
-          <li><label>结项原因：</label><i>{{junOverFail.psettlereason}}</i></li>
-        </ul>
+      <el-dialog title="结项失败" :visible.sync="stateOverFail" width="30%">
+        <div class="text">
+          <p>结项拒绝原因：{{junOverFail.conclued_refused_reason}}结项拒绝原因结项拒绝原因结项拒绝原因结项拒绝原因结项拒绝原因结项拒绝原因</p>
+        </div>
       </el-dialog>
       <el-dialog title="结项" :visible.sync="junctionsVisible" width="30%">
         <div class="form_table">
@@ -281,7 +280,7 @@ export default {
       projectname: '',
       signingCp: '',
       settlement: '',
-      projectstate: '0',
+      projectstate: '1',
       examinestate: '0',
       dataList: '',
       detailsList: '',
@@ -300,6 +299,7 @@ export default {
       searchState: 0,
       junctionsDetails: {},
       junOverFail: {},
+      modifyCzState: false,
       addProject: {
         name: '',
         company: '',
@@ -309,7 +309,8 @@ export default {
         contract_company: '',
         contact: '',
         settle_detail: '',
-        pcoperatedetail: ''
+        pcoperatedetail: '',
+        remark: ''
       },
       initAddProject: {
         name: '',
@@ -422,6 +423,11 @@ export default {
     /* 获取项目列表 */
     getProjectdata () {
       let data = this.conditionDate()
+      if (this.projectstate === '0') {
+        this.modifyCzState = false
+      } else {
+        this.modifyCzState = true
+      }
       if (this.projectstate === '5') {
         this.searchState = true
       } else {
@@ -494,7 +500,12 @@ export default {
       Object.assign(this.modifyProject, row)
     },
     /* 详情搜索 */
-    getDetailsList (data) {
+    getDetailsList () {
+      let data = {
+        params: {
+          project: this.searchDetailsName
+        }
+      }
       getprojectDetails(this.detailsCurrentPage, data).then((res) => {
         console.log(res)
         this.detailsList = res.data
@@ -502,31 +513,31 @@ export default {
     },
     /* 点击查看按钮详情 */
     lookProject (row) {
-      this.searchDetailsName = row.name
-      this.getDetailsList(this.searchDetailsName)
+      this.searchDetailsName = row.id
+      this.getDetailsList()
       this.lookProjectTable = true
     },
     /* 点击 行 查看详情 */
     handleRowHandle (val) {
-      this.searchDetailsName = val.name
-      this.getDetailsList(this.searchDetailsName)
+      this.searchDetailsName = val.id
+      this.getDetailsList()
       this.lookProjectTable = true
     },
     /* 详情分页 */
     detailsCurrentChange (val) {
       this.detailsCurrentPage = val
-      this.getDetailsList(this.searchDetailsName)
+      this.getDetailsList()
     },
-    /* 已结项详情 */
+    /* 结项失败详情 */
     clickthcout (row) {
       console.log(row)
-      this.stateOver = true
-      Object.assign(this.junctionsDetails, row)
+      this.stateOverFail = true
+      Object.assign(this.junOverFail, row)
     },
     /* 已结项详情 */
     clicktSeccrn (row) {
-      this.stateOverFail = true
-      Object.assign(this.junOverFail, row)
+      this.stateOver = true
+      Object.assign(this.junctionsDetails, row)
     },
     /* 提交修改项目 */
     subModiftProject () {
@@ -662,4 +673,8 @@ export default {
   .stateover
     li
       padding: 10px 0;
+  .text
+    p
+      min-height: 100px;
+      line-height: 24px;
 </style>
