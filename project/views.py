@@ -125,7 +125,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.lanched_apply_date=  datetime.date.today()
 
         aimpro.lanched_refused_reason = lanched_refused_reason
-        aimpro.save(update_fields=['audituser','state','lanched_refused_reason','lanched_apply_date'])
+        aimpro.save()
         res = {}
         res['code'] = 0
         return Response(res)
@@ -141,7 +141,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.settle = settle
         aimpro.psettlereason = psettlereason
         aimpro.concluded_apply_date = datetime.date.today()
-        aimpro.save(update_fields=['audituser', 'state', 'settle','psettlereason','concluded_apply_time'])
+        aimpro.save()
         res = {}
         res['code'] = 0
         return Response(res)
@@ -154,7 +154,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.audituser=request.user
         aimpro.state='5'
         aimpro.concluded_audit_date = datetime.date.today()
-        aimpro.save(update_fields=['audituser','state','concluded_audit_time'])
+        aimpro.save()
         res = {}
         res['code'] = 0
         return Response(res)
@@ -168,7 +168,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.state='6'
         aimpro.concluded_audit_date = datetime.date.today()
         aimpro.conclued_refused_reason = conclued_refused_reason
-        aimpro.save(update_fields=['audituser','state','conclued_refused_reason','concluded_audit_date'])
+        aimpro.save()
         res = {}
         res['code'] = 0
         return Response(res)
@@ -358,7 +358,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         aimrefend.audit_date =  datetime.date.today()
 
         aimrefend.audit_refused_reason = reason
-        aimrefend.save(update_fields=['audituser','state','audit_refused_reason','audit_date'])
+        aimrefend.save()
         res = {}
         res['code'] = 0
         return Response(res)
@@ -569,8 +569,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         file = request.FILES.get('file')
         #     print file.name
         aftername=time.time()
-        filename = "./files/"+str(aftername)
-
+        filename = "./files/"+str(int(aftername*1000))
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
@@ -653,8 +652,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 event.project_id = project_id
                 event.invest_mobile = mobile
                 event.invest_time = date
-                event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark',
-                                          'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
+                event.save()
                 suc_num += 1
             ret['code'] = 0
         except Exception as e:
@@ -674,7 +672,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         # print(dir(request))
         file = request.FILES.get('file')
         aftername=time.time()
-        filename = "./files/"+aftername
+        filename = "./files/"+str(int(aftername*1000))
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
@@ -775,8 +773,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 event.invest_mobile = mobile
                 event.invest_time = date
                 event.invest_term = term
-                event.save(update_fields=['state', 'return_amount', 'audit_time', 'source', 'remark', 'invest_term',
-                                          'project_id', 'settle_amount', 'invest_mobile', 'invest_time'])
+                event.save()
                 suc_num += 1
             ret['code'] = 0
         except Exception as e:
@@ -919,8 +916,6 @@ class ProjectInvestData(viewsets.ModelViewSet):
         duplic_mobile_list_str = u'，'.join(duplicate_mobile_list)
         ret.update(num=succ_num, dup1=duplic_num1, dup2=duplic_num2, anum=nrows - 1,
                    dupstr=duplic_mobile_list_str)
-        result={}
-        result
         return JsonResponse(ret)
 
 
