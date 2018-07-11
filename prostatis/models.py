@@ -65,20 +65,6 @@ class DayStatis(models.Model):
         ordering = ['-date']
 
 
-class ProjectStatis(models.Model):
-    project = models.ForeignKey(Project, verbose_name="项目", related_name='project_statis',on_delete=models.CASCADE)
-    channel_consume = models.DecimalField("渠道消耗", max_digits=10, decimal_places=2, default=0)
-    channel_return = models.DecimalField("渠道返现金额", max_digits=10, decimal_places=2, default=0)
-    site_consume = models.DecimalField("网站消耗", max_digits=10, decimal_places=2, default=0)
-    site_return = models.DecimalField("网站返现金额", max_digits=10, decimal_places=2, default=0)
-    def consume(self):
-        return self.channel_consume + self.site_consume
-    def ret(self):
-        return self.channel_return + self.site_return
-    def __str__(self):
-        return str(self.project_id) + self.project.name
-    class Meta:
-        ordering = ["-project__time"]
 
 class UserStatis(models.Model):
     user = models.OneToOneField(User, verbose_name="用户", on_delete=models.CASCADE)

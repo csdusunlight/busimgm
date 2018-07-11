@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from prostatis.models import ProjectDayStatis,DayStatis,ProjectStatis,UserStatis,UserDayStatis
+from prostatis.models import ProjectDayStatis,DayStatis,UserStatis,UserDayStatis
 
 
 
@@ -18,10 +18,6 @@ class UserDayStatisSerializer(serializers.ModelSerializer):
         model = UserDayStatis
         fields = '__all__'
 
-class ProjectStatisSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProjectStatis
-        fields = '__all__'
 
 class UserStatisSerializer(serializers.ModelSerializer):
     class Meta:

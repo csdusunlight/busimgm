@@ -39,7 +39,6 @@ def statis_for_userday():
         consume_amount=Sum('consume_amount'),
         return_amount=Sum('return_amount'))
     for item in queryset:
-        print(item['project__contact_id'], item['date'])
         defaults = dict(consume_amount=item['consume_amount'], invest_amount=item['invest_amount'],
                         return_amount=item['return_amount'], invest_count=item['invest_count'])
         UserDayStatis.objects.update_or_create(user_id=item['project__contact_id'], date=item['date'], defaults=defaults)
@@ -58,7 +57,7 @@ def statis_for_day():
     for item in queryset:
         date = item.pop('invest_time')
         item['start_num'] = Project.objects.filter(lanched_apply_date=today).count()
-        item['concluded_apply_date'] = Project.objects.filter(lanched_apply_date=today).count()
+        item['finish_num'] = Project.objects.filter(lanched_apply_date=today).count()
         DayStatis.objects.update_or_create(date=date,defaults=item)
 
 def statis_for_project():
@@ -73,7 +72,9 @@ def statis_for_user():
         return_amount=Sum('return_amount'),invest_amount=Sum('invest_amount'),consume_amount=Sum('consume_amount'),)
     for item in queryset:
         user_id = item.pop('user_id')
-        UserStatis.objects.filter(user_id=user_id).update(**item)
+        item['start_num'] = Project.objects.filter(contact_id=user_id, state__in=['00', '01', '06']).count()
+        item['finish_num'] = Project.objects.filter(contact_id=user_id, state__in=['04', '05']).count()
+        UserStatis.objects.update_or_create(user_id=user_id, defaults=item)
         # defaults = dict(invest_count=item['invest_count'], return_count=item['return_count'],
         #                 invest_amount=item['invest_amount'], return_invest_amount=item['return_invest_amount'],
         #                 consume_amount=item['consume_amount'], return_amount=item['invest_amount'],)

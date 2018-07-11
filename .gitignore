@@ -35,5 +35,4 @@ __pycache__/
 
 db.sqlite3
 
-frontend/package-lock.json
 celerybeat*
