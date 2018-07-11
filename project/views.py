@@ -598,10 +598,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
 
                 if row[9] == "是":
                     result = True
-                    temp['state'] = '0'
+                    temp['state'] = '1'
                 elif row[9] == "否":
                     result = False
-                    temp['state'] = '1'
+                    temp['state'] = '0'
                 else:
                     raise Exception(u"审核结果必须为是或否。")
 
