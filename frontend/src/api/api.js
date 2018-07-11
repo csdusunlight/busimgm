@@ -45,11 +45,11 @@ export function postNewProject (data) {
   let url = `${http}/Project/projects/`
   return axios.post(url, data)
 }
-/* 获取项目详情 */
-export function getprojectDetails (page, project) {
-  let url = `${http}/Project/projects/?page=${page}&pageSize=${pageSize}&name=${project}`
+/* 获取项目数据详情 */
+export function getprojectDetails (page, data) {
+  let url = `${http}/statis/project_day/?page=${page}&pageSize=${pageSize}`
   console.log(url)
-  return axios.get(url)
+  return axios.get(url, data)
 }
 /* 修改项目 */
 export function putProject (id, data) {
@@ -244,8 +244,20 @@ export function getToken () {
   return axios.get(url)
 }
 /* ----------------数据总览--------------- */
-export function getDataOverview (page) {
-  let url = `${http}/Project/prostatis/get_date1/?page=${page}&pageSize=${pageSize}`
+export function getDataOverview () {
+  let url = `${http}/statis/all/`
   console.log(url)
   return axios.get(url)
+}
+/* ----------------项目总览--------------- */
+export function getProjectOver (page) {
+  let url = `${http}/statis/day/?page=${page}&pageSize=${pageSize}`
+  console.log(url)
+  return axios.get(url)
+}
+/* ----------------项目实况列表--------------- */
+export function getProjectLive (page, data) {
+  let url = `${http}/Project/projects/?page=${page}&pageSize=${pageSize}`
+  console.log(url)
+  return axios.get(url, data)
 }

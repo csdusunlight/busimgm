@@ -39,10 +39,39 @@
         </div>
       </el-col>
     </el-row>
+    <el-row class="row_top row_bottom">
+      <div class="table-list">
+        <el-table v-loading="loading" :data="dataList.results" style="width: 100%">
+          <el-table-column label="项目编号" prop="id"></el-table-column>
+          <el-table-column label="项目名称" prop="name"></el-table-column>
+          <el-table-column label="立项日期" prop="name"></el-table-column>
+          <el-table-column label="结项日期" prop="name"></el-table-column>
+          <el-table-column label="预计待收/待消耗" prop="name"></el-table-column>
+          <el-table-column label="预计总消耗" prop="name"></el-table-column>
+          <el-table-column label="总返现金额" prop="name"></el-table-column>
+          <el-table-column label="预估渠道消耗" prop="name"></el-table-column>
+          <el-table-column label="渠道返现金额" prop="name"></el-table-column>
+          <el-table-column label="预估网站消耗" prop="name"></el-table-column>
+          <el-table-column label="网站返现金额" prop="name"></el-table-column>
+          <el-table-column label="项目状态" prop="name"></el-table-column>
+        </el-table>
+      </div>
+      <div class="pagination">
+        <el-pagination
+          background
+          @current-change="handleCurrentChange"
+          :page-size="10"
+          :current-page="this.currentPage"
+          layout="prev, pager, next, total, jumper"
+          :total="this.dataList.recordCount">
+        </el-pagination>
+      </div>
+    </el-row>
   </div>
 </template>
 
 <script>
+import {getProjectLive} from '@/api/api'
 export default {
   data () {
     return {
@@ -51,6 +80,8 @@ export default {
       projectnum: '',
       projectname: '',
       selectvalue: '0',
+      loading: true,
+      dataList: {},
       options: [
         {
           value: '0',
@@ -65,6 +96,27 @@ export default {
           label: '已结项'
         }
       ]
+    }
+  },
+  methods: {
+    getProjectList () {
+      getProjectLive(this.currentPage, data).then((res) => {
+        
+        console.log(res)
+        this.dataList = res.data
+        this.loading = false
+      }).catch((err) => {
+        console.log('error')
+        console.log(err)
+      })
+    },
+    conditionDate () {
+      let Data = {
+        params: {
+          state: this.projectstate
+        }
+      }
+      return Data
     }
   }
 }
@@ -84,6 +136,8 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+  .marginvi
+    margin-left: 0;
   .search
     font-size: 14px;
     margin-left: 10px;

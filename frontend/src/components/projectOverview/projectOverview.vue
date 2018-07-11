@@ -9,16 +9,16 @@
     <h1 class="title">每日项目数据</h1>
     <el-row class="row_top row_bottom">
       <div class="table-list">
-        <el-table v-loading="loading" :data="dataList.data" style="width: 100%" header-align="center">
+        <el-table v-loading="loading" :data="dataList.results" style="width: 100%" header-align="center">
           <el-table-column label="日期" prop="date"></el-table-column>
-          <el-table-column label="在线项目数" prop="integer"></el-table-column>
-          <el-table-column label="结项项目数" prop="integer"></el-table-column>
-          <el-table-column label="投资人数" prop="integer"></el-table-column>
-          <el-table-column label="投资金额" prop="integer"></el-table-column>
-          <el-table-column label="预估消耗费用" prop="integer"></el-table-column>
-          <el-table-column label="返现人数" prop="integer"></el-table-column>
-          <el-table-column label="返现投资金额" prop="integer"></el-table-column>
-          <el-table-column label="返现费用" prop="integer"></el-table-column>
+          <el-table-column label="在线项目数" prop="start_num"></el-table-column>
+          <el-table-column label="结项项目数" prop="finish_num"></el-table-column>
+          <el-table-column label="投资人数" prop="invest_count"></el-table-column>
+          <el-table-column label="投资金额" prop="invest_amount"></el-table-column>
+          <el-table-column label="预估消耗费用" prop="consume_amount"></el-table-column>
+          <el-table-column label="返现人数" prop="return_count"></el-table-column>
+          <el-table-column label="返现投资金额" prop="return_invest_amount"></el-table-column>
+          <el-table-column label="返现费用" prop="return_amount"></el-table-column>
         </el-table>
       </div>
       <div class="pagination">
@@ -28,7 +28,7 @@
           :page-size="10"
           :current-page="this.currentPage"
           layout="prev, pager, next, total, jumper"
-          :total="this.dataList.total">
+          :total="this.dataList.recordCount">
         </el-pagination>
       </div>
     </el-row>
@@ -37,7 +37,7 @@
 
 <script>
 import Highcharts from 'highcharts'
-import {dataPage} from '@/api/api'
+import {getProjectOver} from '@/api/api'
 
 export default {
   data () {
@@ -70,10 +70,7 @@ export default {
       ],
       dataList: [],
       currentPage: 1,
-      loading: true,
-      param: {
-        page: 1
-      }
+      loading: true
     }
   },
   created () {
@@ -86,7 +83,7 @@ export default {
   },
   methods: {
     getDatalist () {
-      dataPage(this.param).then((res) => {
+      getProjectOver(this.currentPage).then((res) => {
         console.log(res)
         this.dataList = res.data
         this.loading = false
@@ -98,7 +95,6 @@ export default {
       this.datalist = []
       this.loading = true
       this.currentPage = val
-      this.param.page = val
       this.getDatalist()
     },
     charts (dom, datas, titles) {
