@@ -9,7 +9,7 @@ from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
 from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,\
     InvoiceApplyLogFilter,OperatorLogFilter,ProjectInvestDataFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
-#from account.permissions import IsAllowedToUse,IsOwnerOrStaff
+from account.permissions import IsAllowedToUse,IsOwnerOrStaff
 
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
@@ -37,7 +37,7 @@ from utils.Mypagination import MyPageNumberPagination
 #import django.core.cache
 import time
 logger = logging.getLogger('busimgm')
-
+ts = lambda :time.time
 class ProjectDetail(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
@@ -47,7 +47,7 @@ class ProjectDetail(viewsets.ModelViewSet):
     ordering_fields = ('name')
     search_fields = ('name')
     ordering=('lanched_apply_date','concluded_audit_date')
-    #permission_classes =(IsAllowedToUse,)
+    permission_classes =(IsAllowedToUse,)
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -568,7 +568,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret = {'code': -1}
         file = request.FILES.get('file')
         #     print file.name
-        filename = "./"+str(time.time())
+        aftername=time.time()
+        filename = "./files/"+aftername
 
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
@@ -672,7 +673,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret = {'code': -1}
         # print(dir(request))
         file = request.FILES.get('file')
-        filename = "./" + str(time.time())
+        aftername=time.time()
+        filename = "./files/"+aftername
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
@@ -791,8 +793,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         admin_user = request.user
         ret = {'code': -1}
         file = request.FILES.get('file')
-        print(file.name)
-        filename = "./" + str(time.time())
+        filename = "./files/"+'1'
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
