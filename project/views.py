@@ -820,7 +820,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                         project = Project.objects.get(id=id)
                         temp.append(id)
                     elif j == 2:
-                        value = value.strip()
+                        value = str(value).strip()
                         if value == u"首投":
                             temp.append(False)
                         elif value == u"复投":

@@ -27,8 +27,11 @@ class ProjectDayStatis(models.Model):
     date = models.DateField("日期")
     project = models.ForeignKey(Project, verbose_name="项目", related_name='project_day_statis',on_delete=models.CASCADE)
     invest_amount = models.DecimalField(u"投资金额", max_digits=10, decimal_places=2, default=0)
+    invest_count = models.IntegerField(u"投资人数", default=0)
     consume_amount = models.DecimalField(u"消耗费用", max_digits=10, decimal_places=2, default=0)
     return_amount = models.DecimalField(u"返现费用", max_digits=10, decimal_places=2, default=0)
+    return_count = models.IntegerField("返现人数")
+    return_invest_amount = models.DecimalField("返现投资金额", max_digits=10, decimal_places=2, null=True)
     def budgeted_income(self):
         return self.consume_amount - self.return_amount
     class Meta:
@@ -39,10 +42,14 @@ class UserDayStatis(models.Model):
     user = models.ForeignKey(User, verbose_name="用户", related_name='user_day_statis', on_delete=models.CASCADE)
     # total_to_rec = models.DecimalField("总待收", max_digits=10, decimal_places=2, null=True)
     # budgeted_income = models.DecimalField("预估利润", max_digits=10, decimal_places=2, null=True)
+    start_num = models.IntegerField("申请项目数")
+    finish_num = models.IntegerField("结项项目数")
     invest_amount = models.DecimalField(u"投资金额", max_digits=10, decimal_places=2, default=0)
     consume_amount = models.DecimalField(u"消耗费用", max_digits=10, decimal_places=2, default=0)
     return_amount = models.DecimalField(u"返现费用", max_digits=10, decimal_places=2, default=0)
     invest_count = models.IntegerField("投资人数", default=0)
+    return_count = models.IntegerField("返现人数")
+    return_invest_amount = models.DecimalField("返现投资金额", max_digits=10, decimal_places=2, null=True)
     def budgeted_income(self):
         return self.consume_amount - self.return_amount
     class Meta:
