@@ -58,7 +58,7 @@ class ProjectDetail(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-        serializer.save(contact=user,lanched_audit_date=datetime.date.today())
+        serializer.save(contact=user,lanched_apply_date=datetime.date.today())
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -108,7 +108,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
         aimpro.state='1'
-        aimpro.lanched_apply_date=  datetime.date.today()
+        aimpro.lanched_audit_date=  datetime.date.today()
         aimpro.save(update_fields=['audituser','state','lanched_apply_date'])
         res = {}
         res['code'] = 0
@@ -122,7 +122,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
         aimpro.state='2'
-        aimpro.lanched_apply_date=  datetime.date.today()
+        aimpro.lanched_audit_date =  datetime.date.today()
 
         aimpro.lanched_refused_reason = lanched_refused_reason
         aimpro.save()
@@ -820,7 +820,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                         project = Project.objects.get(id=id)
                         temp.append(id)
                     elif j == 2:
-                        value = value.strip()
+                        value = str(value).strip()
                         if value == u"首投":
                             temp.append(False)
                         elif value == u"复投":
