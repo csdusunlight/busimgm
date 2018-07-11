@@ -100,8 +100,8 @@ export default {
   },
   methods: {
     getProjectList () {
+      let data = this.conditionDate()
       getProjectLive(this.currentPage, data).then((res) => {
-        
         console.log(res)
         this.dataList = res.data
         this.loading = false
@@ -113,7 +113,7 @@ export default {
     conditionDate () {
       let Data = {
         params: {
-          state: this.projectstate
+          state: this.selectvalue
         }
       }
       return Data
