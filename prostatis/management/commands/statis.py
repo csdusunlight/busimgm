@@ -48,26 +48,30 @@ def statis_for_userday():
     for item in queryset:
         user_id = item.pop('project__contact_id')
         date = item.pop('date')
-        item['start_num'] = Project.objects.filter(contact_id=user_id, lanched_audit_date=date).count()
-        item['finish_num'] = Project.objects.filter(contact_id=user_id, concluded_audit_date=date).count()
         UserDayStatis.objects.update_or_create(user_id=user_id, date=date, defaults=item)
+
+    queryset1 = Project.objects.filter(state__in=['1','4','6'], lanched_audit_date=today).values('contact_id').annotate(start_num=Count('*'))
+    queryset2 = Project.objects.filter(state='5', concluded_audit_date=today).values('contact_id').annotate(finish_num=Count('*'))
+    for item in list(queryset1) + list(queryset2):
+        user_id = item.pop('contact_id')
+        UserDayStatis.objects.update_or_create(user_id=user_id, date=today, defaults=item)
 
 def statis_for_day():
     today = datetime.datetime.today()
     seven_days_ago = today - datetime.timedelta(days=7)
-    queryset = ProjectDayStatis.objects.filter(date__gte=seven_days_ago).values('date') \
+    queryset = UserDayStatis.objects.filter(date__gte=seven_days_ago).values('date') \
         .annotate(
                   invest_count=Count('id'),
                   invest_amount=Sum('invest_amount'),
                   consume_amount=Sum('consume_amount'),
                   return_amount=Sum('return_amount'),
                   return_count=Sum('return_count'),
-                  return_invest_amount=Sum('return_invest_amount')
+                  return_invest_amount=Sum('return_invest_amount'),
+                  start_num = Sum('start_num'),
+                  finish_num = Sum('finish_num'),
         )
     for item in queryset:
         date = item.pop('date')
-        item['start_num'] = Project.objects.filter(lanched_apply_date=date).count()
-        item['finish_num'] = Project.objects.filter(lanched_apply_date=date).count()
         DayStatis.objects.update_or_create(date=date,defaults=item)
 
 def statis_for_project():
@@ -78,12 +82,16 @@ def statis_for_project():
         Project.objects.filter(id=id).update(**item)
 
 def statis_for_user():
-    queryset = UserDayStatis.objects.values('user_id').annotate(invest_count=Sum('invest_count'),
-        return_amount=Sum('return_amount'),invest_amount=Sum('invest_amount'),consume_amount=Sum('consume_amount'),)
+    queryset = UserDayStatis.objects.values('user_id').annotate(
+            invest_count=Sum('invest_count'),
+            return_amount=Sum('return_amount'),
+            invest_amount=Sum('invest_amount'),
+            consume_amount=Sum('consume_amount'),
+            start_num=Sum('start_num'),
+            finish_num=Sum('finish_num'),
+    )
     for item in queryset:
         user_id = item.pop('user_id')
-        item['start_num'] = Project.objects.filter(contact_id=user_id, state__in=['01', '04', '06']).count()
-        item['finish_num'] = Project.objects.filter(contact_id=user_id, state='05').count()
         UserStatis.objects.update_or_create(user_id=user_id, defaults=item)
         # defaults = dict(invest_count=item['invest_count'], return_count=item['return_count'],
         #                 invest_amount=item['invest_amount'], return_invest_amount=item['return_invest_amount'],
