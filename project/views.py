@@ -569,7 +569,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         file = request.FILES.get('file')
         #     print file.name
         aftername=time.time()
-        filename = "./files/"+aftername
+        filename = "./files/"+str(aftername)
 
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
@@ -793,8 +793,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
         admin_user = request.user
         ret = {'code': -1}
         file = request.FILES.get('file')
-        #time.time()
-        filename = "./files/"+'1'
+        import ipdb
+        ipdb.set_trace()
+        # aftername＝time.time()
+        filename = "./files/" +"1"
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
@@ -833,8 +835,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
                         if (cell.ctype != 3):
                             raise Exception("投资日期列格式错误，请修改后重新提交。")
                         else:
-                            time = xlrd.xldate.xldate_as_datetime(value, 0)
-                            temp.append(time)
+                            time2 = xlrd.xldate.xldate_as_datetime(value, 0)
+                            temp.append(time2)
                     elif j == 4:
                         try:
                             mobile = str(int(value)).strip()
