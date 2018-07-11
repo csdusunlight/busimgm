@@ -37,7 +37,7 @@ from utils.Mypagination import MyPageNumberPagination
 #import django.core.cache
 import time
 logger = logging.getLogger('busimgm')
-
+ts = lambda :time.time
 class ProjectDetail(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
@@ -568,7 +568,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret = {'code': -1}
         file = request.FILES.get('file')
         #     print file.name
-        filename = "./"+str(time.time())
+        aftername=time.time()
+        filename = "./files/"+aftername
 
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
@@ -671,7 +672,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret = {'code': -1}
         # print(dir(request))
         file = request.FILES.get('file')
-        filename = "./" + str(time.time())
+        aftername=time.time()
+        filename = "./files/"+aftername
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
@@ -789,8 +791,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         admin_user = request.user
         ret = {'code': -1}
         file = request.FILES.get('file')
-        print(file.name)
-        filename = "./" + str(time.time())
+        #time.time()
+        filename = "./files/"+'1'
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
