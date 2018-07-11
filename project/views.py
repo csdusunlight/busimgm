@@ -616,7 +616,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 rtable.append(temp)
         except Exception as e:
             logger.info(e)
-            ret['msg'] = e
+            ret['msg'] = e.__str__()
             return JsonResponse(ret)
             ####开始去重
             admin_user = request.user
@@ -650,9 +650,9 @@ class ProjectInvestData(viewsets.ModelViewSet):
             ret['code'] = 0
         except Exception as e:
             exstr = traceback.format_exc()
-            logger.info(unicode(exstr))
+            logger.info(exstr)
             ret['code'] = 1
-            ret['msg'] = unicode(e)
+            ret['msg'] = e.__str__()
         ret['num'] = suc_num
         return JsonResponse(ret)
 
@@ -674,7 +674,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         nrows = table.nrows
         ncols = table.ncols
         if ncols != 13:
-            ret['msg'] = u"文件格式与模板不符，请下载最新模板填写！"
+            ret['msg'] = "文件格式与模板不符，请下载最新模板填写！"
             return JsonResponse(ret)
         rtable = []
         try:
@@ -695,7 +695,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 except Exception as e:
                     mobile = str(mobile).strip()
                 if len(mobile) != 11:
-                    raise Exception(u"手机号必须是11位，请修改后重新提交。")
+                    raise Exception("手机号必须是11位，请修改后重新提交。")
                 if row[9] == "是":
                     result = True
                     temp['state'] = '1'
@@ -703,14 +703,14 @@ class ProjectInvestData(viewsets.ModelViewSet):
                     result = False
                     temp['state'] = '0'
                 else:
-                    raise Exception(u"审核结果必须为是或否。")
+                    raise Exception("审核结果必须为是或否。")
 
                 if row[10]:
                     return_amount = Decimal(row[10])
                     if return_amount > consume:
-                        raise Exception(u"返现金额不能大于结算金额，请检查表格")
+                        raise Exception("返现金额不能大于结算金额，请检查表格")
                 elif result:
-                    raise Exception(u"审核结果为是时，返现金额不能为空或零。")
+                    raise Exception("审核结果为是时，返现金额不能为空或零。")
                 else:
                     return_amount = 0
 
@@ -719,7 +719,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 elif row[11] == "渠道":
                     source = 'channel'
                 else:
-                    raise Exception(u"必须为网站或渠道。")
+                    raise Exception("必须为网站或渠道。")
                 temp['id'] = id
                 temp['project_id'] = project_id
                 temp['source'] = source
