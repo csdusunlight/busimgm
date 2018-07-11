@@ -52,7 +52,7 @@ def statis_for_userday():
 
     queryset1 = Project.objects.filter(state__in=['1','4','6'], lanched_audit_date=today).values('contact_id').annotate(start_num=Count('*'))
     queryset2 = Project.objects.filter(state='5', concluded_audit_date=today).values('contact_id').annotate(finish_num=Count('*'))
-    for item in queryset1 + queryset2:
+    for item in list(queryset1) + list(queryset2):
         user_id = item.pop('contact_id')
         UserDayStatis.objects.update_or_create(user_id=user_id, date=today, defaults=item)
 

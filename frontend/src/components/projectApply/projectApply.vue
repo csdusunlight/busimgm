@@ -141,7 +141,7 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <div class="operation_button">
-                <div class="op_button_padding" v-if="scope.row.state !== '6'"><el-button size="mini" type="primary" @click="lookProject(scope.row)">查看</el-button></div>
+                <div class="op_button_padding" v-if="scope.row.state !== '0' && scope.row.state !== '2'"><el-button size="mini" type="primary" @click="lookProject(scope.row)">查看</el-button></div>
                 <div class="op_button_padding" v-if="scope.row.state === '0' || scope.row.state === '1'"><el-button size="mini" type="danger" @click="modifyproject(scope.row)">修改</el-button></div>
                 <div class="op_button_padding" v-if="scope.row.state === '0'"><el-button size="mini" type="warning" @click="deleteProjectBtn(scope.row)">删除</el-button></div>
                 <div class="op_button_padding" v-if="scope.row.state === '1' || scope.row.state === '6'"><el-button size="mini" type="success" @click="junctions(scope.row)">结项</el-button></div>
@@ -164,12 +164,12 @@
         <div class="table-list">
           <el-table :data="detailsList.results" style="width: 100%" @row-click='handleRowHandle'>
             <el-table-column label="日期" prop="date"></el-table-column>
-            <el-table-column label="项目名称" prop="1"></el-table-column>
-            <el-table-column label="投资人数" prop="1"></el-table-column>
+            <el-table-column label="项目名称" prop="project_name"></el-table-column>
+            <el-table-column label="投资人数" prop="invest_count"></el-table-column>
             <el-table-column label="投资金额" prop="invest_amount"></el-table-column>
             <el-table-column label="消耗费用" prop="consume_amount"></el-table-column>
-            <el-table-column label="返现投资人数" prop="1" width="95"></el-table-column>
-            <el-table-column label="返现投资金额" prop="1"></el-table-column>
+            <el-table-column label="返现投资人数" prop="return_count" width="95"></el-table-column>
+            <el-table-column label="返现投资金额" prop="return_invest_amount"></el-table-column>
             <el-table-column label="返现费用" prop="return_amount"></el-table-column>
           </el-table>
         </div>
