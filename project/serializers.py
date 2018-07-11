@@ -61,6 +61,7 @@ class  OperatorLogSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class  ProjectInvestDataSerializer(serializers.ModelSerializer):
+    projectname = serializers.CharField(source="project.name",read_only=True)
     class Meta:
         model = ProjectInvestDataModel
         fields = '__all__'

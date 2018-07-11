@@ -491,7 +491,7 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteCost(row.id).then((res) => {
-          if (res.data.code === '0') {
+          if (res.data.code === 0) {
             console.log(res)
             this.$message({
               type: 'success',

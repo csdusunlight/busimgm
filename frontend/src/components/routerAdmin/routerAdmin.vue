@@ -82,14 +82,48 @@
 
 <script>
 import header from '@/components/header/header'
+import {checkLogin} from '@/api/api'
+import {mapActions} from 'vuex'
 export default {
+  data () {
+    return {
+      username: ''
+    }
+  },
   computed: {
     defaultActive () {
       return this.$route.path
     }
   },
+  created () {
+    this.checkUserLogin()
+  },
+  methods: {
+    checkUserLogin () {
+      checkLogin().then((res) => {
+        console.log(res)
+        if (res.data.islogin === 1) {
+          this.addName(res.data.mobile)
+          return false
+        } else {
+          this.$message('您未登入过!')
+          this.$router.push('/login')
+        }
+      })
+    },
+    ...mapActions({
+      addName: 'addUserName'
+    })
+  },
   components: {
     'v-header': header
+  },
+  watch: {
+    '$route' (to, from) {
+      if (to.path === '/login') {
+        location.reload()
+      }
+    }
   }
 }
 </script>
@@ -110,7 +144,7 @@ export default {
     left: -6px;
     top: 0;
   .nav
-    margin-top: 30px;
+    margin-top: 20px;
     .el-menu-item
       padding-left: 25px !important
     .el-menu-item span
