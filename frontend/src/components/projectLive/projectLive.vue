@@ -45,11 +45,15 @@
           <el-table-column label="项目编号" prop="id"></el-table-column>
           <el-table-column label="项目名称" prop="name"></el-table-column>
           <el-table-column label="立项日期" prop="lanched_audit_date"></el-table-column>
-          <el-table-column label="结项日期" prop="concluded_audit_date"></el-table-column>
+          <el-table-column label="结项日期" prop="concluded_audit_date" v-if="jiexianstate" :key="Math.random()"></el-table-column>
           <el-table-column label="预计待收/待消耗" prop="topay_amount"></el-table-column>
           <el-table-column label="预计总消耗" prop="consume"></el-table-column>
           <el-table-column label="总返现金额" prop="cost"></el-table-column>
-          <el-table-column label="项目状态" prop="state"></el-table-column>
+          <el-table-column label="项目状态">
+            <template slot-scope="scope">
+              <span>{{stateFilter[scope.row.state]}}</span>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
       <div class="pagination">
@@ -99,18 +103,16 @@ export default {
       inputdate1: '',
       projectnum: '',
       projectname: '',
-      selectvalue: '0',
+      selectvalue: '1',
       loading: true,
       currentPage: 1,
       searchDetailsName: '',
       lookProjectTable: false,
       detailsList: {},
       dataList: {},
+      jiexianstate: false,
+      stateFilter: {0: '待审核', 1: '进行中', 2: '审核未通过', 4: '结项中', 5: '已结项', 6: '结项失败'},
       options: [
-        {
-          value: '0',
-          label: '全部'
-        },
         {
           value: '1',
           label: '进行中'
@@ -137,6 +139,11 @@ export default {
     getProjectList () {
       let data = this.conditionDate()
       getProjectLive(this.currentPage, data).then((res) => {
+        if (this.selectvalue === '5') {
+          this.jiexianstate = true
+        } else {
+          this.jiexianstate = false
+        }
         console.log(res)
         this.dataList = res.data
         this.loading = false
@@ -148,6 +155,10 @@ export default {
     conditionDate () {
       let Data = {
         params: {
+          lanched_audit_date_0: this.inputdate0,
+          lanched_audit_date_1: this.inputdate1,
+          id: this.projectnum,
+          name: this.projectname,
           state: this.selectvalue
         }
       }
