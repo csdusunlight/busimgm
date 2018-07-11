@@ -370,6 +370,10 @@ export default {
     handleAvatarSuccess (response, file) {
       console.log(response)
       if (response.code === 0) {
+        this.$message({
+          type: 'success',
+          message: '上传成功!'
+        })
         this.uploadVisible = true
         this.dataAdminDetails = response
         this.getDatalist()
