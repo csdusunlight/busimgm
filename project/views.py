@@ -803,6 +803,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
 
                     if j == 0:
                         id = int(value)
+                        print(id)
                         project = Project.objects.get(id=id)
                         temp.append(id)
                     elif j == 2:
