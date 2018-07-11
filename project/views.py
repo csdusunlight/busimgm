@@ -9,7 +9,7 @@ from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
 from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,\
     InvoiceApplyLogFilter,OperatorLogFilter,ProjectInvestDataFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
-from account.permissions import IsAllowedToUse,IsOwnerOrStaff
+#from account.permissions import IsAllowedToUse,IsOwnerOrStaff
 
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
@@ -37,7 +37,7 @@ from utils.Mypagination import MyPageNumberPagination
 #import django.core.cache
 import time
 logger = logging.getLogger('busimgm')
-ts = lambda :time.time
+#ts = lambda :time.time
 class ProjectDetail(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
@@ -55,6 +55,13 @@ class ProjectDetail(viewsets.ModelViewSet):
         ret={}
         ret['code']=0
         return Response(ret)
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_swry() :  # 或者是上单人员
+            return Project.objects.filter(user=self.request.user)
+        else:
+            return Project.objects.all()
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -179,7 +186,14 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = FundApplyLogFilter
-    #permission_classes =
+    #permission_classes =(IsAllowedToUse,)
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_swry() :  # 或者是上单人员
+            return FundApplyLog.objects.filter(apply_man=self.request.user)
+        else:
+            return FundApplyLog.objects.all()
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -280,6 +294,13 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     #permission_classes =
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_swry() :  # 或者是上单人员
+            return RefundApplyLog.objects.filter(apply_man=self.request.user)
+        else:
+            return RefundApplyLog.objects.all()
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
@@ -337,7 +358,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         aimrefund.audit_man=request.user
         aimrefund.state='1'
         aimrefund.audit_date = datetime.date.today()
-        aimrefund.save(update_fields=['audituser','state','audit_date'])
+        aimrefund.save(update_fields=['audit_man','state','audit_date'])
         aimpro = aimrefund.project
         if aimrefund.is_invoice=="1":
             aimpro.settle -= aimrefund.refund_rec
@@ -373,6 +394,13 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = InvoiceApplyLogFilter
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_swry():  # 或者是上单人员
+            return InvoiceApplyLog.objects.filter(apply_man=self.request.user)
+        else:
+            return InvoiceApplyLog.objects.all()
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -431,7 +459,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         aiminvoice.audit_man=request.user
         aiminvoice.state='1'
         aiminvoice.audit_date = datetime.date.today()
-        aiminvoice.save(update_fields=['audituser','state','audit_date'])
+        aiminvoice.save(update_fields=['audit_man','state','audit_date'])
         aimpro = aiminvoice.project
         aimpro.invoicenum = aiminvoice.invoice_num
         aimpro.save(update_fields=['invoicenum'])
@@ -450,7 +478,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         aiminvoice.audit_date =  datetime.date.today()
 
         aiminvoice.audit_refused_reason = reason
-        aiminvoice.save(update_fields=['audituser','state','audit_refused_reason','audit_date'])
+        aiminvoice.save(update_fields=['audit_man','state','audit_refused_reason','audit_date'])
         res = {}
         res['code'] = 0
         return Response(res)
@@ -472,13 +500,40 @@ class ProjectInvestData(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectInvestDataFilter
-    permission_classes = ()
+   # permission_classes = ()
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_swry():  # 或者是上单人员
+            return ProjectInvestDataModel.objects.filter(apply_man=self.request.user)
+        else:
+            return ProjectInvestDataModel.objects.all()
+
+    def perform_update(self, serializer):
+        instance=self.get_object()
+        serializer.save()
+        data = serializer.data
+        #####################################
+        # 日志删除时间和具体操作
+        print(instance)
+        oobj=instance
+        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
+        #####################################
+        serializer._data = {}
+        serializer._data['code'] = 0
+        serializer._data['data'] = data
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
         ret={}
         ret['code']=0
+        #####################################
+        # 日志删除时间和具体操作
+        print(instance)
+        oobj=instance
+        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
+        #####################################
         return Response(ret)
 
     def perform_update(self, serializer):
@@ -598,10 +653,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
 
                 if row[9] == "是":
                     result = True
-                    temp['state'] = '0'
+                    temp['state'] = '1'
                 elif row[9] == "否":
                     result = False
-                    temp['state'] = '1'
+                    temp['state'] = '0'
                 else:
                     raise Exception(u"审核结果必须为是或否。")
 
@@ -664,6 +719,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
             ret['code'] = 1
             ret['msg'] = e.__str__()
         ret['num'] = suc_num
+        #####################################
+        # 日志记录导入人的id和导入文件名
+        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=request.user, oobj=filename, otype='2')
+        #####################################
         return JsonResponse(ret)
 
 
@@ -675,7 +734,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         # print(dir(request))
         file = request.FILES.get('file')
         aftername=time.time()
-        filename = "./files/"+str(int(aftername*1000))
+        filename = "./files/audit_"+str(int(aftername*1000))
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
@@ -785,6 +844,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
             ret['code'] = 1
             ret['msg'] = e.__str__()
         ret['num'] = suc_num
+        #####################################
+        # 日志记录导入人的id和导入文件名
+        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=request.user, oobj=filename, otype='2')
+        #####################################
         return JsonResponse(ret)
 
 
@@ -917,6 +980,11 @@ class ProjectInvestData(viewsets.ModelViewSet):
         duplic_mobile_list_str = u'，'.join(duplicate_mobile_list)
         ret.update(num=succ_num, dup1=duplic_num1, dup2=duplic_num2, anum=nrows - 1,
                    dupstr=duplic_mobile_list_str)
+
+        #####################################
+        #日志记录导入人的id和导入文件名
+        OperatorLog.objects.create(otime=datetime.datetime.now(),oman=request.user,oobj=filename,otype='2')
+        #####################################
         returndict ={}
         returndict['data']=ret
         returndict['code']=0
