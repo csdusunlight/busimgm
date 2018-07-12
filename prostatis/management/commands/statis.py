@@ -9,10 +9,10 @@ from project.models import ProjectInvestDataModel, Project
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        # statis_for_projectday()
-        # statis_for_userday()
-        # statis_for_day()
-        # statis_for_project()
+        statis_for_projectday()
+        statis_for_userday()
+        statis_for_day()
+        statis_for_project()
         statis_for_user()
 
 def statis_for_projectday():
