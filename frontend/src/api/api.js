@@ -281,3 +281,12 @@ export function getOperationLog (page) {
   console.log(url)
   return axios.get(url)
 }
+/* 数据导入API */
+/* 正常数据导入 */
+export let normalExcel = `${http}/Project/projectinvestdata/import_projectdata_excel/`
+/* 审核数据导入 */
+export let examineExcel = `${http}/Project/projectinvestdata/import_audit_projectdata_excel/`
+/* 异常数据导入 */
+export let abnormalExcel = `${http}/Project/projectinvestdata/import_audit_projectdata_excel_except/`
+/* 导出 */
+export let exportExcel = `${http}/Project/projectinvestdata/export_investdata_excel/`
