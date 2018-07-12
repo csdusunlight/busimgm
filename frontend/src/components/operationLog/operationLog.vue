@@ -5,6 +5,7 @@
       <div class="table-list">
         <el-table v-loading="loadingproject" :data="dataList.results" style="width: 100%">
           <el-table-column label="编号" prop="id"></el-table-column>
+          <el-table-column label="操作人" prop="oman"></el-table-column>
           <el-table-column label="操作时间" prop="otime"></el-table-column>
           <el-table-column label="操作内容" prop="oobj"></el-table-column>
           <el-table-column label="操作类型">
@@ -12,7 +13,7 @@
               <span>{{otypeFilter[scope.row.otype]}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作人" prop="oman"></el-table-column>
+          <el-table-column label="操作内容" prop="oobj"></el-table-column>
         </el-table>
       </div>
       <div class="pagination">

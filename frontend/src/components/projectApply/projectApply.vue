@@ -58,11 +58,13 @@
       </el-col>
     </el-row>
     <el-row class="row_top">
-      <el-col :span="24">
-        <div class="flexright">
-          <el-button size="medium" @click="newAddproject()" type="info">新增项目</el-button>
-        </div>
-      </el-col>
+      <div v-if="jurisdiction !== 'SJRY'">
+        <el-col :span="24">
+          <div class="flexright">
+            <el-button size="medium" @click="newAddproject()" type="info">新增项目</el-button>
+          </div>
+        </el-col>
+      </div>
       <el-dialog
         title="项目申请"
         :visible.sync="dialogVisible"
@@ -244,7 +246,7 @@
       </el-dialog>
       <el-dialog title="结项失败" :visible.sync="stateOverFail" width="30%">
         <div class="text">
-          <p>结项拒绝原因：{{junOverFail.conclued_refused_reason}}结项拒绝原因结项拒绝原因结项拒绝原因结项拒绝原因结项拒绝原因结项拒绝原因</p>
+          <p>结项拒绝原因：{{junOverFail.conclued_refused_reason}}</p>
         </div>
       </el-dialog>
       <el-dialog title="结项" :visible.sync="junctionsVisible" width="30%">

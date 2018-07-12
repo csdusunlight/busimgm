@@ -34,7 +34,7 @@
     <el-row class="row_top">
       <el-col :span="4" :offset="20">
         <div class="flexright">
-          <el-button size="medium" type="primary">搜索</el-button>
+          <el-button size="medium" type="primary" @click="searchBtn">搜索</el-button>
         </div>
       </el-col>
     </el-row>
@@ -203,65 +203,77 @@ export default {
         console.log(err)
       })
     },
+    /* 搜索 */
+    searchBtn () {
+      this.loading = true
+      this.currentPage = 1
+      this.getProjectList()
+    },
     sortChange (val) {
       console.log(val)
       this.loading = true
-      if (val.prop === 'topay_amount') {
-        if (val.order === 'ascending') {
-          let data = {
-            params: {
-              ordering: 'topay_amount',
-              state: this.selectvalue
+      if (val.prop !== null) {
+        if (val.prop === 'topay_amount') {
+          if (val.order === 'ascending') {
+            let data = {
+              params: {
+                ordering: 'topay_amount',
+                state: this.selectvalue
+              }
             }
-          }
-          this.getSortProjectList(data)
-        } else {
-          let data = {
-            params: {
-              ordering: '-topay_amount',
-              state: this.selectvalue
+            this.getSortProjectList(data)
+          } else {
+            let data = {
+              params: {
+                ordering: '-topay_amount',
+                state: this.selectvalue
+              }
             }
+            this.getSortProjectList(data)
           }
-          this.getSortProjectList(data)
         }
-      }
-      if (val.prop === 'consume') {
-        if (val.order === 'ascending') {
-          let data = {
-            params: {
-              ordering: 'consume',
-              state: this.selectvalue
+        if (val.prop === 'consume') {
+          if (val.order === 'ascending') {
+            let data = {
+              params: {
+                ordering: 'consume',
+                state: this.selectvalue
+              }
             }
-          }
-          this.getSortProjectList(data)
-        } else {
-          let data = {
-            params: {
-              ordering: '-consume',
-              state: this.selectvalue
+            this.getSortProjectList(data)
+          } else {
+            let data = {
+              params: {
+                ordering: '-consume',
+                state: this.selectvalue
+              }
             }
+            this.getSortProjectList(data)
           }
-          this.getSortProjectList(data)
         }
-      }
-      if (val.prop === 'cost') {
-        if (val.order === 'ascending') {
-          let data = {
-            params: {
-              ordering: 'cost',
-              state: this.selectvalue
+        if (val.prop === 'cost') {
+          if (val.order === 'ascending') {
+            let data = {
+              params: {
+                ordering: 'cost',
+                state: this.selectvalue
+              }
             }
-          }
-          this.getSortProjectList(data)
-        } else {
-          let data = {
-            params: {
-              ordering: '-cost',
-              state: this.selectvalue
+            this.getSortProjectList(data)
+          } else {
+            let data = {
+              params: {
+                ordering: '-cost',
+                state: this.selectvalue
+              }
             }
+            this.getSortProjectList(data)
           }
-          this.getSortProjectList(data)
         }
+      } else {
+        this.loading = true
+        this.currentPage = 1
+        this.getProjectList()
       }
       console.log(val)
     }
