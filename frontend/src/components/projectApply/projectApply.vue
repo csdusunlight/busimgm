@@ -475,6 +475,7 @@ export default {
                 type: 'success',
                 message: '新建项目成功!'
               })
+              this.projectstate = '0'
               this.dialogVisible = false
               this.getProjectdata()
             } else {
