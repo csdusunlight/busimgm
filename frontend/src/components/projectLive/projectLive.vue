@@ -35,20 +35,19 @@
       <el-col :span="4" :offset="20">
         <div class="flexright">
           <el-button size="medium" type="primary">搜索</el-button>
-          <el-button size="medium" type="info">导出</el-button>
         </div>
       </el-col>
     </el-row>
     <el-row class="row_top row_bottom">
       <div class="table-list">
-        <el-table v-loading="loading" :data="dataList.results" style="width: 100%" @row-click="handleRowHandle">
+        <el-table v-loading="loading" :data="dataList.results" style="width: 100%" @row-click="handleRowHandle" @sort-change="sortChange">
           <el-table-column label="项目编号" prop="id"></el-table-column>
           <el-table-column label="项目名称" prop="name"></el-table-column>
           <el-table-column label="立项日期" prop="lanched_audit_date"></el-table-column>
           <el-table-column label="结项日期" prop="concluded_audit_date" v-if="jiexianstate" :key="Math.random()"></el-table-column>
-          <el-table-column label="预计待收/待消耗" prop="topay_amount"></el-table-column>
-          <el-table-column label="预计总消耗" prop="consume"></el-table-column>
-          <el-table-column label="总返现金额" prop="cost"></el-table-column>
+          <el-table-column label="预计待收/待消耗" sortable="custom" prop="topay_amount"></el-table-column>
+          <el-table-column label="预计总消耗" sortable="custom" prop="consume"></el-table-column>
+          <el-table-column label="总返现金额" sortable="custom" prop="cost"></el-table-column>
           <el-table-column label="项目状态">
             <template slot-scope="scope">
               <span>{{stateFilter[scope.row.state]}}</span>
@@ -70,12 +69,12 @@
         <div class="table-list">
           <el-table :data="detailsList.results" style="width: 100%" @row-click='handleRowHandle'>
             <el-table-column label="日期" prop="date"></el-table-column>
-            <el-table-column label="项目名称" prop="1"></el-table-column>
-            <el-table-column label="投资人数" prop="1"></el-table-column>
+            <el-table-column label="项目名称" prop="project_name"></el-table-column>
+            <el-table-column label="投资人数" prop="invest_count"></el-table-column>
             <el-table-column label="投资金额" prop="invest_amount"></el-table-column>
             <el-table-column label="消耗费用" prop="consume_amount"></el-table-column>
-            <el-table-column label="返现投资人数" prop="1" width="95"></el-table-column>
-            <el-table-column label="返现投资金额" prop="1"></el-table-column>
+            <el-table-column label="返现投资人数" prop="return_count" width="95"></el-table-column>
+            <el-table-column label="返现投资金额" prop="return_invest_amount"></el-table-column>
             <el-table-column label="返现费用" prop="return_amount"></el-table-column>
           </el-table>
         </div>
@@ -108,6 +107,7 @@ export default {
       currentPage: 1,
       searchDetailsName: '',
       lookProjectTable: false,
+      detailsCurrentPage: 1,
       detailsList: {},
       dataList: {},
       jiexianstate: false,
@@ -177,6 +177,11 @@ export default {
       this.lookProjectTable = true
       this.getDetailsList()
     },
+    /* 详情分页 */
+    detailsCurrentChange (val) {
+      this.detailsCurrentPage = val
+      this.getDetailsList()
+    },
     /* 单击行详情搜索 */
     getDetailsList () {
       let data = {
@@ -188,6 +193,9 @@ export default {
         console.log(res)
         this.detailsList = res.data
       })
+    },
+    sortChange (val) {
+      console.log(val)
     }
   }
 }

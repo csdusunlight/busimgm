@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <h1>综合管理系统</h1>
+    <h1>聚财系统</h1>
     <div class="userinfo">
       <el-dropdown>
         <span class="el-dropdown-link">

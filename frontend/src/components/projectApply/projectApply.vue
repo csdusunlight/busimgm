@@ -138,7 +138,7 @@
           <el-table-column label="待结算/消耗费用" prop="topay_amount"></el-table-column>
           <el-table-column label="已开票金额" prop="invoicenum"></el-table-column>
           <el-table-column label="备注" prop="remark"></el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" v-if="jurisdiction !== 'SJRY'">
             <template slot-scope="scope">
               <div class="operation_button">
                 <div class="op_button_padding" v-if="scope.row.state !== '0' && scope.row.state !== '2'"><el-button size="mini" type="primary" @click="lookProject(scope.row)">查看</el-button></div>
@@ -270,7 +270,7 @@
 <script>
 import {postNewProject, getProjectList, getprojectDetails, deleteProject, putProject, endProjectApply} from '@/api/api'
 import {paccounOption, settlewayopsoption} from '@/common/js/options'
-
+import {mapGetters} from 'vuex'
 export default {
   data () {
     return {
@@ -620,6 +620,11 @@ export default {
       this.currentPage = 1
       this.getProjectdata()
     }
+  },
+  computed: {
+    ...mapGetters([
+      'jurisdiction'
+    ])
   },
   watch: {
     settlement () {
