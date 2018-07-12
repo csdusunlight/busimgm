@@ -539,8 +539,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         #####################################
         # 日志删除时间和具体操作
         print(instance)
-        oobj=instance
-        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
+        oobj=repr(instance)
+        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='1')
         #####################################
         serializer._data = {}
         serializer._data['code'] = 0
@@ -554,7 +554,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         #####################################
         # 日志删除时间和具体操作
         print(instance)
-        oobj=instance
+        oobj=repr(instance)
         OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
         #####################################
         return Response(ret)
