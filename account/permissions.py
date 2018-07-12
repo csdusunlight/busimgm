@@ -5,7 +5,7 @@ from utils.Exception import MyException
 from django.contrib.auth import login
 from rest_framework.request import Request
 from account.models import User
-from project.models import Project
+from project.models import Project,ProjectInvestDataModel
 from rest_framework import permissions
 class MyBasicAuthentication(BaseAuthentication):
     def authenticate(self, request):
