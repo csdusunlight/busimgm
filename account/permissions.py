@@ -5,6 +5,7 @@ from utils.Exception import MyException
 from django.contrib.auth import login
 from rest_framework.request import Request
 from account.models import User
+from project.models import Project
 from rest_framework import permissions
 class MyBasicAuthentication(BaseAuthentication):
     def authenticate(self, request):
@@ -35,6 +36,7 @@ class IsAllowedToUse(BasePermission):
                  "/statis/user_day/": ["GET"],
                  "/statis/user/": ["GET"],
                  "/statis/all/": ["GET"],
+                 "/Project/projectinvestdata/": ["GET"],
                  "/Project/projectinvestdata/export_investdata_excel/": ["GET"],
                  "/Project/projectinvestdata/import_audit_projectdata_excel/": ["POST"],
                  "/Project/projectinvestdata/import_audit_projectdata_excel_except/": ["POST"],
@@ -199,7 +201,7 @@ class IsAdmin(permissions.BasePermission):
         # 写的请求只对对象的创建者开放
         if not request.user.is_authenticated:
             return False
-        return request.user.is_staff
+        return request.user.is_superuser
 
 
 class IsOwnerOrStaff(permissions.BasePermission):
@@ -211,7 +213,10 @@ class IsOwnerOrStaff(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if not request.user.is_authenticated:
             return False
-        return request.user.is_staff or obj.user == request.user
+        if isinstance(obj,Project):
+            return request.user.is_superuser or obj.contact == request.user
+        else:
+            return request.user.is_superuser or obj.apply_man == request.user
 
 
 # class IsOwnerOrStaffOrSDRY(permissions.BasePermission):

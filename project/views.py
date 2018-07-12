@@ -10,12 +10,8 @@ from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilte
     InvoiceApplyLogFilter,OperatorLogFilter,ProjectInvestDataFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from utils.log import write_to_log
-#from account.permissions import IsAllowedToUse,IsOwnerOrStaff
-
+from account.permissions import IsAllowedToUse,IsOwnerOrStaff
 from django.views.decorators.clickjacking import xframe_options_sameorigin
-
-
-
 import django_filters
 from django.http.response import Http404, JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -23,7 +19,6 @@ import xlrd
 import logging
 from django.db import transaction
 from decimal import Decimal
-
 from xlwt.Workbook import Workbook
 from xlwt.Style import easyxf
 import traceback
@@ -55,7 +50,7 @@ class ProjectDetail(viewsets.ModelViewSet):
                        'settle'
                        )
     ordering=('lanched_apply_date')
-    #permission_classes =(IsAllowedToUse,)
+    permission_classes = (IsAllowedToUse,IsOwnerOrStaff,)
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -212,7 +207,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = FundApplyLogFilter
-    #permission_classes =(IsAllowedToUse,)
+    permission_classes =(IsAllowedToUse,IsOwnerOrStaff,)
     ordering_fields = ('fund_rec',
                        'apply_date',
                        'send_date',
@@ -325,7 +320,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = RefundApplyLogFilter
-    #permission_classes =
+    permission_classes =(IsAllowedToUse,IsOwnerOrStaff,)
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     ordering_fields = ('inprest',
                        'apply_date',
@@ -440,6 +435,8 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
                        'return_num'
                        )
     ordering=('apply_date')
+    permission_classes =(IsAllowedToUse,IsOwnerOrStaff,)
+
     def get_queryset(self):
         user = self.request.user
         if user.is_swry():  # 或者是上单人员
@@ -538,6 +535,7 @@ class OperatorLogDetail(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = OperatorLogFilter
+    permission_classes =(IsAllowedToUse,IsOwnerOrStaff,)
     def get_queryset(self):
         user = self.request.user
         if user.is_swry() :  # 或者是上单人员
@@ -554,14 +552,15 @@ class ProjectInvestData(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectInvestDataFilter
-   # permission_classes = ()
+    permission_classes = (IsAllowedToUse, IsOwnerOrStaff,)
+
 
     def get_queryset(self):
-        user = self.request.user
-        if user.is_swry():  # 或者是上单人员
-            return ProjectInvestDataModel.objects.filter(apply_man=self.request.user)
-        else:
-            return ProjectInvestDataModel.objects.all()
+            user = self.request.user
+            if user.is_swry():  # 或者是上单人员
+                return ProjectInvestDataModel.objects.filter(apply_man=self.request.user)
+            else:
+                return ProjectInvestDataModel.objects.all()
 
     def perform_update(self, serializer):
         instance=self.get_object()
