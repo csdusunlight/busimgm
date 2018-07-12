@@ -89,8 +89,8 @@ class User(AbstractBaseUser,PermissionsMixin):
     def get_permission(self):
         userper =  self.upermission.all()
         userper = [i.desc for i in userper ]
-        if self.is_staff :
-            userper.append('STAFF')
+        if self.is_superuser :
+            userper.append('ADMIN')
         return userper
 
     def is_shry(self):
