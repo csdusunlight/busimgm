@@ -115,7 +115,8 @@ class Project(models.Model):
     def __repr__(self):
             return "%s项目公司是%s项目名是%s,签约公司%s" % (self.id,self.company,self.name,self.contract_company)
 
-
+    def __str__(self):
+        return self.name
 
 
     class Meta:
