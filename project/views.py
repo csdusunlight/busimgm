@@ -52,7 +52,6 @@ class ProjectDetail(viewsets.ModelViewSet):
                        'cost',
                        'settle'
                        )
-    search_fields = ('name')
     ordering=('lanched_apply_date')
     #permission_classes =(IsAllowedToUse,)
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
