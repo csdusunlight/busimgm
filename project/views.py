@@ -9,6 +9,7 @@ from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
 from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,\
     InvoiceApplyLogFilter,OperatorLogFilter,ProjectInvestDataFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
+from utils.log import write_to_log
 #from account.permissions import IsAllowedToUse,IsOwnerOrStaff
 
 from django.views.decorators.clickjacking import xframe_options_sameorigin
@@ -57,8 +58,9 @@ class ProjectDetail(viewsets.ModelViewSet):
         #####################################
         # 项目删除时间和具体操作
         #print(instance)
-        oobj = repr(instance)
-        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
+        write_to_log(self.request.user,instance,'0')
+        # oobj = repr(instance)
+        # OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
         #####################################
 
         return Response(ret)
@@ -68,7 +70,7 @@ class ProjectDetail(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         if user.is_swry() :  # 或者是上单人员
-            return Project.objects.filter(user=self.request.user)
+            return Project.objects.filter(contact=self.request.user)
         else:
             return Project.objects.all()
 
@@ -106,8 +108,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         #####################################
         # 项目修改时间和具体操作
         instance = self.get_object()
-        oobj = repr(instance)
-        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='1')
+        write_to_log(self.request.user,instance,'1')
         #####################################
         return Response(res)
 
@@ -426,9 +427,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         ret['code']=0
         #####################################
         # 日志删除时间和具体操作
-        print(instance)
-        oobj=instance
-        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
+        # write_to_log(self.request.user,instance,'0')
         #####################################
         return Response(ret)
 
@@ -537,10 +536,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         serializer.save()
         data = serializer.data
         #####################################
-        # 日志删除时间和具体操作
-        print(instance)
-        oobj=repr(instance)
-        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='1')
+        # 日志修改时间和具体操作
+        write_to_log(self.request.user,instance,'1')
         #####################################
         serializer._data = {}
         serializer._data['code'] = 0
@@ -553,17 +550,15 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret['code']=0
         #####################################
         # 日志删除时间和具体操作
-        print(instance)
-        oobj=repr(instance)
-        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
+        write_to_log(self.request.user,instance,'0')
         #####################################
         return Response(ret)
 
-    def perform_update(self, serializer):
-        if self.request.data.get('state'):
-            serializer.save(audit_time=datetime.datetime.now())
-        else:
-            serializer.save()
+    # def perform_update(self, serializer):
+    #     if self.request.data.get('state'):
+    #         serializer.save(audit_time=datetime.datetime.now())
+    #     else:
+    #         serializer.save()
 
     @action(methods=['post'], detail=True)
     def import_apply_approved(self,request,pk=None,*args,**kwargs):
@@ -744,7 +739,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret['num'] = suc_num
         #####################################
         # 日志记录导入人的id和导入文件名
-        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=request.user, oobj=filename, otype='2')
+        write_to_log(self.request.user,filename,'2')
+
         #####################################
         return JsonResponse(ret)
 
@@ -869,7 +865,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret['num'] = suc_num
         #####################################
         # 日志记录导入人的id和导入文件名
-        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=request.user, oobj=filename, otype='2')
+        write_to_log(self.request.user,filename,'2')
         #####################################
         return JsonResponse(ret)
 
@@ -1006,7 +1002,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
 
         #####################################
         #日志记录导入人的id和导入文件名
-        OperatorLog.objects.create(otime=datetime.datetime.now(),oman=request.user,oobj=filename,otype='2')
+        write_to_log(self.request.user,filename,'2')
         #####################################
         returndict ={}
         returndict['data']=ret

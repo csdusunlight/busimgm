@@ -255,7 +255,7 @@ class ProjectInvestDataModel(models.Model):
     remark = models.CharField("备注", max_length=100)
 
     def __repr__(self):
-        return "%s投资记录,手机是%s,项目名是%s" % (self.id, self.invest_mobile, self.project.name)
+        return "%s投资记录,手机是%s,项目名是%s" % (self.invest_mobile, self.project.name)
 
     def futou_des(self):
         return "复投" if self.is_futou else "首投"
