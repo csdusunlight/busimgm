@@ -50,6 +50,8 @@ class ProjectDetail(viewsets.ModelViewSet):
                        'concluded_audit_date',
                        'lanched_audit_date',
                        'cost',
+                       'consume',
+                       #'topay_amount',
                        'settle'
                        )
     ordering=('lanched_apply_date')
@@ -63,7 +65,9 @@ class ProjectDetail(viewsets.ModelViewSet):
         #####################################
         # 项目删除时间和具体操作
         #print(instance)
-        write_to_log(self.request.user,instance,'0')
+        print(instance.state)
+        if instance.state=='1':
+            write_to_log(self.request.user,instance,'0')
         # oobj = repr(instance)
         # OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
         #####################################
@@ -113,7 +117,8 @@ class ProjectDetail(viewsets.ModelViewSet):
         #####################################
         # 项目修改时间和具体操作
         instance = self.get_object()
-        write_to_log(self.request.user,instance,'1')
+        if instance.state=='1':
+            write_to_log(self.request.user,instance,'1')
         #####################################
         return Response(res)
 
