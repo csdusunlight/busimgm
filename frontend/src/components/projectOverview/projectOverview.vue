@@ -1,6 +1,6 @@
 <template>
   <div class="projectoverview">
-    <h1 class="title">当前在线项目1000</h1>
+    <h1 class="title">当前进行中项目 {{projectLength}} 个</h1>
     <div class="highcharts row_top">
       <div id="collection" ref="collection" style="width: 400px; height: 300px;">123456</div>
       <div id="consume" style="width: 400px; height: 300px;"></div>
@@ -37,7 +37,7 @@
 
 <script>
 import Highcharts from 'highcharts'
-import {getProjectOver, getAllProject, getAllProject2} from '@/api/api'
+import {getProjectOver, getAllProject} from '@/api/api'
 
 export default {
   data () {
@@ -55,15 +55,14 @@ export default {
       pie_data_3: [],
       num_detail_1: [],
       num_detail_2: [],
-      num_detail_3: []
+      num_detail_3: [],
+      projectLength: 0
     }
   },
   created () {
     this.getDatalist()
   },
   mounted () {
-    console.log('pie test')
-    console.log(this.dataarr)
     /* this.charts('monthlyknot', this.dataarr, '当月结项项目分布') */
     this.getProjectdata()
     this.getProjectdata2()
@@ -84,7 +83,7 @@ export default {
       this.currentPage = val
       this.getDatalist()
     },
-    charts (dom, datas, titles) {
+    charts (dom, datas, titles, name) {
       Highcharts.chart(dom, {
         title: {
           text: titles
@@ -107,17 +106,22 @@ export default {
         },
         series: [{
           type: 'pie',
-          name: '浏览器访问占比',
+          name: name,
           data: datas
         }]
       })
     },
     getProjectdata () {
-      getAllProject().then((res) => {
+      let data = {
+        params: {
+          page: 1,
+          pageSize: 999,
+          state: 1
+        }
+      }
+      getAllProject(data).then((res) => {
         if (res.data.code === 0) {
-          console.log('图表数据')
           let data = res.data.results
-          console.log(data)
           for (var i = 0; i < data.length; i++) {
             if (data[i].consume >= 0) {
               this.pie_data_1.push([data[i].name, parseFloat(data[i].consume)])
@@ -126,13 +130,10 @@ export default {
               this.pie_data_2.push([data[i].name, parseFloat(data[i].consume)])
               this.num_detail_2 += parseFloat(data[i].consume)
             }
+            this.projectLength++
           }
-          console.log('pie1、2')
-          console.log(this.pie_data_1)
-          console.log(this.pie_data_2)
-
-          this.charts('collection', this.pie_data_1, '项目预估待收布图')
-          this.charts('consume', this.pie_data_2, '项目预估待消耗分布')
+          this.charts('collection', this.pie_data_1, '项目预估待收布图', '预估待收')
+          this.charts('consume', this.pie_data_2, '项目预估待消耗分布', '预估待消耗')
         } else {
           /* this.$message(res.data.detail) */
         }
@@ -143,21 +144,24 @@ export default {
     },
     getProjectdata2 () {
       let dateNow = new Date()
-      let dateStr = dateNow.getFullYear() + '-' + (dateNow.getMonth() + 1) + '-' + 1
-      let key = '&state=5&concluded_audit_date_0=' + dateStr
-      getAllProject2(key).then((res) => {
+      let m = (dateNow.getMonth() + 1) < 10 ? '0' + (dateNow.getMonth() + 1) : dateNow.getMonth() + 1
+      let dateStr = `${dateNow.getFullYear()}-${m}-01`
+      let data2 = {
+        params: {
+          page: 1,
+          pageSize: 999,
+          state: 5,
+          concluded_audit_date_0: dateStr
+        }
+      }
+      getAllProject(data2).then((res) => {
         if (res.data.code === 0) {
-          console.log('图表数据')
           let data = res.data.results
-          console.log(data)
           for (var i = 0; i < data.length; i++) {
-            this.pie_data_3.push([data[i].name, parseFloat(data[i].consume)])
-            this.num_detail_3 += parseFloat(data[i].consume)
+            this.pie_data_3.push([data[i].name, parseFloat(data[i].settle)])
+            this.num_detail_3 += parseFloat(data[i].settle)
           }
-          console.log('pie3')
-          console.log(this.pie_data_3)
-
-          this.charts('monthlyknot', this.pie_data_3, '当月结项项目分布')
+          this.charts('monthlyknot', this.pie_data_3, '当月结项项目分布', '结算费用')
         } else {
           /* this.$message(res.data.detail) */
         }

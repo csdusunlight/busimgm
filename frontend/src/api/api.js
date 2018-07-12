@@ -42,15 +42,10 @@ export function getProjectList (page, data) {
   return axios.get(url, data)
 }
 /* 获取图表项目 */
-export function getAllProject (page, data) {
-  let url = `${http}/Project/projects/?page=1&pageSize=999&state=1`
+export function getAllProject (data) {
+  let url = `${http}/Project/projects/`
   console.log(url)
   return axios.get(url, data)
-}/* 获取图表项目2 */
-export function getAllProject2 (key) {
-  let url = `${http}/Project/projects/?page=1&pageSize=999${key}`
-  console.log(url)
-  return axios.get(url)
 }
 /* 新建项目提交 */
 export function postNewProject (data) {
