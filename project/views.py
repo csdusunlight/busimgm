@@ -45,9 +45,15 @@ class ProjectDetail(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectFilter
-    ordering_fields = ('name')
+    ordering_fields = ('lanched_apply_date',
+                       'concluded_apply_date',
+                       'concluded_audit_date',
+                       'lanched_audit_date',
+                       'cost',
+                       'settle'
+                       )
     search_fields = ('name')
-    ordering=('lanched_apply_date','concluded_audit_date')
+    ordering=('lanched_apply_date')
     #permission_classes =(IsAllowedToUse,)
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def destroy(self, request, *args, **kwargs):
@@ -203,6 +209,12 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = FundApplyLogFilter
     #permission_classes =(IsAllowedToUse,)
+    ordering_fields = ('fund_rec',
+                       'apply_date',
+                       'send_date',
+                       'audit_date'
+                       )
+    ordering=('apply_date')
 
     def get_queryset(self):
         user = self.request.user
@@ -311,7 +323,12 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     filter_class = RefundApplyLogFilter
     #permission_classes =
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
-
+    ordering_fields = ('inprest',
+                       'apply_date',
+                       'refund_rec',
+                       'audit_date'
+                       )
+    ordering=('apply_date')
     def get_queryset(self):
         user = self.request.user
         if user.is_swry() :  # 或者是上单人员
@@ -412,7 +429,13 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = InvoiceApplyLogFilter
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
-
+    ordering_fields = ('invoice_num',
+                       'invoice_date',
+                       'apply_date',
+                       'audit_date',
+                       'return_num'
+                       )
+    ordering=('apply_date')
     def get_queryset(self):
         user = self.request.user
         if user.is_swry():  # 或者是上单人员
@@ -511,7 +534,12 @@ class OperatorLogDetail(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = OperatorLogFilter
-
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_swry() :  # 或者是上单人员
+            return OperatorLog.objects.filter(oman=self.request.user)
+        else:
+            return OperatorLog.objects.all()
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
