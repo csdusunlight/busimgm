@@ -21,6 +21,8 @@ from django.db import transaction
 from decimal import Decimal
 from xlwt.Workbook import Workbook
 from xlwt.Style import easyxf
+from  django.utils import timezone
+
 import traceback
 import datetime
 from project.models import DBlock
@@ -597,7 +599,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         source = request.data.get('source')
         return_amount = request.data.get('return_amount')
         invest_mobile = request.data.get('invest_mobile')
-        aiminvestrecord.audit_time= django.utils.timezone.now()
+        aiminvestrecord.audit_time= timezone.now()
         aiminvestrecord.source = source
         aiminvestrecord.return_amount = return_amount
         aiminvestrecord.invest_mobile = invest_mobile
@@ -610,7 +612,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def import_apply_rejected(self, request, pk=None, *args, **kwargs):
         aiminvestrecord = ProjectInvestDataModel.objects.get(id=pk)
-        aiminvestrecord.audit_time = django.utils.timezone.now()
+        aiminvestrecord.audit_time = timezone.now()
         aiminvestrecord.state = '2'
         aiminvestrecord.save(update_fields=['audit_time', 'state'])
 
