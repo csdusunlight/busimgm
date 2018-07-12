@@ -107,7 +107,7 @@
             :before-upload="beforeAvatarUpload">
             <el-button size="medium" type="info">异常数据导入</el-button>
           </el-upload>
-          <a href="http://127.0.0.1:8000/static/projectdata_init_template.xls"><el-button size="medium" type="info">获取初始导入模板</el-button></a>
+          <a href="http://mgm.fuliunion.com/static/projectdata_init_template.xls"><el-button size="medium" type="info">获取初始导入模板</el-button></a>
         </div>
       </el-col>
     </el-row>
@@ -214,7 +214,7 @@
 </template>
 
 <script>
-import {getDaAdList, agreeDataAdmin, deleteDataAdmin} from '@/api/api'
+import {getDaAdList, agreeDataAdmin, deleteDataAdmin, normalExcel, examineExcel, abnormalExcel, exportExcel} from '@/api/api'
 import {examineFilter} from '@/common/js/options'
 export default {
   data () {
@@ -225,9 +225,10 @@ export default {
       inputdate3: '',
       projectnum: '',
       projectnameVal: '',
-      uploadURL1: 'http://127.0.0.1:8000/Project/projectinvestdata/import_projectdata_excel/',
-      uploadURL3: 'http://127.0.0.1:8000/Project/projectinvestdata/import_audit_projectdata_excel/',
-      uploadURL4: 'http://127.0.0.1:8000/Project/projectinvestdata/import_audit_projectdata_excel_except/',
+      uploadURL1: normalExcel,
+      uploadURL3: examineExcel,
+      uploadURL4: abnormalExcel,
+      exportExcelUrl: exportExcel,
       uploadName: 'file',
       subphone: '',
       investvalue: '',
@@ -346,7 +347,7 @@ export default {
     /* 导出数据 */
     exportExel () {
       console.log('数据导出')
-      var exportUrl = 'http://127.0.0.1:8000/Project/projectinvestdata/export_investdata_excel/'
+      var exportUrl = this.exportExcelUrl
       console.log(exportUrl)
       var html = '<form action="' + exportUrl + '" method="get" target="_self" id="postData_form">'
       html += '<input name="investtime_0" type="hidden" value="' + this.inputdate0 + '"/>'
