@@ -113,8 +113,8 @@
     </el-row>
     <el-row class="row_top row_bottom">
       <div class="table-list">
-        <el-table v-loading="loading" :data="dataList.results" style="width: 100%" @sort-change="sortChange">
-          <el-table-column label="项目编号" prop="project" sortable="custom" width="100"></el-table-column>
+        <el-table v-loading="loading" :data="dataList.results" style="width: 100%">
+          <el-table-column label="项目编号" prop="project" width="100"></el-table-column>
           <el-table-column label="项目名称" prop="projectname"></el-table-column>
           <el-table-column label="投资日期" prop="invest_time"></el-table-column>
           <el-table-column label="是否复投" prop="is_futou">
@@ -486,9 +486,6 @@ export default {
           return false
         }
       })
-    },
-    sortChange (val) {
-      console.log(val)
     },
     tableSelectionChange (val) {
       console.log(val)

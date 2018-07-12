@@ -239,10 +239,17 @@ export function getToken () {
   return axios.get(url)
 }
 /* ----------------数据总览--------------- */
-export function getDataOverview () {
-  let url = `${http}/statis/all/`
+/* 项目总览 */
+export function getDataOverview (data) {
+  let url = `${http}/statis/user/`
   console.log(url)
-  return axios.get(url)
+  return axios.get(url, data)
+}
+/* 每日项目数据 */
+export function getDataDayList (page, data) {
+  let url = `${http}/statis/user_day/?page=${page}&pageSize=${pageSize}`
+  console.log(url)
+  return axios.get(url, data)
 }
 /* ----------------项目总览--------------- */
 export function getProjectOver (page) {
@@ -255,4 +262,10 @@ export function getProjectLive (page, data) {
   let url = `${http}/Project/projects/?page=${page}&pageSize=${pageSize}`
   console.log(url)
   return axios.get(url, data)
+}
+/* 操作日志 */
+export function getOperationLog (page) {
+  let url = `${http}/Project/operatorlogdetail/?page=${page}&pageSize=${pageSize}`
+  console.log(url)
+  return axios.get(url)
 }

@@ -11,51 +11,51 @@
             text-color="#fff"
             active-text-color="#ffd04b"
           >
-            <el-menu-item index="/projectOverview">
+            <el-menu-item index="/projectOverview" v-if="jurisdiction === 'SHRY' || jurisdiction === 'SJRY' || jurisdiction === 'ADMIN'">
               <i class="iconfont iconchange iconsize">&#xe607;</i>
               <span class="iconsizetext" slot="title">项目总览</span>
             </el-menu-item>
-            <el-menu-item index="/projectLive">
+            <el-menu-item index="/projectLive" v-if="jurisdiction === 'SHRY' || jurisdiction === 'SJRY' || jurisdiction === 'ADMIN'">
               <i class="iconfont iconchange iconsize">&#xe6c0;</i>
               <span class="iconsizetext" slot="title">项目实况</span>
             </el-menu-item>
-            <el-menu-item index="/dataAdmin">
+            <el-menu-item index="/dataAdmin" v-if="jurisdiction === 'SJRY' || jurisdiction === 'ADMIN'">
               <i class="iconfont iconchange">&#xe614;</i>
-              <span slot="title">数据管理</span>
+              <span slot="title">投资数据</span>
             </el-menu-item>
-            <el-menu-item index="/dataOverview">
+            <el-menu-item index="/dataOverview" v-if="jurisdiction === 'SWRY' || jurisdiction === 'ADMIN'">
               <i class="iconfont iconchange">&#xe609;</i>
-              <span slot="title">数据总览</span>
+              <span slot="title">个人数据</span>
             </el-menu-item>
-            <el-menu-item index="/projectApply">
+            <el-menu-item index="/projectApply" v-if="jurisdiction === 'SWRY' || jurisdiction === 'SJRY' || jurisdiction === 'ADMIN'">
               <i class="iconfont iconchange">&#xe6c2;</i>
               <span slot="title">项目申请</span>
             </el-menu-item>
-            <el-menu-item index="/projectExamine">
+            <el-menu-item index="/projectExamine" v-if="jurisdiction === 'SHRY' || jurisdiction === 'ADMIN'">
               <i class="iconfont iconchange">&#xe6c2;</i>
               <span slot="title">项目审核</span>
             </el-menu-item>
-            <el-menu-item index="/costApply">
+            <el-menu-item index="/costApply" v-if="jurisdiction === 'SWRY' || jurisdiction === 'ADMIN'">
               <i class="iconfont iconchange">&#xe608;</i>
               <span slot="title">费用申请</span>
             </el-menu-item>
-            <el-menu-item index="/costExamine">
+            <el-menu-item index="/costExamine" v-if="jurisdiction === 'SHRY' || jurisdiction === 'CWRY' || jurisdiction === 'ADMIN'">
               <i class="iconfont iconchange">&#xe608;</i>
               <span slot="title">费用审核</span>
             </el-menu-item>
-            <el-menu-item index="/invoiceApply">
+            <el-menu-item index="/invoiceApply" v-if="jurisdiction === 'SWRY' || jurisdiction === 'ADMIN'">
               <i class="iconfont iconchange">&#xe654;</i>
               <span slot="title">发票申请</span>
             </el-menu-item>
-            <el-menu-item index="/invoiceExamine">
+            <el-menu-item index="/invoiceExamine" v-if="jurisdiction === 'SHRY' || jurisdiction === 'CWRY' || jurisdiction === 'ADMIN'">
               <i class="iconfont iconchange">&#xe654;</i>
               <span slot="title">发票审核</span>
             </el-menu-item>
-            <el-menu-item index="/refundApply">
+            <el-menu-item index="/refundApply" v-if="jurisdiction === 'SWRY' || jurisdiction === 'ADMIN'">
               <i class="iconfont iconchange">&#xe617;</i>
               <span slot="title">退款申请</span>
             </el-menu-item>
-            <el-menu-item index="/refundExamine">
+            <el-menu-item index="/refundExamine" v-if="jurisdiction === 'SHRY' || jurisdiction === 'CWRY' || jurisdiction === 'ADMIN'">
               <i class="iconfont iconchange">&#xe617;</i>
               <span slot="title">退款审核</span>
             </el-menu-item>
@@ -83,17 +83,21 @@
 <script>
 import header from '@/components/header/header'
 import {checkLogin} from '@/api/api'
-import {mapActions} from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
 export default {
   data () {
     return {
-      username: ''
+      username: '',
+      jutionrow: {}
     }
   },
   computed: {
     defaultActive () {
       return this.$route.path
-    }
+    },
+    ...mapGetters([
+      'jurisdiction'
+    ])
   },
   created () {
     this.checkUserLogin()
@@ -103,7 +107,16 @@ export default {
       checkLogin().then((res) => {
         console.log(res)
         if (res.data.islogin === 1) {
+          this.jutionrow = res.data.permission[0]
+          this.addJution(this.jutionrow)
           this.addName(res.data.mobile)
+          this.addUserId(res.data.userid)
+          if (res.data.permission[0] === 'SWRY') {
+            this.$router.push('/dataOverview')
+          }
+          if (res.data.permission[0] === 'CWRY') {
+            this.$router.push('/costExamine')
+          }
           return false
         } else {
           this.$message('您未登入过!')
@@ -112,7 +125,9 @@ export default {
       })
     },
     ...mapActions({
-      addName: 'addUserName'
+      addName: 'addUserName',
+      addUserId: 'addUserId',
+      addJution: 'jurisdictionRow'
     })
   },
   components: {
