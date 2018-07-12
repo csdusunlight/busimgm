@@ -72,7 +72,12 @@ class IsAllowedToUse(BasePermission):
                 "/statis/project_day/": ["GET"],
                 "/statis/user_day/": ["GET"],
                 "/statis/user/": ["GET"],
-                "/statis/all/": ["GET"]
+                "/statis/all/": ["GET"],
+                "/Project/projectinvestdata/": ["GET"],
+                "/Project/projectinvestdata/export_investdata_excel/": ["GET"],
+                "/Project/projectinvestdata/import_audit_projectdata_excel/": ["POST"],
+                "/Project/projectinvestdata/import_audit_projectdata_excel_except/": ["POST"],
+                "/Project/projectinvestdata/import_projectdata_excel/": ["POST"]
 
 
         },
