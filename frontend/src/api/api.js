@@ -41,6 +41,12 @@ export function getProjectList (page, data) {
   console.log(url)
   return axios.get(url, data)
 }
+/* 获取图表项目 */
+export function getAllProject (data) {
+  let url = `${http}/Project/projects/`
+  console.log(url)
+  return axios.get(url, data)
+}
 /* 新建项目提交 */
 export function postNewProject (data) {
   let url = `${http}/Project/projects/`

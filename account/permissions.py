@@ -30,6 +30,15 @@ class IsAllowedToUse(BasePermission):
                  "/Project/refundapplys/": ["GET","CREATE","DELETE"],
                  "/Project/invoiceapplys/is_altered/":["PUT",],
                  "/Project/invoiceapplys/": ["GET","CREATE" ,"DELETE"],
+                 "/statis/day/":["GET"],
+                 "/statis/project_day/":["GET"],
+                 "/statis/user_day/": ["GET"],
+                 "/statis/user/": ["GET"],
+                 "/statis/all/": ["GET"],
+                 "/Project/projectinvestdata/export_investdata_excel/": ["GET"],
+                 "/Project/projectinvestdata/import_audit_projectdata_excel/": ["POST"],
+                 "/Project/projectinvestdata/import_audit_projectdata_excel_except/": ["POST"],
+                 "/Project/projectinvestdata/import_projectdata_excel/": ["POST"]
 
         },
         "SHRY": {
@@ -47,11 +56,21 @@ class IsAllowedToUse(BasePermission):
                 "/Project/invoiceapplys/apply_approved/": ["POST", ],
                 "/Project/invoiceapplys/apply_rejected/": ["POST"],
                 "/Project/invoiceapplys/": ["GET"],
+                "/statis/day/": ["GET"],
+                "/statis/project_day/": ["GET"],
+                "/statis/user_day/": ["GET"],
+                "/statis/user/": ["GET"],
+                "/statis/all/": ["GET"]
 
         }
         ,
         "SJRY": {
                 "/Project/projects/": ["GET"],
+                "/statis/day/": ["GET"],
+                "/statis/project_day/": ["GET"],
+                "/statis/user_day/": ["GET"],
+                "/statis/user/": ["GET"],
+                "/statis/all/": ["GET"]
 
 
         },
@@ -65,6 +84,11 @@ class IsAllowedToUse(BasePermission):
                 "/Project/invoiceapplys/apply_approved/": ["POST", ],
                 "/Project/invoiceapplys/apply_rejected/": ["POST"],
                 "/Project/invoiceapplys/": ["GET"],
+                "/statis/day/": ["GET"],
+                "/statis/project_day/": ["GET"],
+                "/statis/user_day/": ["GET"],
+                "/statis/user/": ["GET"],
+                "/statis/all/": ["GET"]
         }
 
     }

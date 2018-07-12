@@ -35,7 +35,6 @@
       <el-col :span="4" :offset="20">
         <div class="flexright">
           <el-button size="medium" type="primary">搜索</el-button>
-          <el-button size="medium" type="info">导出</el-button>
         </div>
       </el-col>
     </el-row>
