@@ -23,7 +23,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import admin
 from django.views.generic.base import TemplateView
 from project.views import ProjectDetail,FundApplyLogDetail,RefundApplyLogDetail,\
-    InvoiceApplyLogDetail,ProjectInvestData
+    InvoiceApplyLogDetail,ProjectInvestData,OperatorLogDetail
 
 from rest_framework.routers import DefaultRouter
 
@@ -33,6 +33,8 @@ router.register(r'fundapplys', FundApplyLogDetail, base_name='fundapply')
 router.register(r'refundapplys', RefundApplyLogDetail, base_name='refundapply')
 router.register(r'invoiceapplys', InvoiceApplyLogDetail, base_name='invoiceapply')
 router.register(r'projectinvestdata',ProjectInvestData,base_name='projectinvestdata')
+router.register(r'operatorlogdetail',OperatorLogDetail,base_name='operatorlogdetail')
+
 
 
 
@@ -44,7 +46,6 @@ urlpatterns = [
     url(r'Project/', include(router.urls)),
     url(r'^User/$', AccountView.UserList.as_view()),
     path('statis/', include('prostatis.urls')),
-
     url(r'^check_user_login/$', AccountView.check_user_login),
     url(r'^get_upload_token/$', AccountView.QiniuTokenView.as_view()),
     url(r'^User/(?P<pk>[0-9]+)/$', AccountView.UserDetail.as_view(), kwargs={'partial':True}),

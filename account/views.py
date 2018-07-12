@@ -103,12 +103,13 @@ def check_user_login(request):
     user = request.user
     islogin = 1 if user.is_authenticated else 0
     data = {
+        'userid':user.id,
         'permission':"no permission",
         'islogin':islogin
     }
     if islogin:
         permission = user.get_permission()
-        data.update(username=user.uname, mobile=user.uid, qq=user.uqq,permission=permission)
+        data.update(userid=user.id,username=user.uname, mobile=user.uid, qq=user.uqq,permission=permission)
     return JsonResponse(data)
 
 
