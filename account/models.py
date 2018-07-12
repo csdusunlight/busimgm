@@ -93,3 +93,24 @@ class User(AbstractBaseUser,PermissionsMixin):
             userper.append('STAFF')
         return userper
 
+    def is_shry(self):
+        userper = self.upermission.all()
+        if 'SHRY' in [i.desc for i in userper]:
+            return True
+        else:
+            return False
+
+    def is_cwry(self):
+        userper = self.upermission.all()
+        if 'CWRY' in [i.desc for i in userper]:
+            return True
+        else:
+            return False
+
+    def is_swry(self):
+        userper = self.upermission.all()
+        if 'SWRY' in [i.desc for i in userper]:
+            return True
+        else:
+            return False
+
