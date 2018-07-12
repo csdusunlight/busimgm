@@ -15,7 +15,7 @@
               <i class="iconfont iconchange iconsize">&#xe607;</i>
               <span class="iconsizetext" slot="title">项目总览</span>
             </el-menu-item>
-            <el-menu-item index="/projectLive" v-if="jurisdiction === 'SHRY' || jurisdiction === 'SJRY' || jurisdiction === 'ADMIN' || true">
+            <el-menu-item index="/projectLive" v-if="jurisdiction === 'SHRY' || jurisdiction === 'SJRY' || jurisdiction === 'ADMIN'">
               <i class="iconfont iconchange iconsize">&#xe6c0;</i>
               <span class="iconsizetext" slot="title">项目实况</span>
             </el-menu-item>
