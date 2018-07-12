@@ -4,6 +4,7 @@ from django.http import Http404
 from rest_framework import exceptions
 from rest_framework.response import Response
 def custom_exception_handler(exc, context):
+    context['request'].FILES.clean()
     if isinstance(exc, Http404):
         exc = exceptions.NotFound()
     elif isinstance(exc, PermissionDenied):
