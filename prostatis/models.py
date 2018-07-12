@@ -75,11 +75,16 @@ class DayStatis(models.Model):
 
 class UserStatis(models.Model):
     user = models.OneToOneField(User, verbose_name="用户", on_delete=models.CASCADE)
-    start_num = models.IntegerField("正在进行的项目数", default=0)
-    finish_num = models.IntegerField("已结项的项目数", default=0)
-    invest_count = models.IntegerField("投资人数", default=0)
-    invest_amount = models.DecimalField("投资金额", max_digits=10, decimal_places=2, null=True, default=0)
-    consume_amount = models.DecimalField("消耗金额", max_digits=10, decimal_places=2, null=True, default=0)
-    return_amount = models.DecimalField("返现费用", max_digits=10, decimal_places=2, null=True, default=0)
+    online_num = models.IntegerField("正在进行的项目数", default=0)
+    to_consume_amount = models.DecimalField("待消耗金额", max_digits=10, decimal_places=2, null=True, default=0)
+    to_consume_num = models.IntegerField("待消耗项目数", default=0)
+    to_settle_amount = models.DecimalField("待结算金额", max_digits=10, decimal_places=2, null=True, default=0)
+    to_settle_num = models.IntegerField("待结算项目数", default=0)
+    # start_num = models.IntegerField("正在进行的项目数", default=0)
+    # finish_num = models.IntegerField("已结项的项目数", default=0)
+    # invest_count = models.IntegerField("投资人数", default=0)
+    # invest_amount = models.DecimalField("投资金额", max_digits=10, decimal_places=2, null=True, default=0)
+    # consume_amount = models.DecimalField("消耗金额", max_digits=10, decimal_places=2, null=True, default=0)
+    # return_amount = models.DecimalField("返现费用", max_digits=10, decimal_places=2, null=True, default=0)
     def __str__(self):
-        return self.date.strftime("%Y-%m-%d")
+        return self.user.uid
