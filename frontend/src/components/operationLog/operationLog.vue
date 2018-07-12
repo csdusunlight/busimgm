@@ -50,6 +50,13 @@ export default {
       }).catch((err) => {
         console.log(err)
       })
+    },
+    /* 分页 */
+    handleCurrentChange (val) {
+      this.dataList = []
+      this.loading = true
+      this.currentPage = val
+      this.getOperationLogList()
     }
   }
 }

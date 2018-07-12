@@ -263,6 +263,12 @@ export function getProjectLive (page, data) {
   console.log(url)
   return axios.get(url, data)
 }
+/* 排序 */
+export function getProjectLiveSort (page, data) {
+  let url = `${http}/Project/projects/?page=${page}&pageSize=${pageSize}`
+  console.log(url)
+  return axios.get(url, data)
+}
 /* 操作日志 */
 export function getOperationLog (page) {
   let url = `${http}/Project/operatorlogdetail/?page=${page}&pageSize=${pageSize}`

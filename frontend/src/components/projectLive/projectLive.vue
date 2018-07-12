@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import {getProjectLive, getprojectDetails} from '@/api/api'
+import {getProjectLive, getprojectDetails, getProjectLiveSort} from '@/api/api'
 export default {
   data () {
     return {
@@ -195,7 +195,75 @@ export default {
         this.detailsList = res.data
       })
     },
+    getSortProjectList (data) {
+      getProjectLiveSort(this.currentPage, data).then((res) => {
+        this.loading = false
+        this.dataList = res.data
+        console.log(res)
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
     sortChange (val) {
+      console.log(val)
+      this.loading = true
+      if (val.prop === 'topay_amount') {
+        if (val.order === 'ascending') {
+          let data = {
+            params: {
+              ordering: 'topay_amount',
+              state: this.selectvalue
+            }
+          }
+          this.getSortProjectList(data)
+        } else {
+          let data = {
+            params: {
+              ordering: '-topay_amount',
+              state: this.selectvalue
+            }
+          }
+          this.getSortProjectList(data)
+        }
+      }
+      if (val.prop === 'consume') {
+        if (val.order === 'ascending') {
+          let data = {
+            params: {
+              ordering: 'consume',
+              state: this.selectvalue
+            }
+          }
+          this.getSortProjectList(data)
+        } else {
+          let data = {
+            params: {
+              ordering: '-consume',
+              state: this.selectvalue
+            }
+          }
+          this.getSortProjectList(data)
+        }
+      }
+      if (val.prop === 'cost') {
+        if (val.order === 'ascending') {
+          let data = {
+            params: {
+              ordering: 'cost',
+              state: this.selectvalue
+            }
+          }
+          this.getSortProjectList(data)
+        } else {
+          let data = {
+            params: {
+              ordering: '-cost',
+              state: this.selectvalue
+            }
+          }
+          this.getSortProjectList(data)
+        }
+      }
       console.log(val)
     }
   }
