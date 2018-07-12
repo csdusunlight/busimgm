@@ -54,7 +54,16 @@ class ProjectDetail(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         ret={}
         ret['code']=0
+        #####################################
+        # 项目删除时间和具体操作
+        #print(instance)
+        oobj = repr(instance)
+        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
+        #####################################
+
         return Response(ret)
+
+
 
     def get_queryset(self):
         user = self.request.user
@@ -94,6 +103,12 @@ class ProjectDetail(viewsets.ModelViewSet):
         self.partial_update(request,*args,**kwargs)
         res = {}
         res['code']=0
+        #####################################
+        # 项目修改时间和具体操作
+        instance = self.get_object()
+        oobj = repr(instance)
+        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='1')
+        #####################################
         return Response(res)
 
     @action(methods=['patch'],detail=True)
@@ -197,9 +212,11 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        print(instance.id)
         self.perform_destroy(instance)
         ret={}
         ret['code']=0
+
         return Response(ret)
 
     def get_serializer(self, *args, **kwargs):
@@ -407,6 +424,12 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         ret={}
         ret['code']=0
+        #####################################
+        # 日志删除时间和具体操作
+        print(instance)
+        oobj=instance
+        OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
+        #####################################
         return Response(ret)
 
     def get_serializer(self, *args, **kwargs):

@@ -111,8 +111,19 @@ class Project(models.Model):
             if not self.finish_time:
                 self.finish_time = datetime.date.today()
         return models.Model.save(self, force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+    def __repr__(self):
+            return "%s项目公司是%s项目名是%s,签约公司%s" % (self.id,self.company,self.name,self.contract_company)
+
+
+
+
     class Meta:
         ordering = ["-lanched_apply_date"]
+
+
+
+
     #---------------------------------------------------------
     #当前的
     #按天的
