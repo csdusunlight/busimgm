@@ -111,8 +111,19 @@ class Project(models.Model):
             if not self.finish_time:
                 self.finish_time = datetime.date.today()
         return models.Model.save(self, force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+    def __repr__(self):
+            return "%s项目公司是%s项目名是%s,签约公司%s" % (self.id,self.company,self.name,self.contract_company)
+
+
+
+
     class Meta:
         ordering = ["-lanched_apply_date"]
+
+
+
+
     #---------------------------------------------------------
     #当前的
     #按天的
@@ -243,6 +254,8 @@ class ProjectInvestDataModel(models.Model):
     state = models.CharField("审核状态", max_length=10, choices=AUDIT_STATE)
     remark = models.CharField("备注", max_length=100)
 
+    def __repr__(self):
+        return "%s投资记录,手机是%s,项目名是%s" % (self.invest_mobile, self.project.name)
 
     def futou_des(self):
         return "复投" if self.is_futou else "首投"

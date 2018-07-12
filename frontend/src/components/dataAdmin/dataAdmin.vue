@@ -113,8 +113,8 @@
     </el-row>
     <el-row class="row_top row_bottom">
       <div class="table-list">
-        <el-table v-loading="loading" :data="dataList.results" style="width: 100%" @sort-change="sortChange">
-          <el-table-column label="项目编号" prop="project" sortable="custom" width="100"></el-table-column>
+        <el-table v-loading="loading" :data="dataList.results" style="width: 100%">
+          <el-table-column label="项目编号" prop="project" width="100"></el-table-column>
           <el-table-column label="项目名称" prop="projectname"></el-table-column>
           <el-table-column label="投资日期" prop="invest_time"></el-table-column>
           <el-table-column label="是否复投" prop="is_futou">
@@ -127,7 +127,11 @@
           <el-table-column label="投资金额" prop="invest_amount"></el-table-column>
           <el-table-column label="投资标期" prop="invest_term"></el-table-column>
           <el-table-column label="预估消耗" prop="settle_amount"></el-table-column>
-          <el-table-column label="投资来源" prop="source"></el-table-column>
+          <el-table-column label="投资来源">
+            <template slot-scope="scope">
+              <span>{{sourceFilter[scope.row.source]}}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="返现金额" prop="return_amount"></el-table-column>
           <el-table-column label="审核状态">
             <template slot-scope="scope">
@@ -163,7 +167,7 @@
         >
         <div class="form_table">
           <el-form :model="examineReason" :rules="rules" ref="examineReason" label-width="120px" class="demo-ruleForm">
-            <el-form-item label="项目来源" prop="source">
+            <el-form-item label="投资来源" prop="source">
               <el-radio-group v-model="examineReason.source">
                 <el-radio :label="'site'">网站</el-radio>
                 <el-radio :label="'channel'">渠道</el-radio>
@@ -233,6 +237,7 @@ export default {
       adoptId: '',
       dataAdminDetails: {},
       investFilter: {true: '是', false: '否'},
+      sourceFilter: {'site': '网站', 'channel': '渠道'},
       dataList: [],
       loading: true,
       dialogVisible: false,
@@ -365,6 +370,10 @@ export default {
     handleAvatarSuccess (response, file) {
       console.log(response)
       if (response.code === 0) {
+        this.$message({
+          type: 'success',
+          message: '上传成功!'
+        })
         this.uploadVisible = true
         this.dataAdminDetails = response
         this.getDatalist()
@@ -447,6 +456,7 @@ export default {
     AgreeDataAdminBtn (row) {
       this.dialogVisible = true
       this.adoptId = row.id
+      this.examineReason.source = row.source
     },
     /* 提交同意条件 */
     subDataAdminBtn (examine) {
@@ -476,9 +486,6 @@ export default {
           return false
         }
       })
-    },
-    sortChange (val) {
-      console.log(val)
     },
     tableSelectionChange (val) {
       console.log(val)

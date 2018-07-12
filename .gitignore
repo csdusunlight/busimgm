@@ -36,3 +36,6 @@ __pycache__/
 db.sqlite3
 
 celerybeat*
+
+static/admin/
+static/rest_framework/

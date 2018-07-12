@@ -9,6 +9,7 @@ from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
 from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,\
     InvoiceApplyLogFilter,OperatorLogFilter,ProjectInvestDataFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
+from utils.log import write_to_log
 #from account.permissions import IsAllowedToUse,IsOwnerOrStaff
 
 from django.views.decorators.clickjacking import xframe_options_sameorigin
@@ -37,16 +38,23 @@ from utils.Mypagination import MyPageNumberPagination
 #import django.core.cache
 import time
 logger = logging.getLogger('busimgm')
-ts = lambda :time.time
+#ts = lambda :time.time
 class ProjectDetail(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectFilter
-    ordering_fields = ('name')
-    search_fields = ('name')
-    ordering=('lanched_apply_date','concluded_audit_date')
+    ordering_fields = ('lanched_apply_date',
+                       'concluded_apply_date',
+                       'concluded_audit_date',
+                       'lanched_audit_date',
+                       'cost',
+                       'consume',
+                       #'topay_amount',
+                       'settle'
+                       )
+    ordering=('lanched_apply_date')
     #permission_classes =(IsAllowedToUse,)
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def destroy(self, request, *args, **kwargs):
@@ -54,11 +62,30 @@ class ProjectDetail(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         ret={}
         ret['code']=0
+        #####################################
+        # 项目删除时间和具体操作
+        #print(instance)
+        print(instance.state)
+        if instance.state=='1':
+            write_to_log(self.request.user,instance,'0')
+        # oobj = repr(instance)
+        # OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
+        #####################################
+
         return Response(ret)
+
+
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_swry() :  # 或者是上单人员
+            return Project.objects.filter(contact=self.request.user)
+        else:
+            return Project.objects.all()
 
     def perform_create(self, serializer):
         user = self.request.user
-        serializer.save(contact=user,lanched_audit_date=datetime.date.today())
+        serializer.save(contact=user,lanched_apply_date=datetime.date.today())
         data = serializer.data
         serializer._data = {}
         serializer._data['code'] = 0
@@ -87,6 +114,12 @@ class ProjectDetail(viewsets.ModelViewSet):
         self.partial_update(request,*args,**kwargs)
         res = {}
         res['code']=0
+        #####################################
+        # 项目修改时间和具体操作
+        instance = self.get_object()
+        if instance.state=='1':
+            write_to_log(self.request.user,instance,'1')
+        #####################################
         return Response(res)
 
     @action(methods=['patch'],detail=True)
@@ -108,7 +141,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
         aimpro.state='1'
-        aimpro.lanched_apply_date=  datetime.date.today()
+        aimpro.lanched_audit_date=  datetime.date.today()
         aimpro.save(update_fields=['audituser','state','lanched_apply_date'])
         res = {}
         res['code'] = 0
@@ -122,7 +155,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro = Project.objects.get(id=pk)
         aimpro.audituser=request.user
         aimpro.state='2'
-        aimpro.lanched_apply_date=  datetime.date.today()
+        aimpro.lanched_audit_date =  datetime.date.today()
 
         aimpro.lanched_refused_reason = lanched_refused_reason
         aimpro.save()
@@ -179,13 +212,28 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = FundApplyLogFilter
-    #permission_classes =
+    #permission_classes =(IsAllowedToUse,)
+    ordering_fields = ('fund_rec',
+                       'apply_date',
+                       'send_date',
+                       'audit_date'
+                       )
+    ordering=('apply_date')
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_swry() :  # 或者是上单人员
+            return FundApplyLog.objects.filter(apply_man=self.request.user)
+        else:
+            return FundApplyLog.objects.all()
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        print(instance.id)
         self.perform_destroy(instance)
         ret={}
         ret['code']=0
+
         return Response(ret)
 
     def get_serializer(self, *args, **kwargs):
@@ -279,6 +327,18 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     filter_class = RefundApplyLogFilter
     #permission_classes =
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+    ordering_fields = ('inprest',
+                       'apply_date',
+                       'refund_rec',
+                       'audit_date'
+                       )
+    ordering=('apply_date')
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_swry() :  # 或者是上单人员
+            return RefundApplyLog.objects.filter(apply_man=self.request.user)
+        else:
+            return RefundApplyLog.objects.all()
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -337,10 +397,13 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         aimrefund.audit_man=request.user
         aimrefund.state='1'
         aimrefund.audit_date = datetime.date.today()
-        aimrefund.save(update_fields=['audituser','state','audit_date'])
+        aimrefund.save(update_fields=['audit_man','state','audit_date'])
         aimpro = aimrefund.project
-        aimpro.settle -= aimrefund.refund_rec
-        aimpro.invoicenum -= aimrefund.refund_rec
+        if aimrefund.is_invoice=="1":
+            aimpro.settle -= aimrefund.refund_rec
+        elif aimrefund.is_invoice=="0":
+            aimpro.settle -= aimrefund.refund_rec
+            aimpro.invoicenum -= aimrefund.refund_rec
         aimpro.save(update_fields=['settle','invoicenum'])
 
         res = {}
@@ -370,12 +433,29 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = InvoiceApplyLogFilter
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
+    ordering_fields = ('invoice_num',
+                       'invoice_date',
+                       'apply_date',
+                       'audit_date',
+                       'return_num'
+                       )
+    ordering=('apply_date')
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_swry():  # 或者是上单人员
+            return InvoiceApplyLog.objects.filter(apply_man=self.request.user)
+        else:
+            return InvoiceApplyLog.objects.all()
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
         ret={}
         ret['code']=0
+        #####################################
+        # 日志删除时间和具体操作
+        # write_to_log(self.request.user,instance,'0')
+        #####################################
         return Response(ret)
 
     def get_serializer(self, *args, **kwargs):
@@ -428,7 +508,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         aiminvoice.audit_man=request.user
         aiminvoice.state='1'
         aiminvoice.audit_date = datetime.date.today()
-        aiminvoice.save(update_fields=['audituser','state','audit_date'])
+        aiminvoice.save(update_fields=['audit_man','state','audit_date'])
         aimpro = aiminvoice.project
         aimpro.invoicenum = aiminvoice.invoice_num
         aimpro.save(update_fields=['invoicenum'])
@@ -447,7 +527,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         aiminvoice.audit_date =  datetime.date.today()
 
         aiminvoice.audit_refused_reason = reason
-        aiminvoice.save(update_fields=['audituser','state','audit_refused_reason','audit_date'])
+        aiminvoice.save(update_fields=['audit_man','state','audit_refused_reason','audit_date'])
         res = {}
         res['code'] = 0
         return Response(res)
@@ -458,7 +538,12 @@ class OperatorLogDetail(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = OperatorLogFilter
-
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_swry() :  # 或者是上单人员
+            return OperatorLog.objects.filter(oman=self.request.user)
+        else:
+            return OperatorLog.objects.all()
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
@@ -469,20 +554,43 @@ class ProjectInvestData(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectInvestDataFilter
-    permission_classes = ()
+   # permission_classes = ()
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_swry():  # 或者是上单人员
+            return ProjectInvestDataModel.objects.filter(apply_man=self.request.user)
+        else:
+            return ProjectInvestDataModel.objects.all()
+
+    def perform_update(self, serializer):
+        instance=self.get_object()
+        serializer.save()
+        data = serializer.data
+        #####################################
+        # 日志修改时间和具体操作
+        write_to_log(self.request.user,instance,'1')
+        #####################################
+        serializer._data = {}
+        serializer._data['code'] = 0
+        serializer._data['data'] = data
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
         ret={}
         ret['code']=0
+        #####################################
+        # 日志删除时间和具体操作
+        write_to_log(self.request.user,instance,'0')
+        #####################################
         return Response(ret)
 
-    def perform_update(self, serializer):
-        if self.request.data.get('state'):
-            serializer.save(audit_time=datetime.datetime.now())
-        else:
-            serializer.save()
+    # def perform_update(self, serializer):
+    #     if self.request.data.get('state'):
+    #         serializer.save(audit_time=datetime.datetime.now())
+    #     else:
+    #         serializer.save()
 
     @action(methods=['post'], detail=True)
     def import_apply_approved(self,request,pk=None,*args,**kwargs):
@@ -570,7 +678,6 @@ class ProjectInvestData(viewsets.ModelViewSet):
         #     print file.name
         aftername=time.time()
         filename = "./files/"+str(int(aftername*1000))
-
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
@@ -596,10 +703,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
 
                 if row[9] == "是":
                     result = True
-                    temp['state'] = '0'
+                    temp['state'] = '1'
                 elif row[9] == "否":
                     result = False
-                    temp['state'] = '1'
+                    temp['state'] = '0'
                 else:
                     raise Exception(u"审核结果必须为是或否。")
 
@@ -662,6 +769,11 @@ class ProjectInvestData(viewsets.ModelViewSet):
             ret['code'] = 1
             ret['msg'] = e.__str__()
         ret['num'] = suc_num
+        #####################################
+        # 日志记录导入人的id和导入文件名
+        write_to_log(self.request.user,filename,'2')
+
+        #####################################
         return JsonResponse(ret)
 
 
@@ -673,7 +785,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         # print(dir(request))
         file = request.FILES.get('file')
         aftername=time.time()
-        filename = "./files/"+str(int(aftername*1000))
+        filename = "./files/audit_"+str(int(aftername*1000))
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
@@ -783,16 +895,20 @@ class ProjectInvestData(viewsets.ModelViewSet):
             ret['code'] = 1
             ret['msg'] = e.__str__()
         ret['num'] = suc_num
+        #####################################
+        # 日志记录导入人的id和导入文件名
+        write_to_log(self.request.user,filename,'2')
+        #####################################
         return JsonResponse(ret)
 
 
     @action(methods=['post'], detail=False)
     def import_projectdata_excel(self,request):
         admin_user = request.user
-        ret = {'code': -1}
+        ret = {}
         file = request.FILES.get('file')
-        #time.time()
-        filename = "./files/"+'1'
+        # aftername＝time.time()
+        filename = "./files/" +"1"
         with open(filename, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
@@ -820,7 +936,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                         project = Project.objects.get(id=id)
                         temp.append(id)
                     elif j == 2:
-                        value = value.strip()
+                        value = str(value).strip()
                         if value == u"首投":
                             temp.append(False)
                         elif value == u"复投":
@@ -831,8 +947,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
                         if (cell.ctype != 3):
                             raise Exception("投资日期列格式错误，请修改后重新提交。")
                         else:
-                            time = xlrd.xldate.xldate_as_datetime(value, 0)
-                            temp.append(time)
+                            time2 = xlrd.xldate.xldate_as_datetime(value, 0)
+                            temp.append(time2)
                     elif j == 4:
                         try:
                             mobile = str(int(value)).strip()
@@ -915,6 +1031,14 @@ class ProjectInvestData(viewsets.ModelViewSet):
         duplic_mobile_list_str = u'，'.join(duplicate_mobile_list)
         ret.update(num=succ_num, dup1=duplic_num1, dup2=duplic_num2, anum=nrows - 1,
                    dupstr=duplic_mobile_list_str)
+
+        #####################################
+        #日志记录导入人的id和导入文件名
+        write_to_log(self.request.user,filename,'2')
+        #####################################
+        returndict ={}
+        returndict['data']=ret
+        returndict['code']=0
         return JsonResponse(ret)
 
 

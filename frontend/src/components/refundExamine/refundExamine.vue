@@ -284,7 +284,7 @@ export default {
         type: 'warning'
       }).then(() => {
         agreeRefund(row.id).then((res) => {
-          if (res.data.code === '0') {
+          if (res.data.code === 0) {
             this.$message({
               type: 'success',
               message: '操作成功!'
@@ -311,7 +311,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           refuseRefund(this.refuseId, this.modifyRefund).then((res) => {
-            if (res.data.code === '0') {
+            if (res.data.code === 0) {
               this.modifyRefund = this.initModifyRefund
               this.$refs[formName].resetFields()
               this.$message({
