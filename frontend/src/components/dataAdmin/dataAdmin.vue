@@ -380,7 +380,7 @@ export default {
         this.dataAdminDetails = response.data
         this.getDatalist()
       } else {
-        this.$message.error(response.data.detail)
+        this.$message.error(response.detail)
       }
     },
     /* 审核数据导入回调 */
@@ -398,7 +398,7 @@ export default {
         })
         this.getDatalist()
       } else {
-        this.$message.error(response.data.detail)
+        this.$message.error(response.detail)
       }
     },
     /* 异常数据导入回调 */
@@ -416,7 +416,7 @@ export default {
         })
         this.getDatalist()
       } else {
-        this.$message.error(response.data.detail)
+        this.$message.error(response.detail)
       }
     },
     /* 数据导入前 */
