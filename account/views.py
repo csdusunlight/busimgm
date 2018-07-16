@@ -59,7 +59,7 @@ class UserDetail(RetrieveUpdateDestroyAPIView):
             userserializer.save()
 
         #如果创建成功，返回对应id的对应url
-        returndata = {
+        return_dict = {
                 "desc":"user add",
                 "data":{
                             "upk": upk,
@@ -67,7 +67,7 @@ class UserDetail(RetrieveUpdateDestroyAPIView):
                         },
                 "code":0,
         }
-        return Response(returndata,status=status.HTTP_200_OK)
+        return Response(return_dict,status=status.HTTP_200_OK)
 
 
 class UserLoginAPIView(APIView):
@@ -85,10 +85,10 @@ class UserLoginAPIView(APIView):
         login(request, user)
         ret={}
         ret['msg']='登录成功'
-        returndata ={
+        return_dict ={
                 "code":0,
                 "data":ret}
-        return Response(returndata)
+        return Response(return_dict)
 
 class UserLogoutAPIView(APIView):
     authentication_classes = ()
@@ -96,10 +96,10 @@ class UserLogoutAPIView(APIView):
         logout(request)
         ret = {}
         ret['msg'] = '退出成功'
-        returndata ={
+        return_dict ={
                 "code":0,
                 "data":ret}
-        return Response(returndata)
+        return Response(return_dict)
 
 @csrf_exempt
 def check_user_login(request):
@@ -117,7 +117,7 @@ def check_user_login(request):
     return_dict={}
     return_dict['code']=0
     return_dict['data']=data
-    return JsonResponse(data)
+    return JsonResponse(return_dict)
 
 
 class QiniuTokenView(APIView):
