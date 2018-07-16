@@ -106,19 +106,18 @@ class ProjectDetail(viewsets.ModelViewSet):
         '''修改
         字段仅仅限于is_delete,进行中的项目要通知管理员'''
         aimpro = Project.objects.get(id=pk)
+        instance = self.get_object()
+        #####################################
+        # 项目修改时间和具体操作
+        if instance.state=='1':
+            write_to_log(self.request.user,instance,'1',request)
+        #####################################
+
         #if aimpro.state in ['１',]:
         #    写操作日志，对应visit字段为False表示未读.而每个管理员登录后，都会更新当前的未读的操作日志有多少条，但这些操作日志是共享的
         self.partial_update(request,*args,**kwargs)
         res = {}
         res['code']=0
-        #####################################
-        # 项目修改时间和具体操作
-        instance = self.get_object()
-        print("xxxx")
-        if instance.state=='1':
-            print("xxxx")
-            write_to_log(self.request.user,instance,'1',request)
-        #####################################
         return Response(res)
 
     @action(methods=['patch'],detail=True)
@@ -569,8 +568,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         instance=self.get_object()
+        print(instance.return_amount)
         serializer.save()
         data = serializer.data
+        print(instance.return_amount)
         #####################################
         # 日志修改时间和具体操作
         write_to_log(self.request.user,instance,'1')
