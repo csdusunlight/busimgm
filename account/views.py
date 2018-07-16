@@ -59,15 +59,16 @@ class UserDetail(RetrieveUpdateDestroyAPIView):
             userserializer.save()
 
         #如果创建成功，返回对应id的对应url
-        return_dict = {
+        returndata = {
                 "desc":"user add",
                 "data":{
-                            "upk": upk,
-                            "msg":"add success"
+                            "upk": upk
                         },
-                "code":0,
+                "code":200,
+                "error":0,
+                "detail":"add success"
         }
-        return Response(return_dict,status=status.HTTP_200_OK)
+        return Response(returndata,status=status.HTTP_200_OK)
 
 
 class UserLoginAPIView(APIView):
@@ -83,23 +84,19 @@ class UserLoginAPIView(APIView):
         if user.is_active == False: #如果用戶被禁止登錄則爲false
             raise MyException(detail="用戶被禁止登录",code=2)
         login(request, user)
-        ret={}
-        ret['msg']='登录成功'
-        return_dict ={
+        returndata ={
                 "code":0,
-                "data":ret}
-        return Response(return_dict)
+                "detail":"登录成功"}
+        return Response(returndata)
 
 class UserLogoutAPIView(APIView):
     authentication_classes = ()
     def post(self, request, *args, **kwargs):
         logout(request)
-        ret = {}
-        ret['msg'] = '退出成功'
-        return_dict ={
+        returndata ={
                 "code":0,
-                "data":ret}
-        return Response(return_dict)
+                "detail":"退出成功"}
+        return Response(returndata)
 
 @csrf_exempt
 def check_user_login(request):
@@ -108,16 +105,12 @@ def check_user_login(request):
     data = {
         'userid':user.id,
         'permission':"no permission",
-        'islogin':islogin,
-        'msg':''
+        'islogin':islogin
     }
     if islogin:
         permission = user.get_permission()
         data.update(userid=user.id,username=user.uname, mobile=user.uid, qq=user.uqq,permission=permission)
-    return_dict={}
-    return_dict['code']=0
-    return_dict['data']=data
-    return JsonResponse(return_dict)
+    return JsonResponse(data)
 
 
 class QiniuTokenView(APIView):

@@ -57,9 +57,8 @@ class ProjectDetail(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
+        ret={}
+        ret['code']=0
         #####################################
         # 项目删除时间和具体操作
         #print(instance)
@@ -70,7 +69,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         # OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
         #####################################
 
-        return Response(return_dict)
+        return Response(ret)
 
 
 
@@ -110,9 +109,8 @@ class ProjectDetail(viewsets.ModelViewSet):
         #if aimpro.state in ['１',]:
         #    写操作日志，对应visit字段为False表示未读.而每个管理员登录后，都会更新当前的未读的操作日志有多少条，但这些操作日志是共享的
         self.partial_update(request,*args,**kwargs)
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
+        res = {}
+        res['code']=0
         #####################################
         # 项目修改时间和具体操作
         instance = self.get_object()
@@ -121,7 +119,7 @@ class ProjectDetail(viewsets.ModelViewSet):
             print("xxxx")
             write_to_log(self.request.user,instance,'1')
         #####################################
-        return Response(return_dict)
+        return Response(res)
 
     @action(methods=['patch'],detail=True)
     def is_concluded(self, request, pk=None,*args,**kwargs):
@@ -132,10 +130,9 @@ class ProjectDetail(viewsets.ModelViewSet):
             self.partial_update(request,*args,**kwargs)
         else:
             raise Exception("do not pass no need para!")
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-        return Response(return_dict)
+        res = {}
+        res['code'] =0
+        return Response(res)
 
     @action(methods=['post'],detail=True)
     def lanchedpro_approved(self, request, pk=None,*args,**kwargs):
@@ -145,10 +142,9 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.state='1'
         aimpro.lanched_audit_date=  datetime.date.today()
         aimpro.save(update_fields=['audituser','state','lanched_apply_date'])
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-        return Response(return_dict)
+        res = {}
+        res['code'] = 0
+        return Response(res)
 
 
     @action(methods=['post'],detail=True)
@@ -164,7 +160,6 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.save()
         res = {}
         res['code'] = 0
-        res['data']={}
         return Response(res)
 
     @action(methods=['post'], detail=True)
@@ -179,10 +174,9 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.psettlereason = psettlereason
         aimpro.concluded_apply_date = datetime.date.today()
         aimpro.save()
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-        return Response(return_dict)
+        res = {}
+        res['code'] = 0
+        return Response(res)
 
 
     @action(methods=['post'],detail=True)
@@ -193,11 +187,9 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.state='5'
         aimpro.concluded_audit_date = datetime.date.today()
         aimpro.save()
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-
-        return Response(return_dict)
+        res = {}
+        res['code'] = 0
+        return Response(res)
 
     @action(methods=['post'],detail=True)
     def concludedpro_rejected(self, request, pk=None,*args,**kwargs):
@@ -209,11 +201,9 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.concluded_audit_date = datetime.date.today()
         aimpro.conclued_refused_reason = conclued_refused_reason
         aimpro.save()
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-
-        return Response(return_dict)
+        res = {}
+        res['code'] = 0
+        return Response(res)
 
 class FundApplyLogDetail(viewsets.ModelViewSet):
     queryset = FundApplyLog.objects.all()
@@ -240,10 +230,10 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         instance = self.get_object()
         print(instance.id)
         self.perform_destroy(instance)
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-        return Response(return_dict)
+        ret={}
+        ret['code']=0
+
+        return Response(ret)
 
     def get_serializer(self, *args, **kwargs):
         print("1111")
@@ -279,22 +269,18 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
             self.partial_update(request,*args,**kwargs)
         else:
             raise Exception("do not pass no need para!")
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-
-        return Response(return_dict)
+        res = {}
+        res['code']=0
+        return Response(res)
 
     @action(methods=['put'],detail=True)
     def is_altered(self, request, pk=None,*args,**kwargs):
         '''修改
         字段仅仅限于is_delete'''
         self.partial_update(request,*args,**kwargs)
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-
-        return Response(return_dict)
+        res = {}
+        res['code']=0
+        return Response(res)
 
 
     @action(methods=['post'],detail=True)
@@ -311,11 +297,9 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         aimpro.settle+=aimfund.fund_rec
         aimpro.save(update_fields=['settle'])
 
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-
-        return Response(return_dict)
+        res = {}
+        res['code'] = 0
+        return Response(res)
 
 
     @action(methods=['post'],detail=True)
@@ -329,11 +313,9 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
 
         aimfund.audit_refused_reason = reason
         aimfund.save(update_fields=['audituser','state','audit_refused_reason','audit_date'])
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-
-        return Response(return_dict)
+        res = {}
+        res['code'] = 0
+        return Response(res)
 
 
 class RefundApplyLogDetail(viewsets.ModelViewSet):
@@ -360,11 +342,9 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-
-        return Response(return_dict)
+        ret={}
+        ret['code']=0
+        return Response(ret)
 
     def get_serializer(self, *args, **kwargs):
         if self.request.method == "GET":
@@ -395,21 +375,18 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
             self.partial_update(request,*args,**kwargs)
         else:
             raise Exception("do not pass no need para!")
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-        return Response(return_dict)
+        res = {}
+        res['code']=0
+        return Response(res)
 
     @action(methods=['put'],detail=True)
     def is_altered(self, request, pk=None,*args,**kwargs):
         '''修改
         字段仅仅限于is_delete'''
         self.partial_update(request,*args,**kwargs)
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-
-        return Response(return_dict)
+        res = {}
+        res['code']=0
+        return Response(res)
 
 
     @action(methods=['post'],detail=True)
@@ -428,11 +405,9 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
             aimpro.invoicenum -= aimrefund.refund_rec
         aimpro.save(update_fields=['settle','invoicenum'])
 
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-
-        return Response(return_dict)
+        res = {}
+        res['code'] = 0
+        return Response(res)
 
 
     @action(methods=['post'],detail=True)
@@ -446,10 +421,9 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
 
         aimrefend.audit_refused_reason = reason
         aimrefend.save()
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-        return Response(return_dict)
+        res = {}
+        res['code'] = 0
+        return Response(res)
 
 class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     queryset = InvoiceApplyLog.objects.all()
@@ -477,14 +451,13 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
+        ret={}
+        ret['code']=0
         #####################################
         # 日志删除时间和具体操作
         # write_to_log(self.request.user,instance,'0')
         #####################################
-        return Response(return_dict)
+        return Response(ret)
 
     def get_serializer(self, *args, **kwargs):
         if self.request.method == "GET":
@@ -515,20 +488,18 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
             self.partial_update(request,*args,**kwargs)
         else:
             raise Exception("do not pass no need para!")
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-        return Response(return_dict)
+        res = {}
+        res['code']=0
+        return Response(res)
 
     @action(methods=['put'],detail=True)
     def is_altered(self, request, pk=None,*args,**kwargs):
         '''修改
         字段仅仅限于is_delete'''
         self.partial_update(request,*args,**kwargs)
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-        return Response(return_dict)
+        res = {}
+        res['code']=0
+        return Response(res)
 
 
     @action(methods=['post'],detail=True)
@@ -542,11 +513,9 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         aimpro = aiminvoice.project
         aimpro.invoicenum = aiminvoice.invoice_num
         aimpro.save(update_fields=['invoicenum'])
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-
-        return Response(return_dict)
+        res = {}
+        res['code'] = 0
+        return Response(res)
 
 
     @action(methods=['post'],detail=True)
@@ -560,11 +529,9 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
 
         aiminvoice.audit_refused_reason = reason
         aiminvoice.save(update_fields=['audit_man','state','audit_refused_reason','audit_date'])
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-
-        return Response(return_dict)
+        res = {}
+        res['code'] = 0
+        return Response(res)
 
 class OperatorLogDetail(viewsets.ModelViewSet):
     queryset = OperatorLog.objects.all()
@@ -614,15 +581,13 @@ class ProjectInvestData(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return_dict = {}
-        return_dict['code'] = 0
-        return_dict['data']={}
-
+        ret={}
+        ret['code']=0
         #####################################
         # 日志删除时间和具体操作
         write_to_log(self.request.user,instance,'0')
         #####################################
-        return Response(return_dict)
+        return Response(ret)
 
     # def perform_update(self, serializer):
     #     if self.request.data.get('state'):
@@ -644,8 +609,6 @@ class ProjectInvestData(viewsets.ModelViewSet):
         aiminvestrecord.save(update_fields=['audit_time','state','source','invest_mobile','return_amount'])
         resultdict={}
         resultdict['code']=0
-        resultdict['data']={}
-
         return Response(resultdict)
 
     @action(methods=['post'], detail=True)
@@ -708,7 +671,6 @@ class ProjectInvestData(viewsets.ModelViewSet):
         response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename=导出表格.xls'
         response.write(sio.getvalue())
-
         return response
 
     @action(methods=['post'], detail=False)
@@ -803,11 +765,11 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 event.invest_time = date
                 event.save()
                 suc_num += 1
-            code = 0
+            ret['code'] = 0
         except Exception as e:
             exstr = traceback.format_exc()
             logger.info(exstr)
-            code = 1
+            ret['code'] = 1
             ret['msg'] = e.__str__()
         ret['num'] = suc_num
         #####################################
@@ -815,10 +777,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         write_to_log(self.request.user,filename,'2')
 
         #####################################
-        return_dict = {}
-        return_dict['data']=ret
-        return_dict['code']=code
-        return JsonResponse(return_dict)
+        return JsonResponse(ret)
 
 
 
@@ -932,21 +891,18 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 event.invest_term = term
                 event.save()
                 suc_num += 1
-            code = 0
+            ret['code'] = 0
         except Exception as e:
             exstr = traceback.format_exc()
             logger.info(exstr)
-            code = 1
+            ret['code'] = 1
             ret['msg'] = e.__str__()
         ret['num'] = suc_num
         #####################################
         # 日志记录导入人的id和导入文件名
         write_to_log(self.request.user,filename,'2')
         #####################################
-        return_dict={}
-        return_dict['code']=code
-        return_dict['data']=ret
-        return JsonResponse(return_dict)
+        return JsonResponse(ret)
 
 
     @action(methods=['post'], detail=False)
@@ -1086,7 +1042,6 @@ class ProjectInvestData(viewsets.ModelViewSet):
         returndict ={}
         returndict['data']=ret
         returndict['code']=0
-        return JsonResponse(returndict)
-
+        return JsonResponse(ret)
 
 
