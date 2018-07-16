@@ -59,6 +59,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         ret={}
         ret['code']=0
+        ret['data']={}
         #####################################
         # 项目删除时间和具体操作
         #print(instance)
@@ -111,6 +112,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         self.partial_update(request,*args,**kwargs)
         res = {}
         res['code']=0
+        res['data']={}
         #####################################
         # 项目修改时间和具体操作
         instance = self.get_object()
@@ -132,6 +134,7 @@ class ProjectDetail(viewsets.ModelViewSet):
             raise Exception("do not pass no need para!")
         res = {}
         res['code'] =0
+        res['data']={}
         return Response(res)
 
     @action(methods=['post'],detail=True)
@@ -144,6 +147,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.save(update_fields=['audituser','state','lanched_apply_date'])
         res = {}
         res['code'] = 0
+        res['data']={}
         return Response(res)
 
 
@@ -160,6 +164,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.save()
         res = {}
         res['code'] = 0
+        res['data']={}
         return Response(res)
 
     @action(methods=['post'], detail=True)
@@ -176,6 +181,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.save()
         res = {}
         res['code'] = 0
+        res['data']={}
         return Response(res)
 
 
@@ -189,6 +195,8 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.save()
         res = {}
         res['code'] = 0
+        res['data']={}
+
         return Response(res)
 
     @action(methods=['post'],detail=True)
@@ -203,6 +211,8 @@ class ProjectDetail(viewsets.ModelViewSet):
         aimpro.save()
         res = {}
         res['code'] = 0
+        res['data']={}
+
         return Response(res)
 
 class FundApplyLogDetail(viewsets.ModelViewSet):
@@ -232,7 +242,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         ret={}
         ret['code']=0
-
+        ret['data']={}
         return Response(ret)
 
     def get_serializer(self, *args, **kwargs):
@@ -271,6 +281,8 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
             raise Exception("do not pass no need para!")
         res = {}
         res['code']=0
+        res['data']={}
+
         return Response(res)
 
     @action(methods=['put'],detail=True)
@@ -280,6 +292,8 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         self.partial_update(request,*args,**kwargs)
         res = {}
         res['code']=0
+        res['data']={}
+
         return Response(res)
 
 
@@ -299,6 +313,8 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
 
         res = {}
         res['code'] = 0
+        res['data']={}
+
         return Response(res)
 
 
@@ -315,6 +331,8 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         aimfund.save(update_fields=['audituser','state','audit_refused_reason','audit_date'])
         res = {}
         res['code'] = 0
+        res['data']={}
+
         return Response(res)
 
 
@@ -344,6 +362,8 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         ret={}
         ret['code']=0
+        ret['data']={}
+
         return Response(ret)
 
     def get_serializer(self, *args, **kwargs):
@@ -377,6 +397,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
             raise Exception("do not pass no need para!")
         res = {}
         res['code']=0
+        res['data']={}
         return Response(res)
 
     @action(methods=['put'],detail=True)
@@ -386,6 +407,8 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         self.partial_update(request,*args,**kwargs)
         res = {}
         res['code']=0
+        res['data']={}
+
         return Response(res)
 
 
@@ -407,6 +430,8 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
 
         res = {}
         res['code'] = 0
+        res['data']={}
+
         return Response(res)
 
 
@@ -423,6 +448,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
         aimrefend.save()
         res = {}
         res['code'] = 0
+        res['data'] = {}
         return Response(res)
 
 class InvoiceApplyLogDetail(viewsets.ModelViewSet):
@@ -453,6 +479,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         ret={}
         ret['code']=0
+        ret['data']={}
         #####################################
         # 日志删除时间和具体操作
         # write_to_log(self.request.user,instance,'0')
@@ -490,6 +517,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
             raise Exception("do not pass no need para!")
         res = {}
         res['code']=0
+        res['data']={}
         return Response(res)
 
     @action(methods=['put'],detail=True)
@@ -499,6 +527,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         self.partial_update(request,*args,**kwargs)
         res = {}
         res['code']=0
+        res['data']={}
         return Response(res)
 
 
@@ -515,6 +544,8 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         aimpro.save(update_fields=['invoicenum'])
         res = {}
         res['code'] = 0
+        res['data']={}
+
         return Response(res)
 
 
@@ -531,6 +562,8 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
         aiminvoice.save(update_fields=['audit_man','state','audit_refused_reason','audit_date'])
         res = {}
         res['code'] = 0
+        res['data']={}
+
         return Response(res)
 
 class OperatorLogDetail(viewsets.ModelViewSet):
@@ -583,6 +616,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         ret={}
         ret['code']=0
+        ret['data']={}
+
         #####################################
         # 日志删除时间和具体操作
         write_to_log(self.request.user,instance,'0')
@@ -609,6 +644,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
         aiminvestrecord.save(update_fields=['audit_time','state','source','invest_mobile','return_amount'])
         resultdict={}
         resultdict['code']=0
+        resultdict['data']=''
+
         return Response(resultdict)
 
     @action(methods=['post'], detail=True)
@@ -671,6 +708,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename=导出表格.xls'
         response.write(sio.getvalue())
+
         return response
 
     @action(methods=['post'], detail=False)
@@ -777,7 +815,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
         write_to_log(self.request.user,filename,'2')
 
         #####################################
-        return JsonResponse(ret)
+        return_dict = {}
+        return_dict['data']=ret
+        return_dict['code']=ret['code']
+        return JsonResponse(return_dict)
 
 
 
@@ -902,7 +943,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
         # 日志记录导入人的id和导入文件名
         write_to_log(self.request.user,filename,'2')
         #####################################
-        return JsonResponse(ret)
+        return_dict={}
+        return_dict['code']=ret['code']
+        return_dict['data']=ret
+        return JsonResponse(return_dict)
 
 
     @action(methods=['post'], detail=False)
@@ -1042,7 +1086,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         returndict ={}
         returndict['data']=ret
         returndict['code']=0
-        return JsonResponse(ret)
+        return JsonResponse(returndict)
 
 
 
