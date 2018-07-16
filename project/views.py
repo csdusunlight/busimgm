@@ -64,7 +64,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         #print(instance)
         print(instance.state)
         if instance.state=='1':
-            write_to_log(self.request.user,instance,'0')
+            write_to_log(self.request.user,instance,'0',request)
         # oobj = repr(instance)
         # OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
         #####################################
@@ -117,7 +117,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         print("xxxx")
         if instance.state=='1':
             print("xxxx")
-            write_to_log(self.request.user,instance,'1')
+            write_to_log(self.request.user,instance,'1',request)
         #####################################
         return Response(res)
 
@@ -585,7 +585,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret['code']=0
         #####################################
         # 日志删除时间和具体操作
-        write_to_log(self.request.user,instance,'0')
+        write_to_log(self.request.user,instance,'0',request)
         #####################################
         return Response(ret)
 
@@ -774,7 +774,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret['num'] = suc_num
         #####################################
         # 日志记录导入人的id和导入文件名
-        write_to_log(self.request.user,filename,'2')
+        write_to_log(self.request.user,filename,'2',request)
 
         #####################################
         return JsonResponse(ret)
@@ -900,7 +900,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret['num'] = suc_num
         #####################################
         # 日志记录导入人的id和导入文件名
-        write_to_log(self.request.user,filename,'2')
+        write_to_log(self.request.user,filename,'2',request)
         #####################################
         return JsonResponse(ret)
 
@@ -1038,7 +1038,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
 
         #####################################
         #日志记录导入人的id和导入文件名
-        write_to_log(self.request.user,filename,'2')
+        write_to_log(self.request.user,filename,'2',request)
         #####################################
         return JsonResponse(ret)
 
