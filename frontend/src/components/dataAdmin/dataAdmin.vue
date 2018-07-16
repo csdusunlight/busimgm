@@ -571,6 +571,7 @@ export default {
       line-height: 28px;
       width: 440px;
     .text
+      text-wrap:normal;
       line-height: 28px;
       width: 440px;
       min-height: 150px;
