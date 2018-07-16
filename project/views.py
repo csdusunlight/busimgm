@@ -582,7 +582,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         ret={}
-        ret['code']=0
+        ret['code']=0 #有没权限的时候有两层code
         #####################################
         # 日志删除时间和具体操作
         write_to_log(self.request.user,instance,'0',request)
@@ -602,11 +602,12 @@ class ProjectInvestData(viewsets.ModelViewSet):
         return_amount = request.data.get('return_amount')
         invest_mobile = request.data.get('invest_mobile')
         aiminvestrecord.audit_time= timezone.now()
+        aiminvestrecord.audit_man = request.user
         aiminvestrecord.source = source
         aiminvestrecord.return_amount = return_amount
         aiminvestrecord.invest_mobile = invest_mobile
         aiminvestrecord.state='1'
-        aiminvestrecord.save(update_fields=['audit_time','state','source','invest_mobile','return_amount'])
+        aiminvestrecord.save(update_fields=['audit_time','state','source','invest_mobile','return_amount','audit_man'])
         resultdict={}
         resultdict['code']=0
         return Response(resultdict)
@@ -1024,7 +1025,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                         else:
                             obj = ProjectInvestDataModel(project_id=pid, invest_mobile=mob, settle_amount=settle,
                                                     invest_amount=amount, invest_term=term, invest_time=time,
-                                                    state='0', remark=remark, source=source, is_futou=is_futou)
+                                                    state='0', remark=remark, source=source, is_futou=is_futou,apply_man=admin_user)
                             investdata_list.append(obj)
                 ProjectInvestDataModel.objects.bulk_create(investdata_list)
         except Exception as e:
