@@ -561,10 +561,11 @@ class ProjectInvestData(viewsets.ModelViewSet):
 
     def get_queryset(self):
             user = self.request.user
-            if user.is_swry():  # 或者是上单人员
-                return ProjectInvestDataModel.objects.filter(apply_man=self.request.user)
-            else:
+            if user.is_shry() or user.is_superuser:  # 或者是上单人员
                 return ProjectInvestDataModel.objects.all()
+
+            else:
+                return ProjectInvestDataModel.objects.filter(apply_man=self.request.user)
 
     def perform_update(self, serializer):
         instance=self.get_object()
