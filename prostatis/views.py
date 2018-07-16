@@ -39,6 +39,12 @@ class UserDayStatisList(generics.ListAPIView):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter, django_filters.rest_framework.DjangoFilterBackend)
     filter_class = UserDayStatisFilter
+    def get_queryset(self):
+            user = self.request.user
+            if user.is_swry():  # 或者是商务人员
+                return UserDayStatis.objects.filter(user=self.request.user)
+            else:
+                return UserDayStatis.objects.all()
 
 
 class UserStatisList(generics.ListAPIView):
@@ -47,6 +53,12 @@ class UserStatisList(generics.ListAPIView):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = UserStatisFilter
+    def get_queryset(self):
+            user = self.request.user
+            if user.is_swry():  # 或者是上单人员
+                return UserStatis.objects.filter(user=self.request.user)
+            else:
+                return UserStatis.objects.all()
 
 def statis_all(request):
     '''　数据总览:在线项目数　　 待结算金额 待结算项目数 待消耗金额 待消耗项目数　　正负数关系'''
