@@ -376,10 +376,10 @@ export default {
           message: '上传成功!'
         })
         this.uploadVisible = true
-        this.dataAdminDetails = response
+        this.dataAdminDetails = response.data
         this.getDatalist()
       } else {
-        this.$message.error(response.msg)
+        this.$message.error(response.data.msg)
       }
     },
     /* 审核数据导入回调 */
@@ -392,12 +392,12 @@ export default {
         })
         this.$notify({
           title: '成功',
-          message: '上传成功条数: ' + response.num,
+          message: '上传成功条数: ' + response.data.num,
           type: 'success'
         })
         this.getDatalist()
       } else {
-        this.$message.error(response.msg)
+        this.$message.error(response.data.msg)
       }
     },
     /* 异常数据导入回调 */
@@ -410,12 +410,12 @@ export default {
         })
         this.$notify({
           title: '成功',
-          message: '上传成功条数: ' + response.num,
+          message: '上传成功条数: ' + response.data.num,
           type: 'success'
         })
         this.getDatalist()
       } else {
-        this.$message.error(response.msg)
+        this.$message.error(response.data.msg)
       }
     },
     /* 数据导入前 */
