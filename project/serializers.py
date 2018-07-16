@@ -56,6 +56,7 @@ class  InvoiceApplyLogListSerializer(serializers.ModelSerializer):
 
 
 class  OperatorLogSerializer(serializers.ModelSerializer):
+    oman = serializers.CharField(source='oman.uid',read_only=True)
     class Meta:
         model = OperatorLog
         fields = '__all__'
