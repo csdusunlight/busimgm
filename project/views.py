@@ -777,7 +777,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
         write_to_log(self.request.user,filename,'2')
 
         #####################################
-        return JsonResponse(ret)
+        return_dict = {}
+        return_dict['data']=ret
+        return_dict['code']=0
+        return JsonResponse(return_dict)
 
 
 
@@ -1042,7 +1045,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         returndict ={}
         returndict['data']=ret
         returndict['code']=0
-        return JsonResponse(ret)
+        return JsonResponse(returndict)
 
 
 
