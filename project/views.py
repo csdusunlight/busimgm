@@ -586,6 +586,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         ret['code']=0 #有没权限的时候有两层code
         #####################################
         # 日志删除时间和具体操作
+        print("hihhi")
         write_to_log(self.request.user,instance,'0',request)
         #####################################
         return Response(ret)

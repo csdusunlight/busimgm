@@ -20,7 +20,7 @@ def strformat(ouser,obj,otype,request):#对修改和删除的对象的具体返�
     elif otype=='0':#0是删除
         if isinstance(obj, Project):
             return "%s  %s  删除　项目申请　%s" % (ouser.uid,datetime.datetime.today().strftime("%d/%m/%y"),repr(obj))
-        elif isinstance(obj.ProjectInvestDataModel):
+        elif isinstance(obj,ProjectInvestDataModel):
             return "%s  %s  删除　投资数据　%s" % (ouser.uid, datetime.datetime.today().strftime("%d/%m/%y"),repr(obj))
 
 
