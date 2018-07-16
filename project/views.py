@@ -689,7 +689,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         nrows = table.nrows
         ncols = table.ncols
         if ncols != 13:
-            ret['msg'] = u"文件格式与模板不符，请下载最新模板填写！"
+            ret['detail'] = u"文件格式与模板不符，请下载最新模板填写！"
             return JsonResponse(ret)
         rtable = []
         try:
@@ -735,7 +735,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 rtable.append(temp)
         except Exception as e:
             logger.info(e)
-            ret['msg'] = e.__str__()
+            ret['detail'] = e.__str__()
             return JsonResponse(ret)
             ####开始去重
             admin_user = request.user
@@ -770,7 +770,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
             exstr = traceback.format_exc()
             logger.info(exstr)
             ret['code'] = 1
-            ret['msg'] = e.__str__()
+            ret['detail'] = e.__str__()
         ret['num'] = suc_num
         #####################################
         # 日志记录导入人的id和导入文件名
@@ -798,7 +798,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         nrows = table.nrows
         ncols = table.ncols
         if ncols != 13:
-            ret['msg'] = "文件格式与模板不符，请下载最新模板填写！"
+            ret['detail'] = "文件格式与模板不符，请下载最新模板填写！"
             return JsonResponse(ret)
         rtable = []
         try:
@@ -858,7 +858,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
             logger.info(e)
             print(e)
             #             traceback.print_exc()
-            ret['msg'] = e.__str__()
+            ret['detail'] = e.__str__()
             return JsonResponse(ret)
             ####开始去重
             admin_user = request.user
@@ -896,7 +896,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
             exstr = traceback.format_exc()
             logger.info(exstr)
             ret['code'] = 1
-            ret['msg'] = e.__str__()
+            ret['detail'] = e.__str__()
         ret['num'] = suc_num
         #####################################
         # 日志记录导入人的id和导入文件名
@@ -909,6 +909,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
     def import_projectdata_excel(self,request):
         admin_user = request.user
         ret = {}
+        ret['data']={}
         file = request.FILES.get('file')
         # aftername＝time.time()
         filename = "./files/" +"1"
@@ -920,7 +921,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         nrows = table.nrows
         ncols = table.ncols
         if ncols != 8:
-            ret['msg'] = "文件格式与模板不符，请下载最新模板填写！"
+            detail = "文件格式与模板不符，请下载最新模板填写！"
             return JsonResponse(ret)
         rtable = {}
         mobile_list = []
@@ -992,7 +993,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
 
             logger.info(e)
             #             traceback.print_exc()
-            ret['msg'] = e.__str__()
+            ret['detail'] = e.__str__()
             return JsonResponse(ret)
         ####开始去重
         investdata_list = []
@@ -1026,22 +1027,19 @@ class ProjectInvestData(viewsets.ModelViewSet):
         except Exception as e:
             logger.info(e)
             #             traceback.print_exc()
-            ret['msg'] = e.__str__()
+            ret['detail'] = e.__str__()
             return JsonResponse(ret)
         succ_num = len(investdata_list)
         duplic_num2 = len(duplicate_mobile_list)
         duplic_num1 = nrows - 1 - succ_num - duplic_num2
         duplic_mobile_list_str = u'，'.join(duplicate_mobile_list)
-        ret.update(num=succ_num, dup1=duplic_num1, dup2=duplic_num2, anum=nrows - 1,
+        ret['data'].update(num=succ_num, dup1=duplic_num1, dup2=duplic_num2, anum=nrows - 1,
                    dupstr=duplic_mobile_list_str)
 
         #####################################
         #日志记录导入人的id和导入文件名
         write_to_log(self.request.user,filename,'2')
         #####################################
-        returndict ={}
-        returndict['data']=ret
-        returndict['code']=0
         return JsonResponse(ret)
 
 
