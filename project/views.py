@@ -785,6 +785,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
     def import_audit_projectdata_excel(self,request):
         admin_user = request.user
         ret = {'code': -1}
+        ret['data']={}
         # print(dir(request))
         file = request.FILES.get('file')
         aftername=time.time()
@@ -897,7 +898,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
             logger.info(exstr)
             ret['code'] = 1
             ret['detail'] = e.__str__()
-        ret['num'] = suc_num
+        ret['data']['num'] = suc_num
+
         #####################################
         # 日志记录导入人的id和导入文件名
         write_to_log(self.request.user,filename,'2',request)
@@ -1035,7 +1037,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         duplic_mobile_list_str = u'，'.join(duplicate_mobile_list)
         ret['data'].update(num=succ_num, dup1=duplic_num1, dup2=duplic_num2, anum=nrows - 1,
                    dupstr=duplic_mobile_list_str)
-
+        ret['code']=0
         #####################################
         #日志记录导入人的id和导入文件名
         write_to_log(self.request.user,filename,'2',request)
