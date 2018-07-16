@@ -114,7 +114,9 @@ class ProjectDetail(viewsets.ModelViewSet):
         #####################################
         # 项目修改时间和具体操作
         instance = self.get_object()
+        print("xxxx")
         if instance.state=='1':
+            print("xxxx")
             write_to_log(self.request.user,instance,'1')
         #####################################
         return Response(res)
@@ -540,10 +542,10 @@ class OperatorLogDetail(viewsets.ModelViewSet):
     permission_classes =(IsAllowedToUse,IsOwnerOrStaff,)
     def get_queryset(self):
         user = self.request.user
-        if user.is_swry() :  # 或者是上单人员
-            return OperatorLog.objects.filter(oman=self.request.user)
-        else:
+        if user.is_shry() or user.is_superuser:  # 或者是上单人员
             return OperatorLog.objects.all()
+        else:
+            return OperatorLog.objects.filter(oman=self.request.user)
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
