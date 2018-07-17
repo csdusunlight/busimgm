@@ -274,6 +274,7 @@ export default {
       paccountFliter: paccountypeopsFilter,
       stateFilter: examineFilter,
       projectOption: [],
+      projectItem: [],
       dialogVisible: false,
       modifyRefundVisible: false,
       operationShow: true,
@@ -463,6 +464,13 @@ export default {
             'value': val.id.toString(),
             'label': val.name
           })
+          this.projectItem.push({
+            'id': val.id.toString(),
+            'company': val.company,
+            'platname': val.platname,
+            'fundtype': val.paccountype,
+            'contract_company': val.contract_company
+          })
         })
         console.log(this.projectOption)
       }).catch((err) => {
@@ -534,6 +542,11 @@ export default {
   mounted () {
     this.getProjectList()
   },
+  computed: {
+    projectNameValue () {
+      return this.addRefund.project
+    }
+  },
   watch: {
     examinestate () {
       this.dataList = []
@@ -554,6 +567,17 @@ export default {
       this.loading = true
       this.currentPage = 1
       this.getRefundDatalist()
+    },
+    /* 项目名称获取申请详情 */
+    projectNameValue (id) {
+      this.projectItem.forEach((val, i) => {
+        if (val.id === id) {
+          this.addRefund.company = val.company
+          this.addRefund.platname = val.platname
+          this.addRefund.fundtype = val.fundtype
+          this.addRefund.contract_company = val.contract_company
+        }
+      })
     }
   }
 }

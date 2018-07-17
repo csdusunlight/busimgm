@@ -274,6 +274,7 @@ export default {
       invoiceFilter: {0: '专票', 1: '普票'},
       putId: '',
       projectOption: [],
+      projectItem: [],
       invoice: {
         project: '',
         invoice_type: '',
@@ -465,8 +466,12 @@ export default {
             'value': val.id.toString(),
             'label': val.name
           })
+          this.projectItem.push({
+            'id': val.id.toString(),
+            'contract_company': val.contract_company,
+            'company': val.company
+          })
         })
-        console.log(this.projectOption)
       }).catch((err) => {
         console.log(err)
       })
@@ -480,6 +485,11 @@ export default {
   },
   mounted () {
     this.getProjectList()
+  },
+  computed: {
+    projectNameValue () {
+      return this.invoice.project
+    }
   },
   watch: {
     /* 审核状态搜索 */
@@ -495,6 +505,15 @@ export default {
       this.loading = true
       this.currentPage = 1
       this.getDatalist()
+    },
+    /* 项目名称获取申请详情 */
+    projectNameValue (id) {
+      this.projectItem.forEach((val, i) => {
+        if (val.id === id) {
+          this.invoice.contract_company = val.contract_company
+          this.invoice.company = val.company
+        }
+      })
     }
   }
 }
