@@ -71,6 +71,14 @@ class ProjectDetail(viewsets.ModelViewSet):
 
         return Response(ret)
 
+    # def get_serializer_class(self, *args, **kwargs):
+    #     if self.action in ["list","create"]:
+    #         return ProjectListSerializer
+    #     else:
+    #         return self.serializer_class()
+
+
+
     def get_serializer(self, *args, **kwargs):
         print("1111")
 
@@ -78,7 +86,7 @@ class ProjectDetail(viewsets.ModelViewSet):
             serializer_class = ProjectListSerializer
             print(serializer_class)
         else:
-            serializer_class = self.get_serializer_class()
+            serializer_class = self.serializer_class
             print(serializer_class)
 
         kwargs['context'] = self.get_serializer_context()
