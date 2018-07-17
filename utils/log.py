@@ -13,7 +13,7 @@ def strformat(ouser,obj,otype,request):#对修改和删除的对象的具体返�
             #getdata = request.data #待更新的集合
             #toupdatedata = [(i,obj.__getattribute__(i),getdata[i]) for i in getdata if getdata[i]!=obj.__getattribute__(i)]
             #项目编号和项目名称
-            res = (obj.name,obj.id)
+            res = (obj.id,obj.name)
             stritem = "项目编号为{},项目名称为{};"
             return stritem.format(*res)
 
