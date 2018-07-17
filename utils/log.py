@@ -2,7 +2,7 @@ from project.models import OperatorLog
 import datetime
 from django.db import models
 from project.models import Project,ProjectInvestDataModel
-
+from rest_framework.filters import OrderingFilter
 
 
 
@@ -12,6 +12,7 @@ def strformat(ouser,obj,otype,request):#对修改和删除的对象的具体返�
         if isinstance(obj,Project):
             getdata = request.data #待更新的集合
             toupdatedata = [(i,obj.__getattribute__(i),getdata[i]) for i in getdata if getdata[i]!=obj.__getattribute__(i)]
+            print(toupdatedata)
             restr="项目申请:"
             for i in toupdatedata:
                 stritem = "{}修改前为{},修改后为{};"
