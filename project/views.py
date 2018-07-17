@@ -666,10 +666,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
             return_amount = ''
             result = ''
             if con.state == '0':
-                result = '是'
-                return_amount = con.return_amount
-            elif con.state == '2':
                 result = '否'
+                return_amount = con.return_amount
+            elif con.state == '1':
+                result = '是'
             source = con.get_source_display()
             remark = con.remark
             data.append([id, project_id, project_name, is_futou, invest_time, invest_mobile, invest_amount, invest_term,
