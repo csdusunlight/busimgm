@@ -231,7 +231,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
                        'send_date',
                        'audit_date'
                        )
-    ordering=('apply_date')
+    ordering=('-apply_date')
 
     def get_queryset(self):
         user = self.request.user
