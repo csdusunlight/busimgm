@@ -945,6 +945,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         admin_user = request.user
         ret = {}
         ret['data']={}
+        print("ghgggg")
         file = request.FILES.get('file')
         # aftername＝time.time()
         filename = "./files/" +"1"
@@ -955,8 +956,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
         table = data.sheets()[0]
         nrows = table.nrows
         ncols = table.ncols
+        print("aaa")
         if ncols != 8:
-            detail = "文件格式与模板不符，请下载最新模板填写！"
+            print("bbb")
+            ret['detail']= "文件格式与模板不符，请下载最新模板填写！"
             return JsonResponse(ret)
         rtable = {}
         mobile_list = []
