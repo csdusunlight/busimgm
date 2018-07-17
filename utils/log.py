@@ -14,8 +14,9 @@ def strformat(ouser,obj,otype,request):#对修改和删除的对象的具体返�
             toupdatedata = [(i,obj.__getattribute__(i),getdata[i]) for i in getdata if getdata[i]!=obj.__getattribute__(i)]
             restr="项目申请:"
             for i in toupdatedata:
-                stritem = "{}修改前为{},修改后为{};"*len(toupdatedata)
+                stritem = "{}修改前为{},修改后为{};"
                 restr += stritem.format(*i)
+            print(restr)
             return restr
         elif isinstance(obj,ProjectInvestDataModel):
             afterdata = request.data
