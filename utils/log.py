@@ -15,7 +15,7 @@ def strformat(ouser,obj,otype,request):#对修改和删除的对象的具体返�
             #项目编号和项目名称
             res = (obj.name,obj.id)
             stritem = "项目编号为{},项目名称为{};"
-            return stritem.format(res)
+            return stritem.format(*res)
 
         elif isinstance(obj,ProjectInvestDataModel):
             afterdata = request.data
