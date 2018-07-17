@@ -27,7 +27,7 @@ def custom_exception_handler(exc, context):
             data = exc.detail
             #data.update(code=code)
         else:
-            data = {'code':code, 'msg': exc.detail}
+            data = {'code':code, 'detail': exc.detail}
         returndict = {}
         returndict['code']=0
         returndict['data']=data
