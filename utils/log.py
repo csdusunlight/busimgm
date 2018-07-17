@@ -10,15 +10,13 @@ def strformat(ouser,obj,otype,request):#对修改和删除的对象的具体返�
     #传入
     if otype=='1':#1是修改,原来是什么，现在是什么
         if isinstance(obj,Project):
-            getdata = request.data #待更新的集合
-            toupdatedata = [(i,obj.__getattribute__(i),getdata[i]) for i in getdata if getdata[i]!=obj.__getattribute__(i)]
-            print(toupdatedata)
-            restr="项目申请:"
-            for i in toupdatedata:
-                stritem = "{}修改前为{},修改后为{};"
-                restr += stritem.format(*i)
-            print(restr)
-            return restr
+            #getdata = request.data #待更新的集合
+            #toupdatedata = [(i,obj.__getattribute__(i),getdata[i]) for i in getdata if getdata[i]!=obj.__getattribute__(i)]
+            #项目编号和项目名称
+            res = (obj.name,obj.id)
+            stritem = "项目编号为{},项目名称为{};"
+            return stritem.format(res)
+
         elif isinstance(obj,ProjectInvestDataModel):
             afterdata = request.data
             beforedata = [obj.__getattribute__(i) for i in afterdata]
@@ -28,9 +26,9 @@ def strformat(ouser,obj,otype,request):#对修改和删除的对象的具体返�
 
     elif otype=='0':#0是删除
         if isinstance(obj, Project):
-            return "删除　项目申请　{}".format(repr(obj))
+            return "　项目申请　{}".format(repr(obj))
         elif isinstance(obj,ProjectInvestDataModel):
-            return "删除　投资数据　{}".format(repr(obj))
+            return "　投资数据　{}".format(repr(obj))
 
 
 def write_to_log(ouser,obj,otype,request):
