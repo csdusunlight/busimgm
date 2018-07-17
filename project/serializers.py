@@ -2,7 +2,7 @@ from rest_framework import serializers
 from project.models import Project,FundApplyLog,\
     RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestDataModel
 
-class ProjectSerializer(serializers.ModelSerializer):
+class ProjectListSerializer(serializers.ModelSerializer):
     state_des = serializers.CharField(source='get_state_display', read_only=True)
     settleway_des = serializers.CharField(source='get_settleway_display', read_only=True)
     platformname = serializers.CharField(source='platform', read_only=True)
@@ -14,6 +14,15 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = '__all__'
         read_only_fields = ('id','settleway_des','consume','state_des', 'time','profit','topay_amount')
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+    #contact = serializers.CharField(source="contact.uname",read_only=True)
+
+    class Meta:
+        model = Project
+        fields = '__all__'
+
 
 class  FundApplyLogSerializer(serializers.ModelSerializer):
     #project = serializers.CharField(source="project.id",read_only=True)

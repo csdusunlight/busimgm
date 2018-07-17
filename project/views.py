@@ -5,7 +5,7 @@ from rest_framework import generics, permissions
 from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestDataModel
 from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
     RefundApplyLogSerializer,InvoiceApplyLogSerializer,FundApplyLogListSerializer,\
-    RefundApplyLogListSerializer,InvoiceApplyLogListSerializer,OperatorLogSerializer,ProjectInvestDataSerializer
+    RefundApplyLogListSerializer,InvoiceApplyLogListSerializer,OperatorLogSerializer,ProjectInvestDataSerializer,ProjectListSerializer
 from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,\
     InvoiceApplyLogFilter,OperatorLogFilter,ProjectInvestDataFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -71,7 +71,19 @@ class ProjectDetail(viewsets.ModelViewSet):
 
         return Response(ret)
 
+    def get_serializer(self, *args, **kwargs):
+        print("1111")
 
+        if self.action in ["list","create"]:
+            serializer_class = ProjectListSerializer
+            print(serializer_class)
+        elif self.action in ["retrieve","update","partial_update","destroy"]:
+            serializer_class = self.get_serializer_class()
+            print(serializer_class)
+
+        kwargs['context'] = self.get_serializer_context()
+        print(serializer_class)
+        return serializer_class(*args, **kwargs)
 
     def get_queryset(self):
         user = self.request.user
