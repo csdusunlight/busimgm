@@ -66,7 +66,7 @@ class  InvoiceApplyLogListSerializer(serializers.ModelSerializer):
 
 
 class  OperatorLogSerializer(serializers.ModelSerializer):
-    oman = serializers.CharField(source='oman.uid',read_only=True)
+    oman = serializers.CharField(source='oman.uname',read_only=True)
     otime = serializers.DateTimeField(format="%Y-%m-%d",read_only=True)
 
     class Meta:
