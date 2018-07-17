@@ -8,6 +8,7 @@ class ProjectListSerializer(serializers.ModelSerializer):
     platformname = serializers.CharField(source='platform', read_only=True)
     profit = serializers.DecimalField(decimal_places=2,max_digits=10,read_only=True)
     topay_amount= serializers.DecimalField(decimal_places=2,max_digits=10,read_only=True)
+
     #contact = serializers.CharField(source="contact.uname",read_only=True)
 
     class Meta:
@@ -66,12 +67,16 @@ class  InvoiceApplyLogListSerializer(serializers.ModelSerializer):
 
 class  OperatorLogSerializer(serializers.ModelSerializer):
     oman = serializers.CharField(source='oman.uid',read_only=True)
+    otime = serializers.DateTimeField(format="%Y-%m-%d",read_only=True)
+
     class Meta:
         model = OperatorLog
         fields = '__all__'
 
 class  ProjectInvestDataSerializer(serializers.ModelSerializer):
     projectname = serializers.CharField(source="project.name",read_only=True)
+    audit_time = serializers.DateTimeField(format="%Y-%m-%d",read_only=True)
+
     class Meta:
         model = ProjectInvestDataModel
         fields = '__all__'

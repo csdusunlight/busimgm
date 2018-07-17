@@ -71,14 +71,22 @@ class ProjectDetail(viewsets.ModelViewSet):
 
         return Response(ret)
 
+    # def get_serializer_class(self, *args, **kwargs):
+    #     if self.action in ["list","create"]:
+    #         return ProjectListSerializer
+    #     else:
+    #         return self.serializer_class()
+
+
+
     def get_serializer(self, *args, **kwargs):
         print("1111")
 
         if self.action in ["list","create"]:
             serializer_class = ProjectListSerializer
             print(serializer_class)
-        elif self.action in ["retrieve","update","partial_update","destroy"]:
-            serializer_class = self.get_serializer_class()
+        else:
+            serializer_class = self.serializer_class
             print(serializer_class)
 
         kwargs['context'] = self.get_serializer_context()
@@ -119,6 +127,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         字段仅仅限于is_delete,进行中的项目要通知管理员'''
         aimpro = Project.objects.get(id=pk)
         instance = self.get_object()
+        print(self.action)
         #####################################
         # 项目修改时间和具体操作
         if instance.state=='1':
@@ -570,7 +579,12 @@ class ProjectInvestData(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectInvestDataFilter
     permission_classes = (IsAllowedToUse, IsOwnerOrStaff,)
-
+    ordering_fields = ('invest_time',
+                       'audit_time',
+                       'settle_amount',
+                       'return_amount'
+                       )
+    ordering=('invest_time')
 
     def get_queryset(self):
             user = self.request.user
