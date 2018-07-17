@@ -539,6 +539,8 @@ class OperatorLogDetail(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = OperatorLogFilter
     permission_classes =(IsAllowedToUse,IsOwnerOrStaff,)
+    ordering=('-otime')
+
     def get_queryset(self):
         user = self.request.user
         if user.is_shry() or user.is_superuser:  # 或者是上单人员
