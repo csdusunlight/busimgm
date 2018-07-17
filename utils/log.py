@@ -23,12 +23,11 @@ def strformat(ouser,obj,otype,request):#对修改和删除的对象的具体返�
             result = strtest.format(*afterdata,*beforedata,*afterdata.values())
             return result
 
-
     elif otype=='0':#0是删除
         if isinstance(obj, Project):
-            return "删除　项目申请　%s" % (ouser.uid,datetime.datetime.today().strftime("%d/%m/%y"),repr(obj))
+            return "删除　项目申请　{}".format(repr(obj))
         elif isinstance(obj,ProjectInvestDataModel):
-            return "删除　投资数据　%s" % (ouser.uid, datetime.datetime.today().strftime("%d/%m/%y"),repr(obj))
+            return "删除　投资数据　{}".format(repr(obj))
 
 
 def write_to_log(ouser,obj,otype,request):
