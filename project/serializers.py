@@ -72,7 +72,7 @@ class  OperatorLogSerializer(serializers.ModelSerializer):
 
 class  ProjectInvestDataSerializer(serializers.ModelSerializer):
     projectname = serializers.CharField(source="project.name",read_only=True)
-    audit_time = serializers.DateField(format="%Y-%m-%d",read_only=True)
+    audit_time = serializers.DateTimeField(format="%Y-%m-%d",read_only=True)
 
     class Meta:
         model = ProjectInvestDataModel
