@@ -4,7 +4,7 @@ from django.http import Http404
 from rest_framework import exceptions
 from rest_framework.response import Response
 def custom_exception_handler(exc, context):
-    context['request'].FILES.clear()
+    #context['request'].FILES.clear()
     if isinstance(exc, Http404):
         exc = exceptions.NotFound()
     elif isinstance(exc, PermissionDenied):
@@ -25,8 +25,11 @@ def custom_exception_handler(exc, context):
             headers['Retry-After'] = '%d' % exc.wait
         if type(exc.detail) == dict:
             data = exc.detail
-            data.update(code=code)
+            #data.update(code=code)
         else:
             data = {'code':code, 'detail': exc.detail}
-        return Response(data, status=200, headers=headers)
+        returndict = {}
+        returndict['code']=0
+        returndict['data']=data
+        return Response(returndict, status=200, headers=headers)
     return None

@@ -142,9 +142,10 @@
           <el-table-column label="备注" prop="remark"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <div class="operation_button">
-                <div class="op_button_padding"><el-button size="mini" type="danger" @click="AgreeDataAdminBtn(scope.row)">审核</el-button></div>
-                <div class="op_button_padding"><el-button size="mini" type="warning" @click="deleteDataAdminBtn(scope.row)">删除</el-button></div>
+              <div class="operation_minimalism">
+                <span class="minimalism"><el-button size="mini" type="danger" @click="AgreeDataAdminBtn(scope.row)">审核</el-button></span>
+                |
+                <span class="minimalism"><el-button size="mini" type="warning" @click="deleteDataAdminBtn(scope.row)">删除</el-button></span>
               </div>
             </template>
           </el-table-column>
@@ -323,10 +324,10 @@ export default {
     conditionDate () {
       let Data = {
         params: {
-          invest_time_0: this.inputdate0,
-          invest_time_1: this.inputdate1,
-          audit_time_0: this.inputdate2,
-          audit_time_1: this.inputdate3,
+          investtime_0: this.inputdate0,
+          investtime_1: this.inputdate1,
+          audittime_0: this.inputdate2,
+          audittime_1: this.inputdate3,
           project: this.projectnum,
           invest_mobile: this.subphone,
           projectname: this.projectnameVal,
@@ -376,10 +377,10 @@ export default {
           message: '上传成功!'
         })
         this.uploadVisible = true
-        this.dataAdminDetails = response
+        this.dataAdminDetails = response.data
         this.getDatalist()
       } else {
-        this.$message.error(response.msg)
+        this.$message.error(response.detail)
       }
     },
     /* 审核数据导入回调 */
@@ -392,12 +393,12 @@ export default {
         })
         this.$notify({
           title: '成功',
-          message: '上传成功条数: ' + response.num,
+          message: '上传成功条数: ' + response.data.num,
           type: 'success'
         })
         this.getDatalist()
       } else {
-        this.$message.error(response.msg)
+        this.$message.error(response.detail)
       }
     },
     /* 异常数据导入回调 */
@@ -410,12 +411,12 @@ export default {
         })
         this.$notify({
           title: '成功',
-          message: '上传成功条数: ' + response.num,
+          message: '上传成功条数: ' + response.data.num,
           type: 'success'
         })
         this.getDatalist()
       } else {
-        this.$message.error(response.msg)
+        this.$message.error(response.detail)
       }
     },
     /* 数据导入前 */
@@ -440,7 +441,7 @@ export default {
           } else {
             this.$message({
               type: 'error',
-              message: res.detail
+              message: res.data.detail
             })
           }
         })
@@ -458,6 +459,8 @@ export default {
       this.dialogVisible = true
       this.adoptId = row.id
       this.examineReason.source = row.source
+      this.examineReason.return_amount = row.return_amount
+      this.examineReason.invest_mobile = row.invest_mobile
     },
     /* 提交同意条件 */
     subDataAdminBtn (examine) {
@@ -571,7 +574,21 @@ export default {
       line-height: 28px;
       width: 440px;
     .text
+      text-wrap:normal;
       line-height: 28px;
       width: 440px;
       min-height: 150px;
+  .table-list
+    .el-table td, .el-table th
+      padding: 8px 0;
+    .el-table .cell
+      line-height: 16px;
+  .operation_minimalism
+    .minimalism
+      .el-button
+        font-size: 12px;
+        color: #171717;
+        border: 0;
+        padding: 0;
+        background: none;
 </style>

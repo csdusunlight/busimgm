@@ -286,6 +286,8 @@ export default {
       currentPage: 1,
       searchState: 0,
       projectOption: [],
+      pushId: '',
+      projectItem: [],
       addCostApply: {
         project: '',
         send_pic: '',
@@ -457,8 +459,12 @@ export default {
             'value': val.id.toString(),
             'label': val.name
           })
+          this.projectItem.push({
+            'id': val.id.toString(),
+            'fundtype': val.paccountype,
+            'company': val.company
+          })
         })
-        console.log(this.projectOption)
       }).catch((err) => {
         console.log(err)
       })
@@ -523,6 +529,11 @@ export default {
       this.getCostDatalist()
     }
   },
+  computed: {
+    projectNameValue () {
+      return this.addCostApply.project
+    }
+  },
   mounted () {
     this.getProjectList()
   },
@@ -540,6 +551,15 @@ export default {
       this.loading = true
       this.currentPage = 1
       this.getCostDatalist()
+    },
+    /* 项目名称获取费用申请详情 */
+    projectNameValue (id) {
+      this.projectItem.forEach((val, i) => {
+        if (val.id === id) {
+          this.addCostApply.fundtype = val.fundtype
+          this.addCostApply.company = val.company
+        }
+      })
     }
   }
 }

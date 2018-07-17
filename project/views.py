@@ -3,7 +3,7 @@ from io import BytesIO
 from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestDataModel
 from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
     RefundApplyLogSerializer,InvoiceApplyLogSerializer,FundApplyLogListSerializer,\
-    RefundApplyLogListSerializer,InvoiceApplyLogListSerializer,OperatorLogSerializer,ProjectInvestDataSerializer
+    RefundApplyLogListSerializer,InvoiceApplyLogListSerializer,OperatorLogSerializer,ProjectInvestDataSerializer,ProjectListSerializer
 from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilter,\
     InvoiceApplyLogFilter,OperatorLogFilter,ProjectInvestDataFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -16,6 +16,8 @@ import logging
 from decimal import Decimal
 from xlwt.Workbook import Workbook
 from xlwt.Style import easyxf
+from  django.utils import timezone
+
 import traceback
 import datetime
 from rest_framework.response import Response
@@ -42,7 +44,7 @@ class ProjectDetail(viewsets.ModelViewSet):
                        'topay_amount',
                        'settle'
                        )
-    ordering=('lanched_apply_date')
+    ordering=('lanched_apply_date',)
     permission_classes = (IsAllowedToUse,IsOwnerOrStaff,)
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def destroy(self, request, *args, **kwargs):
@@ -55,14 +57,34 @@ class ProjectDetail(viewsets.ModelViewSet):
         #print(instance)
         print(instance.state)
         if instance.state=='1':
-            write_to_log(self.request.user,instance,'0')
+            write_to_log(self.request.user,instance,'0',request)
         # oobj = repr(instance)
         # OperatorLog.objects.create(otime=datetime.datetime.now(), oman=self.request.user, oobj=oobj, otype='0')
         #####################################
 
         return Response(ret)
 
+    # def get_serializer_class(self, *args, **kwargs):
+    #     if self.action in ["list","create"]:
+    #         return ProjectListSerializer
+    #     else:
+    #         return self.serializer_class()
 
+
+
+    def get_serializer(self, *args, **kwargs):
+        print("1111")
+
+        if self.action in ["list","create"]:
+            serializer_class = ProjectListSerializer
+            print(serializer_class)
+        else:
+            serializer_class = self.serializer_class
+            print(serializer_class)
+
+        kwargs['context'] = self.get_serializer_context()
+        print(serializer_class)
+        return serializer_class(*args, **kwargs)
 
     def get_queryset(self):
         user = self.request.user
@@ -98,17 +120,19 @@ class ProjectDetail(viewsets.ModelViewSet):
         '''修改
         字段仅仅限于is_delete,进行中的项目要通知管理员'''
         aimpro = Project.objects.get(id=pk)
+        instance = self.get_object()
+        print(self.action)
+        #####################################
+        # 项目修改时间和具体操作
+        if instance.state=='1':
+            write_to_log(self.request.user,instance,'1',request)
+        #####################################
+
         #if aimpro.state in ['１',]:
         #    写操作日志，对应visit字段为False表示未读.而每个管理员登录后，都会更新当前的未读的操作日志有多少条，但这些操作日志是共享的
         self.partial_update(request,*args,**kwargs)
         res = {}
         res['code']=0
-        #####################################
-        # 项目修改时间和具体操作
-        instance = self.get_object()
-        if instance.state=='1':
-            write_to_log(self.request.user,instance,'1')
-        #####################################
         return Response(res)
 
     @action(methods=['patch'],detail=True)
@@ -530,12 +554,14 @@ class OperatorLogDetail(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = OperatorLogFilter
     permission_classes =(IsAllowedToUse,IsOwnerOrStaff,)
+    ordering=('-otime')
+
     def get_queryset(self):
         user = self.request.user
-        if user.is_swry() :  # 或者是上单人员
-            return OperatorLog.objects.filter(oman=self.request.user)
-        else:
+        if user.is_shry() or user.is_superuser:  # 或者是上单人员
             return OperatorLog.objects.all()
+        else:
+            return OperatorLog.objects.filter(oman=self.request.user)
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
@@ -547,19 +573,27 @@ class ProjectInvestData(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectInvestDataFilter
     permission_classes = (IsAllowedToUse, IsOwnerOrStaff,)
-
+    ordering_fields = ('invest_time',
+                       'audit_time',
+                       'settle_amount',
+                       'return_amount'
+                       )
+    ordering=('invest_time')
 
     def get_queryset(self):
             user = self.request.user
-            if user.is_swry():  # 或者是上单人员
-                return ProjectInvestDataModel.objects.filter(apply_man=self.request.user)
-            else:
+            if user.is_shry() or user.is_superuser:  # 或者是上单人员
                 return ProjectInvestDataModel.objects.all()
+
+            else:
+                return ProjectInvestDataModel.objects.filter(apply_man=self.request.user)
 
     def perform_update(self, serializer):
         instance=self.get_object()
+        print(instance.return_amount)
         serializer.save()
         data = serializer.data
+        print(instance.return_amount)
         #####################################
         # 日志修改时间和具体操作
         write_to_log(self.request.user,instance,'1')
@@ -572,10 +606,11 @@ class ProjectInvestData(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         ret={}
-        ret['code']=0
+        ret['code']=0 #有没权限的时候有两层code
         #####################################
         # 日志删除时间和具体操作
-        write_to_log(self.request.user,instance,'0')
+        print("hihhi")
+        write_to_log(self.request.user,instance,'0',request)
         #####################################
         return Response(ret)
 
@@ -591,12 +626,13 @@ class ProjectInvestData(viewsets.ModelViewSet):
         source = request.data.get('source')
         return_amount = request.data.get('return_amount')
         invest_mobile = request.data.get('invest_mobile')
-        aiminvestrecord.audit_time= datetime.date.today()
+        aiminvestrecord.audit_time= timezone.now()
+        aiminvestrecord.audit_man = request.user
         aiminvestrecord.source = source
         aiminvestrecord.return_amount = return_amount
         aiminvestrecord.invest_mobile = invest_mobile
         aiminvestrecord.state='1'
-        aiminvestrecord.save(update_fields=['audit_time','state','source','invest_mobile','return_amount'])
+        aiminvestrecord.save(update_fields=['audit_time','state','source','invest_mobile','return_amount','audit_man'])
         resultdict={}
         resultdict['code']=0
         return Response(resultdict)
@@ -604,7 +640,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True)
     def import_apply_rejected(self, request, pk=None, *args, **kwargs):
         aiminvestrecord = ProjectInvestDataModel.objects.get(id=pk)
-        aiminvestrecord.audit_time = datetime.date.today()
+        aiminvestrecord.audit_time = timezone.now()
         aiminvestrecord.state = '2'
         aiminvestrecord.save(update_fields=['audit_time', 'state'])
 
@@ -667,6 +703,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
     def import_audit_projectdata_excel_except(self,request):
         admin_user = request.user
         ret = {'code': -1}
+        ret['data']={}
         file = request.FILES.get('file')
         #     print file.name
         aftername=time.time()
@@ -679,7 +716,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         nrows = table.nrows
         ncols = table.ncols
         if ncols != 13:
-            ret['msg'] = u"文件格式与模板不符，请下载最新模板填写！"
+            ret['detail'] = u"文件格式与模板不符，请下载最新模板填写！"
             return JsonResponse(ret)
         rtable = []
         try:
@@ -725,7 +762,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                 rtable.append(temp)
         except Exception as e:
             logger.info(e)
-            ret['msg'] = e.__str__()
+            ret['detail'] = e.__str__()
             return JsonResponse(ret)
             ####开始去重
             admin_user = request.user
@@ -760,11 +797,11 @@ class ProjectInvestData(viewsets.ModelViewSet):
             exstr = traceback.format_exc()
             logger.info(exstr)
             ret['code'] = 1
-            ret['msg'] = e.__str__()
-        ret['num'] = suc_num
+            ret['detail'] = e.__str__()
+        ret['data']['num'] = suc_num
         #####################################
         # 日志记录导入人的id和导入文件名
-        write_to_log(self.request.user,filename,'2')
+        write_to_log(self.request.user,filename,'2',request)
 
         #####################################
         return JsonResponse(ret)
@@ -775,6 +812,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
     def import_audit_projectdata_excel(self,request):
         admin_user = request.user
         ret = {'code': -1}
+        ret['data']={}
         # print(dir(request))
         file = request.FILES.get('file')
         aftername=time.time()
@@ -788,7 +826,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
         nrows = table.nrows
         ncols = table.ncols
         if ncols != 13:
-            ret['msg'] = "文件格式与模板不符，请下载最新模板填写！"
+            ret['detail'] = "文件格式与模板不符，请下载最新模板填写！"
             return JsonResponse(ret)
         rtable = []
         try:
@@ -848,7 +886,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
             logger.info(e)
             print(e)
             #             traceback.print_exc()
-            ret['msg'] = e.__str__()
+            ret['detail'] = e.__str__()
             return JsonResponse(ret)
             ####开始去重
             admin_user = request.user
@@ -886,11 +924,12 @@ class ProjectInvestData(viewsets.ModelViewSet):
             exstr = traceback.format_exc()
             logger.info(exstr)
             ret['code'] = 1
-            ret['msg'] = e.__str__()
-        ret['num'] = suc_num
+            ret['detail'] = e.__str__()
+        ret['data']['num'] = suc_num
+
         #####################################
         # 日志记录导入人的id和导入文件名
-        write_to_log(self.request.user,filename,'2')
+        write_to_log(self.request.user,filename,'2',request)
         #####################################
         return JsonResponse(ret)
 
@@ -899,6 +938,8 @@ class ProjectInvestData(viewsets.ModelViewSet):
     def import_projectdata_excel(self,request):
         admin_user = request.user
         ret = {}
+        ret['data']={}
+        print("ghgggg")
         file = request.FILES.get('file')
         # aftername＝time.time()
         filename = "./files/" +"1"
@@ -909,8 +950,10 @@ class ProjectInvestData(viewsets.ModelViewSet):
         table = data.sheets()[0]
         nrows = table.nrows
         ncols = table.ncols
+        print("aaa")
         if ncols != 8:
-            ret['msg'] = "文件格式与模板不符，请下载最新模板填写！"
+            print("bbb")
+            ret['detail']= "文件格式与模板不符，请下载最新模板填写！"
             return JsonResponse(ret)
         rtable = {}
         mobile_list = []
@@ -982,7 +1025,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
 
             logger.info(e)
             #             traceback.print_exc()
-            ret['msg'] = e.__str__()
+            ret['detail'] = e.__str__()
             return JsonResponse(ret)
         ####开始去重
         investdata_list = []
@@ -1010,29 +1053,25 @@ class ProjectInvestData(viewsets.ModelViewSet):
                         else:
                             obj = ProjectInvestDataModel(project_id=pid, invest_mobile=mob, settle_amount=settle,
                                                     invest_amount=amount, invest_term=term, invest_time=time,
-                                                    state='0', remark=remark, source=source, is_futou=is_futou)
+                                                    state='0', remark=remark, source=source, is_futou=is_futou,apply_man=admin_user)
                             investdata_list.append(obj)
                 ProjectInvestDataModel.objects.bulk_create(investdata_list)
         except Exception as e:
             logger.info(e)
             #             traceback.print_exc()
-            ret['msg'] = e.__str__()
+            ret['detail'] = e.__str__()
             return JsonResponse(ret)
         succ_num = len(investdata_list)
         duplic_num2 = len(duplicate_mobile_list)
         duplic_num1 = nrows - 1 - succ_num - duplic_num2
         duplic_mobile_list_str = u'，'.join(duplicate_mobile_list)
-        ret.update(num=succ_num, dup1=duplic_num1, dup2=duplic_num2, anum=nrows - 1,
+        ret['data'].update(num=succ_num, dup1=duplic_num1, dup2=duplic_num2, anum=nrows - 1,
                    dupstr=duplic_mobile_list_str)
-
+        ret['code']=0
         #####################################
         #日志记录导入人的id和导入文件名
-        write_to_log(self.request.user,filename,'2')
+        write_to_log(self.request.user,filename,'2',request)
         #####################################
-        returndict ={}
-        returndict['data']=ret
-        returndict['code']=0
         return JsonResponse(ret)
-
 
 

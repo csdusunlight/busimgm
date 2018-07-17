@@ -7,7 +7,6 @@
           <el-table-column label="编号" prop="id"></el-table-column>
           <el-table-column label="操作人" prop="oman"></el-table-column>
           <el-table-column label="操作时间" prop="otime"></el-table-column>
-          <el-table-column label="操作内容" prop="oobj"></el-table-column>
           <el-table-column label="操作类型">
             <template slot-scope="scope">
               <span>{{otypeFilter[scope.row.otype]}}</span>
