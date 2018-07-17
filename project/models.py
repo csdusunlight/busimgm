@@ -91,7 +91,7 @@ class Project(models.Model):
 
     def consume_minus_paid(self):
         return self.consume - self.settle
-    topay_amount = property(consume_minus_paid)
+    # topay_amount = property(consume_minus_paid)
 
 
 

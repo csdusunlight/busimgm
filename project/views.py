@@ -1,7 +1,5 @@
 from io import BytesIO
 
-from django.utils.decorators import method_decorator
-from rest_framework import generics, permissions
 from project.models import Project,FundApplyLog,RefundApplyLog,InvoiceApplyLog,OperatorLog,ProjectInvestDataModel
 from project.serializers import ProjectSerializer,FundApplyLogSerializer,\
     RefundApplyLogSerializer,InvoiceApplyLogSerializer,FundApplyLogListSerializer,\
@@ -11,31 +9,26 @@ from project.Filters import ProjectFilter,FundApplyLogFilter,RefundApplyLogFilte
 from rest_framework.filters import SearchFilter, OrderingFilter
 from utils.log import write_to_log
 from account.permissions import IsAllowedToUse,IsOwnerOrStaff
-from django.views.decorators.clickjacking import xframe_options_sameorigin
 import django_filters
 from django.http.response import Http404, JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 import xlrd
 import logging
-from django.db import transaction
 from decimal import Decimal
 from xlwt.Workbook import Workbook
 from xlwt.Style import easyxf
 import traceback
 import datetime
-from project.models import DBlock
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, GenericAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route,action
 from rest_framework import viewsets
 from django.core.cache import cache
+from django.db.models import F
 from utils.Mypagination import MyPageNumberPagination
 #import django.core.cache
 import time
 logger = logging.getLogger('busimgm')
 #ts = lambda :time.time
 class ProjectDetail(viewsets.ModelViewSet):
-    queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
@@ -46,7 +39,7 @@ class ProjectDetail(viewsets.ModelViewSet):
                        'lanched_audit_date',
                        'cost',
                        'consume',
-                       #'topay_amount',
+                       'topay_amount',
                        'settle'
                        )
     ordering=('lanched_apply_date')
@@ -74,9 +67,10 @@ class ProjectDetail(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         if user.is_swry() :  # 或者是上单人员
-            return Project.objects.filter(contact=self.request.user)
+            qs = Project.objects.filter(contact=self.request.user)
         else:
-            return Project.objects.all()
+            qs = Project.objects.all()
+        qs = qs.annotate(topay_amount=F('consume')-F('settle'))
 
     def perform_create(self, serializer):
         user = self.request.user
