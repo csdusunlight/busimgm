@@ -324,10 +324,10 @@ export default {
     conditionDate () {
       let Data = {
         params: {
-          invest_time_0: this.inputdate0,
-          invest_time_1: this.inputdate1,
-          audit_time_0: this.inputdate2,
-          audit_time_1: this.inputdate3,
+          investtime_0: this.inputdate0,
+          investtime_1: this.inputdate1,
+          audittime_0: this.inputdate2,
+          audittime_1: this.inputdate3,
           project: this.projectnum,
           invest_mobile: this.subphone,
           projectname: this.projectnameVal,
