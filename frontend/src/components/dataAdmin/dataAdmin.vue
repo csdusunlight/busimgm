@@ -460,6 +460,7 @@ export default {
       this.adoptId = row.id
       this.examineReason.source = row.source
       this.examineReason.return_amount = row.return_amount
+      this.examineReason.invest_mobile = row.invest_mobile
     },
     /* 提交同意条件 */
     subDataAdminBtn (examine) {
