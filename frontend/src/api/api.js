@@ -100,6 +100,12 @@ export function endProjectRefuse (id, data) {
   console.log(url)
   return axios.post(url, data)
 }
+/* 根据ID获取单个数据 */
+export function getIdProjectdata (id) {
+  let url = `${http}/Project/projects/${id}/`
+  console.log(url)
+  return axios.get(url)
+}
 /* ----------------费用申请审核API--------------- */
 /* 获取费用申请列表 */
 export function getCostList (page, data) {

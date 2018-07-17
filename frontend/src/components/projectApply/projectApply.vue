@@ -270,7 +270,7 @@
 </template>
 
 <script>
-import {postNewProject, getProjectList, getprojectDetails, deleteProject, putProject, endProjectApply} from '@/api/api'
+import {postNewProject, getProjectList, getprojectDetails, deleteProject, putProject, endProjectApply, getIdProjectdata} from '@/api/api'
 import {paccounOption, settlewayopsoption} from '@/common/js/options'
 import {mapGetters} from 'vuex'
 export default {
@@ -499,8 +499,12 @@ export default {
     },
     /* 打开项目修改对话框 */
     modifyproject (row) {
+      getIdProjectdata(row.id).then((res) => {
+        this.modifyProject = res.data
+      }).catch((err) => {
+        console.log(err)
+      })
       this.modifyProjectfrom = true
-      Object.assign(this.modifyProject, row)
     },
     /* 详情搜索 */
     getDetailsList () {
