@@ -322,18 +322,34 @@ export default {
     },
     /* 搜索条件拼接 */
     conditionDate () {
-      let Data = {
-        params: {
-          investtime_0: this.inputdate0,
-          investtime_1: this.inputdate1,
-          audittime_0: this.inputdate2,
-          audittime_1: this.inputdate3,
-          project: this.projectnum,
-          invest_mobile: this.subphone,
-          projectname: this.projectnameVal,
-          source: this.investvalue,
-          is_futou: this.inmodevalue,
-          state: this.examinestate
+      let Data = {}
+      if (this.inputdate2 !== '' && this.inputdate3 !== '') {
+        Data = {
+          params: {
+            investtime_0: this.inputdate0,
+            investtime_1: this.inputdate1,
+            audittime_0: this.inputdate2 + ' 00:00:00',
+            audittime_1: this.inputdate3 + ' 23:59:59',
+            project: this.projectnum,
+            invest_mobile: this.subphone,
+            projectname: this.projectnameVal,
+            source: this.investvalue,
+            is_futou: this.inmodevalue,
+            state: this.examinestate
+          }
+        }
+      } else {
+        Data = {
+          params: {
+            investtime_0: this.inputdate0,
+            investtime_1: this.inputdate1,
+            project: this.projectnum,
+            invest_mobile: this.subphone,
+            projectname: this.projectnameVal,
+            source: this.investvalue,
+            is_futou: this.inmodevalue,
+            state: this.examinestate
+          }
         }
       }
       return Data
