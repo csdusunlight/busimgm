@@ -92,7 +92,7 @@ class ProjectDetail(viewsets.ModelViewSet):
             qs = Project.objects.filter(contact=self.request.user)
         else:
             qs = Project.objects.all()
-        qs = qs.annotate(topay_amount=F('consume')-F('settle'))
+        return qs.annotate(topay_amount=F('consume')-F('settle'))
 
     def perform_create(self, serializer):
         user = self.request.user
