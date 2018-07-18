@@ -70,6 +70,7 @@
       </el-col>
       <el-col :span="4">
         <div class="flexright">
+          <el-button size="medium" type="primary" @click="refreshBtn">刷新</el-button>
           <el-button size="medium" type="primary" @click="searchBtn">搜索</el-button>
         </div>
       </el-col>
@@ -467,6 +468,21 @@ export default {
     },
     /* 搜索 */
     searchBtn () {
+      this.currentPage = 1
+      this.getDatalist()
+    },
+    /* 刷新 */
+    refreshBtn () {
+      this.inputdate0 = ''
+      this.inputdate1 = ''
+      this.inputdate2 = ''
+      this.inputdate3 = ''
+      this.projectnum = ''
+      this.subphone = ''
+      this.projectnameVal = ''
+      this.investvalue = ''
+      this.inmodevalue = ''
+      this.examinestate = ''
       this.currentPage = 1
       this.getDatalist()
     },
