@@ -25,6 +25,8 @@ class ProjectDayStatisList(generics.ListAPIView):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter, django_filters.rest_framework.DjangoFilterBackend)
     filter_class = ProjectDayStatisFilter
+    ordering=('-date')
+
 
 class DayStatisStatisList(generics.ListAPIView):
     queryset = DayStatis.objects.all()
@@ -32,6 +34,7 @@ class DayStatisStatisList(generics.ListAPIView):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter,django_filters.rest_framework.DjangoFilterBackend)
     filter_class = DayStatisFilter
+    ordering=('-date')
 
 class UserDayStatisList(generics.ListAPIView):
     queryset = UserDayStatis.objects.all()
@@ -39,6 +42,7 @@ class UserDayStatisList(generics.ListAPIView):
     pagination_class = MyPageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter, django_filters.rest_framework.DjangoFilterBackend)
     filter_class = UserDayStatisFilter
+    ordering=('-date')
     def get_queryset(self):
             user = self.request.user
             if user.is_swry():  # 或者是商务人员

@@ -44,7 +44,7 @@ class ProjectDetail(viewsets.ModelViewSet):
                        'topay_amount',
                        'settle'
                        )
-    ordering=('lanched_apply_date',)
+    ordering=('-lanched_apply_date',)
     permission_classes = (IsAllowedToUse,IsOwnerOrStaff,)
     '''三个操作分别是修改，删除，结项申请，都是商务人员发起的'''
     def destroy(self, request, *args, **kwargs):
@@ -231,7 +231,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
                        'send_date',
                        'audit_date'
                        )
-    ordering=('apply_date')
+    ordering=('-apply_date')
 
     def get_queryset(self):
         user = self.request.user
@@ -345,7 +345,7 @@ class RefundApplyLogDetail(viewsets.ModelViewSet):
                        'refund_rec',
                        'audit_date'
                        )
-    ordering=('apply_date')
+    ordering=('-apply_date')
     def get_queryset(self):
         user = self.request.user
         if user.is_swry() :  # 或者是上单人员
@@ -452,7 +452,7 @@ class InvoiceApplyLogDetail(viewsets.ModelViewSet):
                        'audit_date',
                        'return_num'
                        )
-    ordering=('apply_date')
+    ordering=('-apply_date')
     permission_classes =(IsAllowedToUse,IsOwnerOrStaff,)
 
     def get_queryset(self):
@@ -578,7 +578,7 @@ class ProjectInvestData(viewsets.ModelViewSet):
                        'settle_amount',
                        'return_amount'
                        )
-    ordering=('invest_time')
+    ordering=('-invest_time')
 
     def get_queryset(self):
             user = self.request.user
@@ -666,10 +666,12 @@ class ProjectInvestData(viewsets.ModelViewSet):
             return_amount = ''
             result = ''
             if con.state == '0':
+                result = '否'
+                #return_amount = con.return_amount
+            elif con.state == '1':
                 result = '是'
                 return_amount = con.return_amount
-            elif con.state == '2':
-                result = '否'
+
             source = con.get_source_display()
             remark = con.remark
             data.append([id, project_id, project_name, is_futou, invest_time, invest_mobile, invest_amount, invest_term,
