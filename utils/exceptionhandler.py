@@ -28,8 +28,5 @@ def custom_exception_handler(exc, context):
             #data.update(code=code)
         else:
             data = {'code':code, 'detail': exc.detail}
-        returndict = {}
-        returndict['code']=0
-        returndict['data']=data
-        return Response(returndict, status=200, headers=headers)
+        return Response(data, status=200, headers=headers)
     return None

@@ -8,8 +8,7 @@ class ProjectListSerializer(serializers.ModelSerializer):
     platformname = serializers.CharField(source='platform', read_only=True)
     profit = serializers.DecimalField(decimal_places=2,max_digits=10,read_only=True)
     topay_amount= serializers.DecimalField(decimal_places=2,max_digits=10,read_only=True)
-
-    #contact = serializers.CharField(source="contact.uname",read_only=True)
+    contact = serializers.CharField(source="contact.uname",read_only=True)
 
     class Meta:
         model = Project
