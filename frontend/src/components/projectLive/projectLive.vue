@@ -43,9 +43,9 @@
         <el-table v-loading="loading" :data="dataList.results" style="width: 100%" @row-click="handleRowHandle" @sort-change="sortChange">
           <el-table-column label="项目编号" prop="id"></el-table-column>
           <el-table-column label="项目名称" prop="name"></el-table-column>
-          <el-table-column label="立项日期" prop="lanched_audit_date"></el-table-column>
+          <el-table-column label="立项日期" prop="lanched_apply_date"></el-table-column>
           <el-table-column label="结项日期" prop="concluded_audit_date" v-if="jiexianstate" :key="Math.random()"></el-table-column>
-          <el-table-column label="预计待收/待消耗" sortable="custom" prop="topay_amount"></el-table-column>
+          <el-table-column label="预计待收/待消耗" sortable="custom" prop="topay_amount" width="150"></el-table-column>
           <el-table-column label="总结算金额" prop="settle"></el-table-column>
           <el-table-column label="预计总消耗" sortable="custom" prop="consume"></el-table-column>
           <el-table-column label="总返现金额" sortable="custom" prop="cost"></el-table-column>
@@ -145,6 +145,7 @@ export default {
         } else {
           this.jiexianstate = false
         }
+        console.log(res.data)
         this.dataList = res.data
         this.loading = false
       }).catch((err) => {
@@ -270,6 +271,13 @@ export default {
         this.currentPage = 1
         this.getProjectList()
       }
+    }
+  },
+  watch: {
+    selectvalue () {
+      this.loading = true
+      this.currentPage = 1
+      this.getProjectList()
     }
   }
 }
