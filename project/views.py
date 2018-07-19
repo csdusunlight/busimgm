@@ -184,7 +184,7 @@ class ProjectDetail(viewsets.ModelViewSet):
         settle = request.POST.get("settle")
         psettlereason = request.POST.get("reason")
         aimpro = Project.objects.get(id=pk)
-        aimpro.audituser = request.user
+        aimpro.contact = request.user
         aimpro.state = "4" #"结项待审核"
         aimpro.settle = settle
         aimpro.psettlereason = psettlereason
@@ -306,7 +306,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         aimfund.audit_man=request.user
         aimfund.state='1'
         aimfund.audit_date = datetime.date.today()
-        aimfund.save(update_fields=['audituser','state','audit_date'])
+        aimfund.save(update_fields=['audit_man','state','audit_date'])
 
         #同时把对应的project的settle加上
         aimpro = aimfund.project
@@ -328,7 +328,7 @@ class FundApplyLogDetail(viewsets.ModelViewSet):
         aimfund.audit_date =  datetime.date.today()
 
         aimfund.audit_refused_reason = reason
-        aimfund.save(update_fields=['audituser','state','audit_refused_reason','audit_date'])
+        aimfund.save(update_fields=['audit_man','state','audit_refused_reason','audit_date'])
         res = {}
         res['code'] = 0
         return Response(res)
