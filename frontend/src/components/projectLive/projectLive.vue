@@ -145,11 +145,9 @@ export default {
         } else {
           this.jiexianstate = false
         }
-        console.log(res)
         this.dataList = res.data
         this.loading = false
       }).catch((err) => {
-        console.log('error')
         console.log(err)
       })
     },
@@ -173,7 +171,6 @@ export default {
     },
     /* 点击 行 查看详情 */
     handleRowHandle (val) {
-      console.log(val)
       this.searchDetailsName = val.id
       this.lookProjectTable = true
       this.getDetailsList()
@@ -191,7 +188,6 @@ export default {
         }
       }
       getprojectDetails(this.detailsCurrentPage, data).then((res) => {
-        console.log(res)
         this.detailsList = res.data
       })
     },
@@ -199,7 +195,6 @@ export default {
       getProjectLiveSort(this.currentPage, data).then((res) => {
         this.loading = false
         this.dataList = res.data
-        console.log(res)
       }).catch((err) => {
         console.log(err)
       })
@@ -211,7 +206,6 @@ export default {
       this.getProjectList()
     },
     sortChange (val) {
-      console.log(val)
       this.loading = true
       if (val.prop !== null) {
         if (val.prop === 'topay_amount') {
@@ -276,7 +270,6 @@ export default {
         this.currentPage = 1
         this.getProjectList()
       }
-      console.log(val)
     }
   }
 }

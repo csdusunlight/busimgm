@@ -315,7 +315,6 @@ export default {
   methods: {
     /* Tab点击 */
     handleClick (tab, event) {
-      console.log(tab, event)
       if (!this.dataList2 && this.activeName === 'second') {
         this.getProjectData()
       }
@@ -333,7 +332,6 @@ export default {
     },
     /* 搜索 */
     searchData () {
-      console.log(this.searchKey)
       if (this.activeName === 'first') {
         this.currentPage = 1
         this.getProjectData()
@@ -364,31 +362,23 @@ export default {
         data = this.searchKey_2
       }
       getProjectList(page, data).then((res) => {
-        console.log(res)
         if (this.activeName === 'first') {
           this.dataList = res.data
         } else if (this.activeName === 'second') {
           this.dataList2 = res.data
         }
         this.loading = false
-        if (res.code) {
-        } else {
-          /* this.$message(res.data.detail) */
-        }
       }).catch((err) => {
-        console.log('error')
         console.log(err)
       })
     },
     comfirmProjectAdd (id) {
-      console.log(id)
       this.$confirm('请确认是否审核通过该条数据？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         addProjectConfirm(id).then((res) => {
-          console.log(res)
           if (res.data.code === 0) {
             this.getProjectData()
             this.$message({
@@ -402,12 +392,11 @@ export default {
             })
           }
         })
-      }).catch(() => {
-        console.log('cancel')
+      }).catch((err) => {
+        console.log(err)
       })
     },
     refuseProjectAdd (id) {
-      console.log(id)
       this.$prompt('请输入拒绝原因', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -431,8 +420,8 @@ export default {
             })
           }
         })
-      }).catch(() => {
-        console.log('cancel')
+      }).catch((err) => {
+        console.log(err)
       })
     },
     comfirmProjectEnd (id) {
@@ -456,12 +445,11 @@ export default {
             })
           }
         })
-      }).catch(() => {
-        console.log('cancel')
+      }).catch((err) => {
+        console.log(err)
       })
     },
     refuseProjectEnd (id) {
-      console.log(id)
       this.$prompt('请输入拒绝原因', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -485,8 +473,8 @@ export default {
             })
           }
         })
-      }).catch(() => {
-        console.log('cancel')
+      }).catch((err) => {
+        console.log(err)
       })
     }
   },

@@ -436,7 +436,6 @@ export default {
         this.searchState = false
       }
       getProjectList(this.currentPage, data).then((res) => {
-        console.log(res)
         this.dataList = res.data
         this.loading = false
         if (res.code) {
@@ -444,7 +443,6 @@ export default {
           /* this.$message(res.data.detail) */
         }
       }).catch((err) => {
-        console.log('error')
         console.log(err)
       })
     },
@@ -514,7 +512,6 @@ export default {
         }
       }
       getprojectDetails(this.detailsCurrentPage, data).then((res) => {
-        console.log(res)
         this.detailsList = res.data
       })
     },
@@ -549,7 +546,6 @@ export default {
     /* 提交修改项目 */
     subModiftProject () {
       putProject(this.modifyProject.id, this.modifyProject).then((res) => {
-        console.log(res)
         this.$message({
           type: 'success',
           message: '修改成功!'
@@ -571,7 +567,6 @@ export default {
       }).then(() => {
         deleteProject(row.id).then((res) => {
           if (res.data.code === 0) {
-            console.log(res)
             this.$message({
               type: 'success',
               message: '删除成功!'
@@ -598,9 +593,7 @@ export default {
     subJunctionsProject (addJunctions) {
       this.$refs[addJunctions].validate((valid) => {
         if (valid) {
-          console.log(this.addJunctions)
           endProjectApply(this.projectId, this.addJunctions).then((res) => {
-            console.log(res)
             if (res.data.code === 0) {
               this.$message({
                 type: 'success',

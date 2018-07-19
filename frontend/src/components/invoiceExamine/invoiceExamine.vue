@@ -225,7 +225,6 @@ export default {
         this.examineAdopt = false
       }
       getInvoice(this.currentPage, data).then((res) => {
-        console.log(res)
         this.dataList = res.data
         this.loading = false
       }).catch((err) => {

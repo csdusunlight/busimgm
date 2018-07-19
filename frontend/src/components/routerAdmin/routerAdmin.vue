@@ -105,7 +105,6 @@ export default {
   methods: {
     checkUserLogin () {
       checkLogin().then((res) => {
-        console.log(res)
         if (res.data.islogin === 1) {
           this.jutionrow = res.data.permission[0]
           this.addJution(this.jutionrow)

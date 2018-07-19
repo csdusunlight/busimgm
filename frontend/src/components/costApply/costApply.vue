@@ -356,10 +356,8 @@ export default {
         this.examineAdopt = false
       }
       getCostList(this.currentPage, data).then((res) => {
-        console.log(res)
         this.loading = false
         this.dataList = res.data
-        console.log(this.dataList)
       }).catch((err) => {
         console.log(err)
       })
@@ -453,7 +451,6 @@ export default {
     /* 获取项目 */
     getProjectList () {
       allGetProject().then((res) => {
-        console.log(res.data)
         res.data.results.forEach((val, i) => {
           this.projectOption.push({
             'value': val.id.toString(),
@@ -483,7 +480,6 @@ export default {
     /* 提交修改费用 */
     modifyCostData () {
       putCost(this.modifyCost.id, this.modifyCost).then((res) => {
-        console.log(res)
         this.$message({
           type: 'success',
           message: '修改成功!'
@@ -505,7 +501,6 @@ export default {
       }).then(() => {
         deleteCost(row.id).then((res) => {
           if (res.data.code === 0) {
-            console.log(res)
             this.$message({
               type: 'success',
               message: '删除成功!'
