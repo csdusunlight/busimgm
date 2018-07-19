@@ -122,12 +122,12 @@ export default {
         if (res.data.code === 0) {
           let data = res.data.results
           for (var i = 0; i < data.length; i++) {
-            if (data[i].consume >= 0) {
-              this.pie_data_1.push([data[i].name, parseFloat(data[i].consume)])
-              this.num_detail_1 += parseFloat(data[i].consume)
+            if (data[i].topay_amount >= 0) {
+              this.pie_data_1.push([data[i].name, parseFloat(data[i].topay_amount)])
+              this.num_detail_1 += parseFloat(data[i].topay_amount)
             } else {
-              this.pie_data_2.push([data[i].name, parseFloat(data[i].consume)])
-              this.num_detail_2 += parseFloat(data[i].consume)
+              this.pie_data_2.push([data[i].name, parseFloat(data[i].topay_amount)])
+              this.num_detail_2 += parseFloat(data[i].topay_amount)
             }
             this.projectLength++
           }
