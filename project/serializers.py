@@ -9,6 +9,10 @@ class ProjectListSerializer(serializers.ModelSerializer):
     profit = serializers.DecimalField(decimal_places=2,max_digits=10,read_only=True)
     topay_amount= serializers.DecimalField(decimal_places=2,max_digits=10,read_only=True)
     contact = serializers.CharField(source="contact.uname",read_only=True)
+    audituser = serializers.CharField(source="audituser.uname",read_only=True)
+    #apply_man = serializers.CharField(source="apply_man.uname",read_only=True)
+
+
 
     class Meta:
         model = Project
@@ -33,6 +37,10 @@ class  FundApplyLogSerializer(serializers.ModelSerializer):
 class  FundApplyLogListSerializer(serializers.ModelSerializer):
     project = serializers.CharField(source="project.id",read_only=True)
     projectname = serializers.CharField(source="project.name",read_only=True)
+    audit_man = serializers.CharField(source="audit_man.uname",read_only=True)
+    apply_man = serializers.CharField(source="apply_man.uname",read_only=True)
+
+
     class Meta:
         model = FundApplyLog
         fields = '__all__'
@@ -47,6 +55,9 @@ class  RefundApplyLogSerializer(serializers.ModelSerializer):
 class  RefundApplyLogListSerializer(serializers.ModelSerializer):
     project = serializers.CharField(source="project.id", read_only=True)
     projectname = serializers.CharField(source="project.name",read_only=True)
+    audit_man = serializers.CharField(source="audit_man.uname",read_only=True)
+    apply_man = serializers.CharField(source="apply_man.uname",read_only=True)
+
     class Meta:
         model = RefundApplyLog
         fields = '__all__'
@@ -59,6 +70,10 @@ class  InvoiceApplyLogSerializer(serializers.ModelSerializer):
 class  InvoiceApplyLogListSerializer(serializers.ModelSerializer):
     project = serializers.CharField(source="project.id", read_only=True)
     projectname = serializers.CharField(source="project.name",read_only=True)
+    audit_man = serializers.CharField(source="audit_man.uname",read_only=True)
+    apply_man = serializers.CharField(source="apply_man.uname",read_only=True)
+
+
     class Meta:
         model = InvoiceApplyLog
         fields = '__all__'
@@ -75,6 +90,7 @@ class  OperatorLogSerializer(serializers.ModelSerializer):
 class  ProjectInvestDataSerializer(serializers.ModelSerializer):
     projectname = serializers.CharField(source="project.name",read_only=True)
     audit_time = serializers.DateTimeField(format="%Y-%m-%d",read_only=True)
+    audit_man = serializers.CharField(source="audit_man.uname",read_only=True)
 
     class Meta:
         model = ProjectInvestDataModel
