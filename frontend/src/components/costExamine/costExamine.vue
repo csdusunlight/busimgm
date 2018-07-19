@@ -88,7 +88,7 @@
           <el-table-column label="打款时间" prop="send_date"></el-table-column>
           <el-table-column label="打款截图">
             <template slot-scope="scope">
-              <div class="img_box">
+              <div class="img_box" @click="maxPicImage(scope.row.send_pic)">
                 <img :src="scope.row.send_pic"/>
               </div>
             </template>
@@ -141,6 +141,15 @@
           <el-button type="primary" @click="subRefuseCost('modifyCost')">确 定</el-button>
         </span>
       </el-dialog>
+      <el-dialog
+        title="打款截图"
+        :visible.sync="dialogImgShow"
+        width="850px"
+        >
+        <div class="form_table">
+          <img :src="imageMax"/>
+        </div>
+      </el-dialog>
     </el-row>
   </div>
 </template>
@@ -185,6 +194,8 @@ export default {
       examineData: true,
       examineAdopt: true,
       uploadIcon: false,
+      dialogImgShow: false,
+      imageMax: '',
       loading: true,
       paccountFliter: paccountypeopsFilter,
       currentPage: 1,
@@ -317,6 +328,10 @@ export default {
           return false
         }
       })
+    },
+    maxPicImage (row) {
+      this.dialogImgShow = true
+      this.imageMax = row
     }
   },
   watch: {
@@ -397,7 +412,12 @@ export default {
       height: 90px;
       display: block;
   .img_box
+    cursor: pointer;
     img
       width: 100px
-      height: 120px
+      height: 120px;
+  .form_table
+    img
+      width: 800px;
+      height: 500px;
 </style>
