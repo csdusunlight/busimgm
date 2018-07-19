@@ -66,7 +66,6 @@ export default {
       setTimeout(() => {
         let data = this.conditionDate()
         getDataOverview(data).then((res) => {
-          console.log(res.data)
           if (res.data.code === 0) {
             this.projectOverview = res.data
             this.loading = false
@@ -81,7 +80,6 @@ export default {
       setTimeout(() => {
         let data = this.conditionDate()
         getDataDayList(this.currentPage, data).then((res) => {
-          console.log(res)
           this.dataList = res.data
           this.loadingproject = false
         }).catch((err) => {

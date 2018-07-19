@@ -57,7 +57,6 @@ export default {
         upwd: pass
       }
       login(para).then((res) => {
-        console.log(res)
         if (res.data.code === 0) {
           this.addName(this.loginForm.username)
           this.$router.push('/routerAdmin')
@@ -67,7 +66,6 @@ export default {
             type: 'success'
           })
         } else {
-          console.log(res)
           this.$message(res.data.detail)
         }
       })

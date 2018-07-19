@@ -242,10 +242,8 @@ export default {
         this.examineAdopt = false
       }
       getRefundList(this.currentPage, data).then((res) => {
-        console.log(res)
         this.loading = false
         this.dataList = res.data
-        console.log(this.dataList)
       }).catch((err) => {
         console.log(err)
       })
@@ -297,8 +295,8 @@ export default {
             })
           }
         })
-      }).catch(() => {
-        console.log('cancel')
+      }).catch((err) => {
+        console.log(err)
       })
     },
     /* 拒绝操作 */

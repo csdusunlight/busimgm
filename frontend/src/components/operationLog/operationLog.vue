@@ -45,7 +45,6 @@ export default {
   methods: {
     getOperationLogList () {
       getOperationLog(this.currentPage).then((res) => {
-        console.log(res)
         this.dataList = res.data
       }).catch((err) => {
         console.log(err)

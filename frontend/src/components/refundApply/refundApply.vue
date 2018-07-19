@@ -400,10 +400,8 @@ export default {
         this.operationShow = false
       }
       getRefundList(this.currentPage, data).then((res) => {
-        console.log(res)
         this.loading = false
         this.dataList = res.data
-        console.log(this.dataList)
       }).catch((err) => {
         console.log(err)
       })
@@ -458,7 +456,6 @@ export default {
     /* 获取项目 */
     getProjectList () {
       allGetProject().then((res) => {
-        console.log(res.data)
         res.data.results.forEach((val, i) => {
           this.projectOption.push({
             'value': val.id.toString(),
@@ -472,7 +469,6 @@ export default {
             'contract_company': val.contract_company
           })
         })
-        console.log(this.projectOption)
       }).catch((err) => {
         console.log(err)
       })
@@ -488,12 +484,10 @@ export default {
     modifyRefundBtn (row) {
       this.modifyRefundVisible = true
       Object.assign(this.modifyRefund, row)
-      console.log(this.modifyRefund)
     },
     /* 提交退款修改 */
     subModifyRefund () {
       putRefund(this.modifyRefund.id, this.modifyRefund).then((res) => {
-        console.log(res)
         this.$message({
           type: 'success',
           message: '修改成功!'

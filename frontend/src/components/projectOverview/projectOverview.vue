@@ -70,7 +70,6 @@ export default {
   methods: {
     getDatalist () {
       getProjectOver(this.currentPage).then((res) => {
-        console.log(res)
         this.dataList = res.data
         this.loading = false
       }).catch((err) => {
@@ -138,7 +137,6 @@ export default {
           /* this.$message(res.data.detail) */
         }
       }).catch((err) => {
-        console.log('error')
         console.log(err)
       })
     },
@@ -166,7 +164,6 @@ export default {
           /* this.$message(res.data.detail) */
         }
       }).catch((err) => {
-        console.log('error')
         console.log(err)
       })
     }

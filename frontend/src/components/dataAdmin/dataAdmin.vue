@@ -315,7 +315,6 @@ export default {
       let data = this.conditionDate()
       getDaAdList(this.currentPage, data).then((res) => {
         this.dataList = res.data
-        console.log(this.dataList)
         this.loading = false
       }).catch((err) => {
         console.log(err)
@@ -499,7 +498,6 @@ export default {
       this.$refs[examine].validate((valid) => {
         if (valid) {
           agreeDataAdmin(this.adoptId, this.examineReason).then((res) => {
-            console.log(res)
             if (res.data.code === 0) {
               this.examineReason = this.initExamineReason
               this.$refs[examine].resetFields()

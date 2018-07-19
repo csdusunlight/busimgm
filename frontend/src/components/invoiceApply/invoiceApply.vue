@@ -351,7 +351,6 @@ export default {
         this.examineAdopt = false
       }
       getInvoice(this.currentPage, data).then((res) => {
-        console.log(res)
         this.dataList = res.data
         this.loading = false
       }).catch((err) => {
@@ -412,7 +411,6 @@ export default {
     /* 发票修改 */
     subModifyInvoice () {
       putInvoice(this.modifyInvoice.id, this.modifyInvoice).then((res) => {
-        console.log(res)
         this.$message({
           type: 'success',
           message: '修改成功!'
@@ -429,7 +427,6 @@ export default {
     opInvoice (row) {
       this.invoiceVisible = true
       Object.assign(this.modifyInvoice, row)
-      console.log(this.modifyInvoice)
     },
     /* 发票删除 */
     deleteInvoiceBtn (row) {
@@ -460,7 +457,6 @@ export default {
     /* 获取项目 */
     getProjectList () {
       allGetProject().then((res) => {
-        console.log(res.data)
         res.data.results.forEach((val, i) => {
           this.projectOption.push({
             'value': val.id.toString(),
