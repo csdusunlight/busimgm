@@ -28,7 +28,9 @@ from django.db.models import F
 from utils.Mypagination import MyPageNumberPagination
 #import django.core.cache
 import time
+from enum import Enum, auto
 logger = logging.getLogger('busimgm')
+
 #ts = lambda :time.time
 class ProjectDetail(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
