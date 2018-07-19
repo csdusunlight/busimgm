@@ -110,10 +110,8 @@ def check_user_login(request):
     if islogin:
         permission = user.get_permission()
         data.update(userid=user.id,username=user.uname, mobile=user.uid, qq=user.uqq,permission=permission)
-    returndict ={}
-    returndict['code']=0
-    returndict['data']=data
-    return JsonResponse(returndict)
+
+    return JsonResponse(data)
 
 
 class QiniuTokenView(APIView):
