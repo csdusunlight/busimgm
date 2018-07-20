@@ -122,17 +122,19 @@ export default {
         if (res.data.code === 0) {
           let data = res.data.results
           for (var i = 0; i < data.length; i++) {
-            if (data[i].consume >= 0) {
-              this.pie_data_1.push([data[i].name, parseFloat(data[i].consume)])
-              this.num_detail_1 += parseFloat(data[i].consume)
+            if (data[i].topay_amount >= 0) {
+              this.pie_data_1.push([data[i].name, parseFloat(data[i].topay_amount)])
+              this.num_detail_1 += parseFloat(data[i].topay_amount)
             } else {
-              this.pie_data_2.push([data[i].name, parseFloat(data[i].consume)])
-              this.num_detail_2 += parseFloat(data[i].consume)
+              this.pie_data_2.push([data[i].name, Math.abs(parseFloat(data[i].topay_amount))])
+              this.num_detail_2 += parseFloat(data[i].topay_amount)
             }
             this.projectLength++
           }
           this.charts('collection', this.pie_data_1, '项目预估待收布图', '预估待收')
           this.charts('consume', this.pie_data_2, '项目预估待消耗分布', '预估待消耗')
+          console.log(this.pie_data_1)
+          console.log(this.pie_data_2)
         } else {
           /* this.$message(res.data.detail) */
         }
