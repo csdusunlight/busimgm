@@ -97,10 +97,16 @@
           <el-table-column label="签约公司" prop="contract_company"></el-table-column>
           <el-table-column label="甲方公司名称" prop="company"></el-table-column>
           <el-table-column label="纳税人识别号" prop="putaxmanid"></el-table-column>
-          <el-table-column label="注册地址" prop="regaddress"></el-table-column>
-          <el-table-column label="银行账号" prop="bank_account"></el-table-column>
-          <el-table-column label="开户行" prop="bank"></el-table-column>
-          <el-table-column label="电话" prop="mobile"></el-table-column>
+          <el-table-column label="开户行/银行账号" >
+            <template slot-scope="scope">
+              <span>{{scope.row.bank}} {{scope.row.bank_account}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="注册地址/电话">
+            <template slot-scope="scope">
+              <span>{{scope.row.regaddress}} {{scope.row.mobile}}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="开票金额" prop="invoice_num"></el-table-column>
           <el-table-column label="商务对接人" prop="apply_man"></el-table-column>
           <el-table-column label="审核人" prop="audit_man" :key="Math.random()" v-if="examineData"></el-table-column>
