@@ -112,6 +112,7 @@
           <el-table-column label="审核人" prop="audit_man" :key="Math.random()" v-if="examineData"></el-table-column>
           <el-table-column label="审核时间" prop="audit_date" :key="Math.random()" v-if="examineData"></el-table-column>
           <el-table-column label="拒绝原因" prop="audit_refused_reason" :key="Math.random()" v-if="examineAdopt"></el-table-column>
+          <el-table-column label="备注" prop="record"></el-table-column>
           <el-table-column label="操作" v-if="operationShow">
             <template slot-scope="scope">
               <div class="operation_button">

@@ -130,6 +130,9 @@
             <el-form-item label="退款原因" prop="refund_reason">
               <el-input type="textarea" v-model="addRefund.refund_reason" size="medium"></el-input>
             </el-form-item>
+            <el-form-item label="备注">
+              <el-input type="textarea" v-model="addRefund.record" size="medium"></el-input>
+            </el-form-item>
           </el-form>
         </div>
         <span slot="footer" class="dialog-footer">
@@ -167,6 +170,7 @@
               <span>{{stateFilter[scope.row.state]}}</span>
             </template>
           </el-table-column>
+          <el-table-column label="备注" prop="record"></el-table-column>
           <el-table-column label="操作" v-if="operationShow">
             <template slot-scope="scope">
               <div class="operation_button">
@@ -244,6 +248,9 @@
             </el-form-item>
             <el-form-item label="退款原因" prop="refund_reason">
               <el-input type="textarea" v-model="modifyRefund.refund_reason" size="medium"></el-input>
+            </el-form-item>
+            <el-form-item label="备注">
+              <el-input type="textarea" v-model="modifyRefund.record" size="medium"></el-input>
             </el-form-item>
           </el-form>
         </div>
