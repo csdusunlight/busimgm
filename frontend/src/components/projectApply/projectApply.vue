@@ -144,7 +144,7 @@
             <template slot-scope="scope">
               <div class="operation_button">
                 <div class="op_button_padding" v-if="scope.row.state !== '0' && scope.row.state !== '2'"><el-button size="mini" type="primary" @click="lookProject(scope.row)">查看</el-button></div>
-                <div class="op_button_padding" v-if="scope.row.state === '0' || scope.row.state === '1'"><el-button size="mini" type="danger" @click="modifyproject(scope.row)">修改</el-button></div>
+                <div class="op_button_padding" v-if="scope.row.state === '0' || scope.row.state === '1' || scope.row.state === '2'"><el-button size="mini" type="danger" @click="modifyproject(scope.row)">修改</el-button></div>
                 <div class="op_button_padding" v-if="scope.row.state === '0'"><el-button size="mini" type="warning" @click="deleteProjectBtn(scope.row)">删除</el-button></div>
                 <div class="op_button_padding" v-if="scope.row.state === '1' || scope.row.state === '6'"><el-button size="mini" type="success" @click="junctions(scope.row)">结项</el-button></div>
               </div>
@@ -545,6 +545,9 @@ export default {
     },
     /* 提交修改项目 */
     subModiftProject () {
+      if (this.projectstate === '2') {
+        this.modifyProject.state = '0'
+      }
       putProject(this.modifyProject.id, this.modifyProject).then((res) => {
         this.$message({
           type: 'success',

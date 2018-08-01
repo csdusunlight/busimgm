@@ -345,7 +345,7 @@ export default {
     /* 费用申请列表 */
     getCostDatalist () {
       let data = this.conditionDate()
-      if (this.selectvalue === '0') {
+      if (this.selectvalue !== '1') {
         this.operationShow = true
       } else {
         this.operationShow = false
@@ -358,6 +358,7 @@ export default {
       getCostList(this.currentPage, data).then((res) => {
         this.loading = false
         this.dataList = res.data
+        console.log(this.dataList)
       }).catch((err) => {
         console.log(err)
       })
@@ -479,6 +480,14 @@ export default {
     },
     /* 提交修改费用 */
     modifyCostData () {
+      if (this.selectvalue === '2') {
+        this.modifyCost.state = '0'
+      }
+      delete this.modifyCost.apply_man
+      if (this.modifyCost.audit_man) {
+        delete this.modifyCost.audit_man
+      }
+      console.log(this.modifyCost)
       putCost(this.modifyCost.id, this.modifyCost).then((res) => {
         this.$message({
           type: 'success',

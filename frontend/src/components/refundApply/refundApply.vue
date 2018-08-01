@@ -394,7 +394,7 @@ export default {
     /* 退款申请列表 */
     getRefundDatalist () {
       let data = this.conditionDate()
-      if (this.examinestate === '0') {
+      if (this.examinestate !== '1') {
         this.operationShow = true
       } else {
         this.operationShow = false
@@ -487,6 +487,14 @@ export default {
     },
     /* 提交退款修改 */
     subModifyRefund () {
+      if (this.examinestate === '2') {
+        this.modifyRefund.state = '0'
+      }
+      delete this.modifyRefund.apply_man
+      if (this.modifyRefund.audit_man) {
+        delete this.modifyRefund.audit_man
+      }
+      console.log(this.modifyRefund)
       putRefund(this.modifyRefund.id, this.modifyRefund).then((res) => {
         this.$message({
           type: 'success',

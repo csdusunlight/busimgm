@@ -178,8 +178,8 @@
         >
         <div class="form_table">
           <el-form :model="modifyInvoice" :rules="modifyInvoice" ref="modifyInvoice" label-width="120px" class="demo-ruleForm">
-            <el-form-item label="项目名称" prop="project">
-              <el-select size="medium" filterable v-model="invoice.project" placeholder="请选择">
+            <el-form-item label="项目名称">
+              <el-select size="medium" filterable v-model="modifyInvoice.projectname" placeholder="请选择">
                 <el-option
                   v-for="item in projectOption"
                   :key="item.value"
@@ -326,7 +326,8 @@ export default {
       },
       modifyInvoice: {
         id: '',
-        invoice_type: ''
+        invoice_type: '',
+        projectname: ''
       }
     }
   },
@@ -340,15 +341,10 @@ export default {
     /* 获取列表 */
     getDatalist () {
       let data = this.conditionDate()
-      if (this.selectvalue === '0') {
+      if (this.selectvalue !== '1') {
         this.operationShow = true
       } else {
         this.operationShow = false
-      }
-      if (this.selectvalue === '2') {
-        this.examineAdopt = true
-      } else {
-        this.examineAdopt = false
       }
       getInvoice(this.currentPage, data).then((res) => {
         this.dataList = res.data
@@ -410,6 +406,13 @@ export default {
     },
     /* 发票修改 */
     subModifyInvoice () {
+      if (this.selectvalue === '2') {
+        this.modifyInvoice.state = '0'
+      }
+      delete this.modifyInvoice.apply_man
+      if (this.modifyInvoice.audit_man) {
+        delete this.modifyInvoice.audit_man
+      }
       putInvoice(this.modifyInvoice.id, this.modifyInvoice).then((res) => {
         this.$message({
           type: 'success',

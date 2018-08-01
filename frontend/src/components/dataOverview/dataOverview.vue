@@ -68,6 +68,7 @@ export default {
         getDataOverview(data).then((res) => {
           if (res.data.code === 0) {
             this.projectOverview = res.data
+            console.log(this.projectOverview)
             this.loading = false
           }
         }).catch((err) => {
