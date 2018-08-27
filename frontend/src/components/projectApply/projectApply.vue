@@ -134,11 +134,23 @@
               <span class="cursou" @click="clicktSeccrn(scope.row)" v-else>{{stateFilter[scope.row.state]}}</span>
             </template>
           </el-table-column>
+          <el-table-column label="商务对接人" prop="contact" v-if="jurisdiction === 'SJRY'"></el-table-column>
+          <el-table-column label="结算方式" v-if="jurisdiction === 'SJRY'">
+            <template slot-scope="scope">
+              <span>{{settlewayFilter[scope.row.settleway]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="公账/私账" v-if="jurisdiction === 'SJRY'">
+            <template slot-scope="scope">
+              <span>{{paccountypeFilter[scope.row.paccountype]}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="结算详情" prop="settle_detail" v-if="jurisdiction === 'SJRY'"></el-table-column>
           <el-table-column label="结项日期" prop="concluded_audit_date" v-if="concludedState"></el-table-column>
-          <el-table-column label="消耗费用" prop="consume"></el-table-column>
+          <el-table-column label="消耗费用" prop="consume" v-if="jurisdiction !== 'SJRY'"></el-table-column>
           <el-table-column label="已结算费用" prop="settle"></el-table-column>
           <el-table-column label="待结算/消耗费用" prop="topay_amount"></el-table-column>
-          <el-table-column label="已开票金额" prop="invoicenum"></el-table-column>
+          <el-table-column label="已开票金额" prop="invoicenum" v-if="jurisdiction !== 'SJRY'"></el-table-column>
           <el-table-column label="备注" prop="remark"></el-table-column>
           <el-table-column label="操作" v-if="jurisdiction !== 'SJRY'">
             <template slot-scope="scope">
@@ -271,7 +283,7 @@
 
 <script>
 import {postNewProject, getProjectList, getprojectDetails, deleteProject, putProject, endProjectApply, getIdProjectdata} from '@/api/api'
-import {paccounOption, settlewayopsoption} from '@/common/js/options'
+import {paccounOption, settlewayopsoption, settlewayopsFilter, paccountypeopsFilter} from '@/common/js/options'
 import {mapGetters} from 'vuex'
 export default {
   data () {
@@ -405,6 +417,8 @@ export default {
           label: '结项失败'
         }
       ],
+      paccountypeFilter: paccountypeopsFilter,
+      settlewayFilter: settlewayopsFilter,
       stateFilter: {0: '待审核', 1: '进行中', 2: '审核未通过', 4: '结项中', 5: '已结项', 6: '结项失败'},
       settlewayops: settlewayopsoption,
       paccountypeops: paccounOption,
