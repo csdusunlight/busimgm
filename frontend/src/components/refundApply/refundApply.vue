@@ -432,28 +432,24 @@ export default {
     subPostRefund (addRefund) {
       this.$refs[addRefund].validate((valid) => {
         if (valid) {
-          if (this.addRefund.inprest > this.addRefund.consume_sum) {
-            postRefund(this.addRefund).then((res) => {
-              if (res.data.code === 0) {
-                this.addRefund = this.initAddRefund
-                this.$refs[addRefund].resetFields()
-                this.$message({
-                  type: 'success',
-                  message: '提交退款申请成功'
-                })
-                this.dialogVisible = false
-                this.loading = true
-                this.getRefundDatalist()
-              } else {
-                this.dialogVisible = false
-                this.$message(res.data.detail)
-              }
-            }).catch((err) => {
-              console.log(err)
-            })
-          } else {
-            this.$message.error('已消耗金额 不能大于 预付款金额！')
-          }
+          postRefund(this.addRefund).then((res) => {
+            if (res.data.code === 0) {
+              this.addRefund = this.initAddRefund
+              this.$refs[addRefund].resetFields()
+              this.$message({
+                type: 'success',
+                message: '提交退款申请成功'
+              })
+              this.dialogVisible = false
+              this.loading = true
+              this.getRefundDatalist()
+            } else {
+              this.dialogVisible = false
+              this.$message(res.data.detail)
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
         } else {
           this.$message.error('提交有误，请检查提交项！')
           return false
@@ -463,6 +459,7 @@ export default {
     /* 获取项目 */
     getProjectList () {
       allGetProject().then((res) => {
+        console.log(res.data)
         res.data.results.forEach((val, i) => {
           this.projectOption.push({
             'value': val.id.toString(),
