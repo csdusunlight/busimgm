@@ -459,7 +459,6 @@ export default {
     /* 获取项目 */
     getProjectList () {
       allGetProject().then((res) => {
-        console.log(res.data)
         res.data.results.forEach((val, i) => {
           this.projectOption.push({
             'value': val.id.toString(),
@@ -470,7 +469,10 @@ export default {
             'company': val.company,
             'platname': val.platname,
             'fundtype': val.paccountype,
-            'contract_company': val.contract_company
+            'contract_company': val.contract_company,
+            'inprest': val.settle,
+            'consume_sum': val.consume,
+            'refund_rec': parseFloat(val.settle) - parseFloat(val.consume)
           })
         })
       }).catch((err) => {
@@ -582,6 +584,9 @@ export default {
           this.addRefund.platname = val.platname
           this.addRefund.fundtype = val.fundtype
           this.addRefund.contract_company = val.contract_company
+          this.addRefund.inprest = val.inprest
+          this.addRefund.consume_sum = val.consume_sum
+          this.addRefund.refund_rec = val.refund_rec
         }
       })
     }

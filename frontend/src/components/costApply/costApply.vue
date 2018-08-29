@@ -96,8 +96,18 @@
                   <i v-else :class="[uploadIcon ? 'el-icon-loading' : 'el-icon-plus']" class="avatar-uploader-icon"></i>
                 </el-upload>
                 <span @click="unsend_pic">删除长图 </span>
+                <span @click="look_pic">查看大图 </span>
               </div>
             </el-form-item>
+            <el-dialog
+              width="840px"
+              title="查看大图"
+              :visible.sync="innerVisible"
+              append-to-body>
+              <div class="look_max_img">
+                <img width="800" height="500" :src="lookMaxImg"/>
+              </div>
+            </el-dialog>
             <el-form-item label="对公对私" prop="fundtype">
               <el-select size="medium" v-model="addCostApply.fundtype" placeholder="请选择">
                 <el-option
@@ -257,10 +267,12 @@ export default {
       onwcopte: '',
       selectvalue: '0',
       fundtypevalue: '',
+      lookMaxImg: '',
       options: examineOption,
       dataList: [],
       dialogVisible: false,
       modifyVisible: false,
+      innerVisible: false,
       uploadIcon: false,
       modifyuploadIcon: false,
       loading: true,
@@ -400,6 +412,13 @@ export default {
     unsend_pic () {
       this.addCostApply.send_pic = ''
       this.uploadIcon = false
+    },
+    /* 查看大图 */
+    look_pic () {
+      if (this.addCostApply.send_pic) {
+        this.innerVisible = true
+        this.lookMaxImg = this.addCostApply.send_pic
+      }
     },
     /* moidfy图片上传后 */
     modifyAvatarSuccess (res, file) {
