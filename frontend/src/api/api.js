@@ -4,7 +4,7 @@ axios.defaults.withCredentials = true
 
 let base = ''
 let pageSize = 10
-let http = 'http://mgm.fuliunion.com'
+let http = ''
 /* let http = 'http://127.0.0.1:8000' */
 
 export const requestData = params => { return axios.get(`${base}/data/list/`, { params: params }) }

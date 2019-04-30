@@ -5,7 +5,7 @@
         <div class="nav">
           <el-menu
             router
-            :default-active="defaultActive"
+            :default-active="1"
             class="el-menu-vertical-demo"
             background-color="#2b2b3a"
             text-color="#fff"
@@ -93,6 +93,7 @@ export default {
   },
   computed: {
     defaultActive () {
+      console.log('test')
       return this.$route.path
     },
     ...mapGetters([

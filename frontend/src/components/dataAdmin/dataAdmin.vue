@@ -108,7 +108,7 @@
             :before-upload="beforeAvatarUpload">
             <el-button size="medium" type="info">异常数据导入</el-button>
           </el-upload>
-          <a href="http://mgm.fuliunion.com/static/projectdata_init_template.xls"><el-button size="medium" type="info">获取初始导入模板</el-button></a>
+          <a href="/static/projectdata_init_template.xls"><el-button size="medium" type="info">获取初始导入模板</el-button></a>
         </div>
       </el-col>
     </el-row>
